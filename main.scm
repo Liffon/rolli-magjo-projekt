@@ -1,5 +1,5 @@
 (require racket/gui)
-(define *g* 0.0002)
+(define *g* 0.0002) ;; gravitation
 (define *dt* (round (/ 1000 60))) ;; millisekunder
 (load "player.scm")
 
