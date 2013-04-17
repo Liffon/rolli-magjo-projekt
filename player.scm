@@ -53,6 +53,7 @@
 ;      (set! x-pos (+ x-pos (* vx *dt*)))
 ;      (unless on-ground?
 ;        (set! y-pos (+ y-pos (* vy *dt*)))))
+        )
     ;;to-do: gravitation
     (super-new)))
 
