@@ -1,5 +1,5 @@
 (require racket/gui)
-(define *g* 0.0002) ;; gravitation
+(define *g* 0.001) ;; gravitation
 (define *dt* (round (/ 1000 60))) ;; millisekunder
 (load "player.scm")
 
@@ -8,7 +8,20 @@
                      [width 640]
                      [height 480]))
 
-(define *canvas* (new canvas%
+(define game-canvas%
+  (class canvas%
+    (define/override (on-char key-event)
+      (let ((key-code (send key-event get-key-code)))
+        (case key-code
+          ((#\space up)
+           (send *player* jump!))
+          ((#\a left)
+           (send *player* move-left!))
+          ((#\d right)
+           (send *player* move-right!)))))
+    (super-new)))
+
+(define *canvas* (new game-canvas%
                       [parent *frame*]
                       [paint-callback (lambda (canvas dc)
                                         (send *player* render canvas dc))]))
