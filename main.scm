@@ -1,5 +1,6 @@
 (require racket/gui)
-(define *g* 0.001) ;; gravitation
+(require racket/bool)
+(define *g* 0.005) ;; gravitation
 (define *dt* (round (/ 1000 60))) ;; millisekunder
 (load "player.scm")
 
@@ -14,11 +15,19 @@
       (let ((key-code (send key-event get-key-code)))
         (case key-code
           ((#\space up)
-           (send *player* jump!))
+           (send *player* set-key! 'jump #t))
           ((#\a left)
-           (send *player* move-left!))
+           (send *player* set-key! 'left #t))
           ((#\d right)
-           (send *player* move-right!)))))
+           (send *player* set-key! 'right #t))
+          ('release
+           (case (send key-event get-key-release-code)
+             ((#\space up)
+              (send *player* set-key! 'jump #f))
+             ((#\a left)
+              (send *player* set-key! 'left #f))
+             ((#\d right)
+              (send *player* set-key! 'right #f)))))))
     (super-new)))
 
 (define *canvas* (new game-canvas%
