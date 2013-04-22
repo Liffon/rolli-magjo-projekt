@@ -4,7 +4,7 @@
 (define *dt* (round (/ 1000 60))) ;; millisekunder
 (load "map.scm")
 (load "player.scm")
-(load "character.scm")
+(load "enemy.scm")
 
 (define *frame* (new frame%
                      [label "testbana"]
@@ -43,7 +43,7 @@
 
 (define *timer* (new timer%
                      [notify-callback (lambda ()
-                                        (send *map* update)
+                                        (send *map* update!)
                                         (send *canvas* refresh))]))
 
 (send *timer* start *dt*)
@@ -52,5 +52,5 @@
 (define *map* (new map%))
 (send *map* add-object! *player*)
 (send *frame* show #t)
-(define *enemy* (new character%))
+(define *enemy* (new enemy%))
 (send *map* add-object! *enemy*)

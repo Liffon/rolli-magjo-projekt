@@ -13,28 +13,31 @@
     (define width w)
     (define height h)
     
+    (define/public (decelerate!)
+      (set! vx (* vx 0.85)))
+    
     (define/public (push! dvx dvy)
       (set! vx (+ vx dvx))
       (set! vy (+ vy dvy)))
        
     (define/public (jump!)
-      (when on-ground?
-        (set! on-ground? #f)
-        (push! 0 -0.4)))
+      (set! vy -1))
     
     (define/public (render canvas dc)
       (send dc draw-rectangle x-pos y-pos width height))
-    (define/public (update)
-  
-      
+    
+    (define/public (move!)
       (push! 0 (* *g* *dt*))
-      
+      (decelerate!)
       (let ((new-x (+ x-pos (* vx *dt*)))
             (new-y (+ y-pos (* vy *dt*)))
             (ground-y 250))
         
         (set! x-pos new-x)
-        (set! y-pos (min new-y ground-y))))    
+        (set! y-pos (min new-y ground-y))))
+    
+    (define/public (update!)
+      (move!))    
     (super-new)))
 
 

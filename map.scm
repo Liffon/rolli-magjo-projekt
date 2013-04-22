@@ -10,9 +10,9 @@
                               (not (eq? obj object)))
                             objects)))
     
-    (define/public (update)
+    (define/public (update!)
       (for-each (λ (obj)
-                 (send obj update))
+                 (send obj update!))
                objects))
     
     (define/public (render canvas dc)
