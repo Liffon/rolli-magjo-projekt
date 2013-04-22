@@ -39,14 +39,19 @@
     (define/public (update)
      (let ((holding-right? (get-key 'right))
            (holding-left? (get-key 'left))
-           (holding-jump? (get-key 'jump)))
+           (holding-jump? (get-key 'jump))
+           (holding-sprint? (get-key 'sprint))
+           (speed 1))
        
-      (when holding-right?
+       (when holding-sprint?
+         (set! speed 2.5))
+         
+       (when holding-right?
          ;;knuff åt höger
-         (push! 0.05 0))
-      (when holding-left?
+         (push! (* 0.05 speed) 0))
+       (when holding-left?
          ;;knuff åt vänster
-         (push! -0.05 0))
+         (push! (* -0.05 speed) 0))
        
        (set! vx (* vx 0.85))
       
@@ -63,7 +68,6 @@
         
         (set! x-pos new-x)
         (set! y-pos (min new-y ground-y))))    
-    ;;to-do: gravitation
     (super-new)))
 
 
