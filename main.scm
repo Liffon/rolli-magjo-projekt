@@ -2,6 +2,7 @@
 (require racket/bool)
 (define *g* 0.005) ;; gravitation
 (define *dt* (round (/ 1000 60))) ;; millisekunder
+(load "map.scm")
 (load "player.scm")
 
 (define *frame* (new frame%
@@ -33,15 +34,17 @@
 (define *canvas* (new game-canvas%
                       [parent *frame*]
                       [paint-callback (lambda (canvas dc)
-                                        (send *player* render canvas dc))]))
+                                        (send *map* render canvas dc))]))
 
 (define *timer* (new timer%
                      [notify-callback (lambda ()
-                                        (send *player* update)
+                                        (send *map* update)
                                         (send *canvas* refresh))]))
 
 (send *timer* start *dt*)
 
 (define *player* (new player%))
+(define *map* (new map%))
+(send *map* add-object! *player*)
 (send *frame* show #t)
                      
