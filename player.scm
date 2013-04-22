@@ -1,7 +1,9 @@
 (define player%
   (class object%
     (init [x 0]
-          [y 0])
+          [y 0]
+          [w 25]
+          [h 50])
     (define x-pos x)
     (define y-pos y)
     (define vx 0)
@@ -9,7 +11,8 @@
     (define maxspeed 0.05)
     (define on-ground? #f)
     (define keys (make-hash))
-    
+    (define width w)
+    (define height h)
     (define/public (set-key! key boolean)
       (dict-set! keys key boolean))
     
@@ -32,21 +35,20 @@
         (push! 0 -0.4)))
     
     (define/public (render canvas dc)
-      (send dc draw-rectangle x-pos y-pos 50 50))
+      (send dc draw-rectangle x-pos y-pos width height))
     (define/public (update)
      (let ((holding-right? (get-key 'right))
            (holding-left? (get-key 'left))
            (holding-jump? (get-key 'jump)))
-      (cond
-        ((eq? holding-right? holding-left?)
-         ;;bromsa 
-         (set! vx (* vx 0.7)))
-        (holding-right?
+       
+      (when holding-right?
          ;;knuff åt höger
-         (push! 0.03 0))
-        (holding-left?
+         (push! 0.05 0))
+      (when holding-left?
          ;;knuff åt vänster
-         (push! -0.03 0)))
+         (push! -0.05 0))
+       
+       (set! vx (* vx 0.85))
       
       (when holding-jump?
         ;;knuff uppåt
@@ -60,24 +62,7 @@
             (ground-y 250))
         
         (set! x-pos new-x)
-        (set! y-pos (min new-y ground-y)))
-      
-      
-        
-        
-        
-;      (if (and (> y-pos 250)
-;               (not on-ground?))
-;          (begin (set! vy 0)
-;                 (set! y-pos 250)
-;                 (set! on-ground? #t))
-;          (set! vy (+ vy (* *g* *dt*))))
-;          
-;      (set! x-pos (+ x-pos (* vx *dt*)))
-;      (unless on-ground?
-;        (set! y-pos (+ y-pos (* vy *dt*)))))
-        )
-    
+        (set! y-pos (min new-y ground-y))))    
     ;;to-do: gravitation
     (super-new)))
 
