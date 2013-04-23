@@ -14,4 +14,5 @@
       (vector-ref tiles (tile x y)))
     
     (define/public (set-tile! x y value)
-      (vector-set! tiles (tile x y) value))))
+      (vector-set! tiles (tile x y) value))
+  (super-new)))
