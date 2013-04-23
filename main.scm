@@ -3,7 +3,6 @@
 (define *g* 0.005) ;; gravitation
 (define *dt* (round (/ 1000 60))) ;; millisekunder
 (load "map.scm")
-(load "tilemap.scm")
 (load "player.scm")
 (load "enemy.scm")
 
