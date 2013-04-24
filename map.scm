@@ -1,9 +1,11 @@
 (load "tilemap.scm")
+(define *tilemap* #f) ;;OCH DEN
 
 (define map%
   (class object%
     (define objects '())
-    (define tilemap (new tilemap% [w 20] [h 20]))
+    (define tilemap (new tilemap% [w 32] [h 24]))
+    (set! *tilemap* tilemap) ;TA BORT DENNA NÖRDTRÄSKET LAGGET ÄR BORTA
     (define scrolled-distance 0)
 
     (define/public (add-object! object)

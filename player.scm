@@ -5,7 +5,8 @@
     (inherit decelerate!
              push!
              move!
-             jump!)
+             jump!
+             on-ground?)
     (define keys (make-hash))
     (define/public (set-key! key boolean)
       (dict-set! keys key boolean))
@@ -18,6 +19,7 @@
            (holding-left? (get-key 'left))
            (holding-jump? (get-key 'jump))
            (holding-sprint? (get-key 'sprint))
+           (ground-y 250)
            (speed 1))
        
        (when holding-sprint?
@@ -29,9 +31,10 @@
        (when holding-left?
          ;;knuff åt vänster
          (push! (* -0.05 speed) 0))
-      (when holding-jump?
+      (when (and (on-ground?) holding-jump?)
         ;;knuff uppåt
         ;;todo: kolla att man får hoppa
+;        (displayln "Jump!")
         (jump!))
        
        (move!)))

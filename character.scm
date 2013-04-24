@@ -9,9 +9,19 @@
     (define vx 0)
     (define vy 0)
     (define maxspeed 0.05)
-    (define on-ground? #f)
     (define width w)
     (define height h)
+    (define map #f) 
+    (define/public (set-map! a-map)
+      (set! map a-map)) ;fixa
+    
+    (define/public (on-ground?)
+      (eq? (inexact->exact y-pos) (ground-y)))
+    
+    (define/public (ground-y)
+      (let* ((down-edge (+ y-pos height))
+            (new-ground (send map get-next-solid-under x-pos down-edge))) ;map ska skicka blabla till tilemap
+        new-ground))
     
     (define/public (decelerate!)
       (set! vx (* vx 0.85)))
@@ -30,11 +40,10 @@
       (push! 0 (* *g* *dt*))
       (decelerate!)
       (let ((new-x (+ x-pos (* vx *dt*)))
-            (new-y (+ y-pos (* vy *dt*)))
-            (ground-y 250))
+            (new-y (+ y-pos (* vy *dt*))))
         
         (set! x-pos new-x)
-        (set! y-pos (min new-y ground-y))))
+        (set! y-pos (min new-y (ground-y)))))
     
     (define/public (update!)
       (move!))    
