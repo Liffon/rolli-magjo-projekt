@@ -14,9 +14,12 @@
       (+ (* width y) x))
     
     (define/public (get-tile-coord-pos x y)
-      (values (floor (/ x size))
-              (floor (/ y size))))
-      
+      (values (inexact->exact (floor (/ x size)))
+              (inexact->exact (floor (/ y size)))))
+    (define/public (valid-tile-coord? x y)
+      (and (<= 0 x (- width 1))
+           (<= 0 y (- height 1))))
+          
     (define/public (get-position-tile x y)
         (get-tile
          (floor (/ x size))
@@ -24,9 +27,11 @@
     
     (define/public (get-next-solid-under pixel-x pixel-y)
       (define (helper tile-x tile-y)
-        (if (get-tile tile-x tile-y)
-            (* size tile-y)
-            (helper tile-x (+ 1 tile-y))))
+        (cond ((not (valid-tile-coord? tile-x tile-y)) 300) 
+              ((get-tile tile-x tile-y)
+               (* size tile-y))
+              (else (helper tile-x (+ 1 tile-y)))))
+      
       (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x
                                                         pixel-y)]) 
             (helper tile-x tile-y)))

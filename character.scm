@@ -12,8 +12,8 @@
     (define width w)
     (define height h)
     (define map #f) 
-    (define/public (set-map! a-map)
-      (set! map a-map)) ;fixa
+    (define/public (set-map! new-map)
+      (set! map new-map))
     
     (define/public (on-ground?)
       (eq? (inexact->exact y-pos) (ground-y)))
@@ -21,7 +21,7 @@
     (define/public (ground-y)
       (let* ((down-edge (+ y-pos height))
             (new-ground (send map get-next-solid-under x-pos down-edge))) ;map ska skicka blabla till tilemap
-        new-ground))
+        (- new-ground height)))
     
     (define/public (decelerate!)
       (set! vx (* vx 0.85)))

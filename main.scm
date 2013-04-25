@@ -52,5 +52,5 @@
 (define *map* (new map%))
 (send *map* add-object! *player*)
 (send *frame* show #t)
-(define *enemy* (new enemy%))
-(send *map* add-object! *enemy*)
+;(define *enemy* (new enemy%))
+;(send *map* add-object! *enemy*)
