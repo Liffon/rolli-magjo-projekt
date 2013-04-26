@@ -4,15 +4,15 @@
 (define map%
   (class object%
     (define objects '())
-    (define tilemap (new tilemap% [w 32] [h 24]))
+    (define tilemap (new tilemap% [w 16] [h 12]))
     (set! *tilemap* tilemap) ;TA BORT DENNA NÖRDTRÄSKET LAGGET ÄR BORTA
     (for-each (lambda (x)
                 (send tilemap set-tile! x 10 'hest)
                 (send tilemap set-tile! x 11 'hest))
               (range 0 11))
     (define scrolled-distance 0)
-    (define/public (get-next-solid-under x-pos down-edge)
-      (send tilemap get-next-solid-under x-pos down-edge)) 
+    (define/public (get-next-solid-pixel direction x-pos down-edge)
+      (send tilemap get-next-solid-pixel direction x-pos down-edge)) 
     (define/public (add-object! object)
       (send object set-map! this)
       (set! objects (cons object objects)))

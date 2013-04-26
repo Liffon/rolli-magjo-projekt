@@ -20,7 +20,7 @@
     
     (define/public (ground-y)
       (let* ((down-edge (+ y-pos height))
-            (new-ground (send map get-next-solid-under x-pos down-edge))) ;map ska skicka blabla till tilemap
+            (new-ground (send map get-next-solid-pixel 'down x-pos down-edge))) ;map ska skicka blabla till tilemap
         (- new-ground height)))
     
     (define/public (decelerate!)

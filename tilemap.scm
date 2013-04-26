@@ -7,7 +7,7 @@
     (define height h)
     (define size tile-size)
     (define tile-picture (make-object bitmap% "tile.png"))
-    (define all-tiles (new bitmap%))
+    ;(define all-tiles (new bitmap%))
     
     (define tiles (make-vector (* width height) #f))
     
@@ -27,15 +27,24 @@
          (floor (/ x size))
          (floor (/ y size))))
     
-    (define/public (get-next-solid pixel-x pixel-y)
-      (define (helper tile-x tile-y)
-        (cond ((not (valid-tile-coord? tile-x tile-y)) 530) 
-              ((get-tile tile-x tile-y)
-               (* size tile-y))
-              (else (helper tile-x (+ 1 tile-y)))))
-      
+    (define/public (get-next-solid-pixel direction pixel-x pixel-y)
       (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x
-                                                        pixel-y)]) 
+                                                        pixel-y)]
+                   ((next-x next-y end-coordinate pixel-result)
+                    (case direction
+                      ('up (values identity sub1 0 (lambda (tile-x tile-y)
+                                                     (sub1 (+ (* size tile-y) size)))))
+                      ('down (values identity add1 (* (+ height 1) size) (lambda (tile-x tile-y)
+                                                                           (* size tile-y))))
+                      ('right (values add1 identity (add1 (* width size)) (lambda (tile-x tile-y)
+                                                                            (* size tile-x))))
+                      ('left (values sub1 identity 0 (lambda (tile-x tile-y)
+                                                     (+ (* size tile-x) size)))))))
+      (define (helper tile-x tile-y)
+        (cond ((not (valid-tile-coord? tile-x tile-y)) end-coordinate) 
+              ((get-tile tile-x tile-y)
+               (pixel-result tile-x tile-y))
+              (else (helper (next-x tile-x) (next-y tile-y)))))
             (helper tile-x tile-y)))
     
     (define/public (get-tile x y)
