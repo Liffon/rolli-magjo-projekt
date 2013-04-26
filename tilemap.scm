@@ -6,8 +6,11 @@
     (define width w)
     (define height h)
     (define size tile-size)
-    (define tile-picture (make-object bitmap% "tile.png"))
-    ;(define all-tiles (new bitmap%))
+    (define tile-picture (make-object bitmap% "tile.png"))    
+    ;; ny bitmap med samma storlek som hela tilemapen
+    ;; som har en alpha-kanal (dvs kan vara transparent)
+    (define tiles-bitmap (make-object bitmap% (* width size) (* height size) #f #t))
+    (define tiles-dc (make-object bitmap-dc% tiles-bitmap))
     
     (define tiles (make-vector (* width height) #f))
     
@@ -51,30 +54,26 @@
       (vector-ref tiles (tile x y)))
     
     (define/public (set-tile! x y value)
-      (vector-set! tiles (tile x y) value))
+      (vector-set! tiles (tile x y) value)
+      (render-tile tiles-dc x y))
     
-    (define (render-tile canvas dc x y)
+    (define (render-tile dc x y)
       (let ((scaled-x (* size x))
             (scaled-y (* size y)))
         (when (get-tile x y)
-          ;rita ut det som finn
+          ;rita ut det som finns
           (send dc draw-bitmap tile-picture scaled-x scaled-y))))
       
     (define/public (render canvas dc scrolled-distance)
       (let* ((canvas-width (send canvas get-width))
+             (canvas-height (send canvas get-height))
              (left-x (inexact->exact (floor (/ scrolled-distance size))))
              (right-x (inexact->exact (ceiling (/ canvas-width size))))
              (x-list (range 0 right-x))
              (y-list (range 0 height)))
-;        (displayln canvas-width)
-;        (displayln (/ canvas-width size))
-;        (displayln x-list)
-        (send dc translate (- scrolled-distance) 0)  
-        (for-each (λ (x)
-                    (for-each (λ (y)
-                                (render-tile canvas dc x y))
-                              y-list))
-                    x-list)
-        (send dc translate scrolled-distance 0)))
+        (send dc draw-bitmap-section tiles-bitmap
+              0 0 ;; dest-x dest-y
+              scrolled-distance 0 ;; src-x src-y
+              canvas-width canvas-height))) ;; src-width src-height
       
   (super-new)))
