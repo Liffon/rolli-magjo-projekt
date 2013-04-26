@@ -2,11 +2,12 @@
   (class object%
     (init w
           h
-          [tile-size 20])
+          [tile-size 40])
     (define width w)
     (define height h)
     (define size tile-size)
     (define tile-picture (make-object bitmap% "tile.png"))
+    (define all-tiles (new bitmap%))
     
     (define tiles (make-vector (* width height) #f))
     
@@ -16,6 +17,7 @@
     (define/public (get-tile-coord-pos x y)
       (values (inexact->exact (floor (/ x size)))
               (inexact->exact (floor (/ y size)))))
+
     (define/public (valid-tile-coord? x y)
       (and (<= 0 x (- width 1))
            (<= 0 y (- height 1))))
@@ -25,9 +27,9 @@
          (floor (/ x size))
          (floor (/ y size))))
     
-    (define/public (get-next-solid-under pixel-x pixel-y)
+    (define/public (get-next-solid pixel-x pixel-y)
       (define (helper tile-x tile-y)
-        (cond ((not (valid-tile-coord? tile-x tile-y)) 300) 
+        (cond ((not (valid-tile-coord? tile-x tile-y)) 530) 
               ((get-tile tile-x tile-y)
                (* size tile-y))
               (else (helper tile-x (+ 1 tile-y)))))
