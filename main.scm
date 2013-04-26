@@ -6,6 +6,12 @@
 (load "player.scm")
 (load "enemy.scm")
 
+;; behövs på astmatix, finns inte inbyggd i gamla versionen av Racket
+(define (range x y)
+  (if (< x y)
+      (cons x (range (+ x 1) y))
+      '()))
+
 (define *frame* (new frame%
                      [label "testbana"]
                      [width 640]
