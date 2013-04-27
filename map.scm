@@ -11,8 +11,10 @@
                 (send tilemap set-tile! x 11 'hest))
               (range 0 11))
     (define scrolled-distance 0)
-    (define/public (get-next-solid-pixel direction x-pos down-edge)
-      (send tilemap get-next-solid-pixel direction x-pos down-edge)) 
+
+    (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
+      (send tilemap get-next-solid-pixel . args)) ;; till tilemap
+
     (define/public (add-object! object)
       (send object set-map! this)
       (set! objects (cons object objects)))
