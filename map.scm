@@ -3,19 +3,27 @@
 
 (define map%
   (class object%
+    (init-field width height tile-size)
+    
     (define objects '())
-    (define tilemap (new tilemap% [w 16] [h 12]))
+    (define tilemap (new tilemap% [width width] [height height] [tile-size tile-size]))
     (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
     (define scrolled-distance 0)
 
-    (for-each (λ (x) ;; initialisera banan
-                ;;(send tilemap set-tile! x 10 #t)
+    ;; initialisera en testbana
+    (for-each (λ (x)
                 (send tilemap set-tile! x 11 #t))
-              (range 0 11))
+              (range 0 16))
     (send tilemap set-tile! 5 11 #f)
+    (for-each (λ (x)
+                (send tilemap set-tile! x 7 #t))
+              (range 6 13))
+    (send tilemap set-tile! 13 8 #t)
+    (send tilemap set-tile! 15 9 #t)
+    (send tilemap set-tile! 15 10 #t)
 
     (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
-      (send tilemap get-next-solid-pixel . args)) ;; till tilemap
+      (send tilemap get-next-solid-pixel . args)) ; till tilemap
     
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))

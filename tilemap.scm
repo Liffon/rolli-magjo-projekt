@@ -1,17 +1,12 @@
 (define tilemap%
   (class object%
-    (init w
-          h
-          [tile-size 40])
-    (define width w)
-    (define height h)
-    (define size tile-size)
+    (init-field width height tile-size)
     (define tile-picture (make-object bitmap% "tile.png"))
-    (define empty-tile-pixels (make-bytes (* size size 4) 0)) ;; genomskinlig "tile" som bytestring
+    (define empty-tile-pixels (make-bytes (* tile-size tile-size 4) 0)) ;; genomskinlig "tile" som bytestring
     
     ;; ny bitmap med samma storlek som hela tilemapen
     ;; som har en alpha-kanal (dvs kan vara transparent)
-    (define tiles-bitmap (make-object bitmap% (* width size) (* height size) #f #t))
+    (define tiles-bitmap (make-object bitmap% (* width tile-size) (* height tile-size) #f #t))
     (define tiles-dc (make-object bitmap-dc% tiles-bitmap))
     
     (define tiles (make-vector (* width height) #f))
@@ -20,8 +15,8 @@
       (+ (* width y) x))
     
     (define/public (get-tile-coord-pos x y)
-      (values (inexact->exact (floor (/ x size)))
-              (inexact->exact (floor (/ y size)))))
+      (values (inexact->exact (floor (/ x tile-size)))
+              (inexact->exact (floor (/ y tile-size)))))
 
     (define/public (valid-tile-coord? x y)
       (and (<= 0 x (- width 1))
@@ -29,8 +24,8 @@
           
     (define/public (get-position-tile x y)
         (get-tile
-         (inexact->exact (floor (/ x size))) ;;la till heltalskonvertering
-         (inexact->exact (floor (/ y size)))));;la till heltalskonvertering
+         (inexact->exact (floor (/ x tile-size))) ;;la till heltalskonvertering
+         (inexact->exact (floor (/ y tile-size)))));;la till heltalskonvertering
     
     (define/public (get-next-solid-pixel direction pixel-x pixel-y)
       (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x pixel-y)]
@@ -40,22 +35,22 @@
                                    sub1 
                                    0
                                    (λ (tile-x tile-y)
-                                     (sub1 (+ (* size tile-y) size)))))
+                                     (sub1 (+ (* tile-size tile-y) tile-size)))))
                       ('down (values identity
                                      add1
-                                     (* (+ height 1) size) ;; borde egentligen vara strax nedanför skärmen
+                                     (* (+ height 1) tile-size) ;; borde egentligen vara strax nedanför skärmen
                                      (λ (tile-x tile-y)
-                                       (* size tile-y))))
+                                       (* tile-size tile-y))))
                       ('right (values add1
                                       identity
-                                      (add1 (* width size))
+                                      (add1 (* width tile-size))
                                       (λ (tile-x tile-y)
-                                        (* size tile-x))))
+                                        (* tile-size tile-x))))
                       ('left (values sub1
                                      identity
                                      0
                                      (λ (tile-x tile-y)
-                                       (+ (* size tile-x) size)))))])
+                                       (+ (* tile-size tile-x) tile-size)))))])
       (define (helper tile-x tile-y)
         (cond [(not (valid-tile-coord? tile-x tile-y)) end-coordinate]
               [(get-tile tile-x tile-y)
@@ -71,17 +66,17 @@
       (render-tile tiles-dc x y))
     
     (define (render-tile dc x y)
-      (let ([scaled-x (* size x)]
-            [scaled-y (* size y)])
+      (let ([scaled-x (* tile-size x)]
+            [scaled-y (* tile-size y)])
         (if (get-tile x y)
             (send dc draw-bitmap tile-picture scaled-x scaled-y) ;; Rita om det finns en tile
-            (send dc set-argb-pixels scaled-x scaled-y size size empty-tile-pixels)))) ;; Annars, rensa
+            (send dc set-argb-pixels scaled-x scaled-y tile-size tile-size empty-tile-pixels)))) ;; Annars, rensa
       
     (define/public (render canvas dc scrolled-distance)
       (let* ([canvas-width (send canvas get-width)]
              [canvas-height (send canvas get-height)]
-             [left-x (inexact->exact (floor (/ scrolled-distance size)))]
-             [right-x (inexact->exact (ceiling (/ canvas-width size)))]
+             [left-x (inexact->exact (floor (/ scrolled-distance tile-size)))]
+             [right-x (inexact->exact (ceiling (/ canvas-width tile-size)))]
              [x-list (range 0 right-x)]
              [y-list (range 0 height)])
         (send dc draw-bitmap-section tiles-bitmap

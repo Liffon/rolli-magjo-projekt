@@ -58,7 +58,7 @@
 (send *timer* start *dt*)
 
 (define *player* (new player%))
-(define *map* (new map%))
+(define *map* (new map% [width 16] [height 12] [tile-size 40]))
 (send *map* add-object! *player*)
 (send *frame* show #t)
 ;(define *enemy* (new enemy%))

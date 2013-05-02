@@ -13,7 +13,7 @@
       (set! the-map new-map))
     
     (define/public (on-ground?)
-      (eq? (inexact->exact y) (ground-y)))
+      (eq? (inexact->exact y) (- (ground-y) height)))
     
     ;; Dessa borde generaliseras till t.ex. (get-edge 'direction)!
     (define/public (roof-y)
@@ -42,10 +42,10 @@
     
     (define/public (ground-y)
       (let ([xs (range x (+ x width) (get-field tile-size the-map))])
-        (- (apply min
-                  (map (λ (x)
-                         (send the-map get-next-solid-pixel 'down x (+ y height -1)))
-                       xs)) height)))
+        (apply min
+               (map (λ (x)
+                      (send the-map get-next-solid-pixel 'down x (+ y height -1)))
+                    xs))))
     
     (define/public (decelerate!)
       (set! vx (* vx 0.85)))
@@ -71,7 +71,7 @@
             (set! x (- (right-x) width))) ;; Tile-kollision åt höger
                                           ;;  (tog bort pixeln mellan ty det verkade funka utan)
         (if (> new-y (roof-y))
-            (set! y (min new-y (ground-y)))
+            (set! y (min new-y (- (ground-y) height)))
             (set! y (+ (roof-y) 1))))) ;;Tile-kollision uppåt
     
     (define/public (update!)
