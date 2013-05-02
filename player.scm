@@ -28,15 +28,16 @@
        (when holding-right?
          ;;knuff åt höger
          (push! (* 0.05 speed) 0))
+       
        (when holding-left?
          ;;knuff åt vänster
          (push! (* -0.05 speed) 0))
+      
       (when (and (on-ground?) holding-jump?)
         ;;knuff uppåt
         ;;todo: kolla att man får hoppa
 ;        (displayln "Jump!")
         (jump!))
-       
        (move!)))
     (super-new)))
 

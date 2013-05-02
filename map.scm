@@ -14,7 +14,8 @@
 
     (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-solid-pixel . args)) ;; till tilemap
-
+    (define/public (get-position-tile . args)
+      (send tilemap get-position-tile . args))
     (define/public (add-object! object)
       (send object set-map! this)
       (set! objects (cons object objects)))

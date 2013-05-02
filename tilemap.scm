@@ -27,13 +27,13 @@
           
     (define/public (get-position-tile x y)
         (get-tile
-         (floor (/ x size))
-         (floor (/ y size))))
+         (inexact->exact (floor (/ x size))) ;;la till heltalskonvertering
+         (inexact->exact (floor (/ y size)))));;la till heltalskonvertering
     
     (define/public (get-next-solid-pixel direction pixel-x pixel-y)
       (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x
                                                         pixel-y)]
-                   ((next-x next-y end-coordinate pixel-result)
+                   [(next-x next-y end-coordinate pixel-result)
                     (case direction
                       ('up (values identity sub1 0 (lambda (tile-x tile-y)
                                                      (sub1 (+ (* size tile-y) size)))))
@@ -42,7 +42,7 @@
                       ('right (values add1 identity (add1 (* width size)) (lambda (tile-x tile-y)
                                                                             (* size tile-x))))
                       ('left (values sub1 identity 0 (lambda (tile-x tile-y)
-                                                     (+ (* size tile-x) size)))))))
+                                                     (+ (* size tile-x) size)))))])
       (define (helper tile-x tile-y)
         (cond ((not (valid-tile-coord? tile-x tile-y)) end-coordinate) 
               ((get-tile tile-x tile-y)
