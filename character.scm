@@ -24,12 +24,16 @@
         (max roof-left-y roof-right-y)))
     
     (define/public (left-x)
-      (let ((upper-left-x (send map get-next-solid-pixel 'left x-pos y-pos))
-            (lower-left-x (send map get-next-solid-pixel 'left x-pos (+ y-pos 
-                                                                        (/ height
-                                                                           2))))) ;;kanske borde använda nåt annat än height/2
-                                                                                  ;;för att kunna ha andra storlekar på en character?
-        (max upper-left-x lower-left-x))) ;för att spelaren är större än en tile
+      (let ([upper-left-x (send map get-next-solid-pixel
+                                'left x-pos y-pos)]
+            [middle-left-x (send map get-next-solid-pixel
+                                'left x-pos (+ y-pos 
+                                               (/ height
+                                                  2)))]
+            [lower-left-x (send map get-next-solid-pixel
+                                'left x-pos (+ y-pos (- height 1)))]) ;;kanske borde använda nåt annat än height/2
+                                                         ;;för att kunna ha andra storlekar på en character?
+        (max upper-left-x middle-left-x lower-left-x))) ;för att spelaren är större än en tile
     
       (define/public (right-x)
         (let ((upper-right-x (send map get-next-solid-pixel 'right (+ x-pos width) y-pos))

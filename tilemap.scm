@@ -31,24 +31,35 @@
          (inexact->exact (floor (/ y size)))));;la till heltalskonvertering
     
     (define/public (get-next-solid-pixel direction pixel-x pixel-y)
-      (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x
-                                                        pixel-y)]
-                   [(next-x next-y end-coordinate pixel-result)
+      (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x pixel-y)]
+                   [(next-x next-y end-coordinate pixel-result) ;; fortsätt loopen olika beroende på riktning
                     (case direction
-                      ('up (values identity sub1 0 (lambda (tile-x tile-y)
-                                                     (sub1 (+ (* size tile-y) size)))))
-                      ('down (values identity add1 (* (+ height 1) size) (lambda (tile-x tile-y)
-                                                                           (* size tile-y))))
-                      ('right (values add1 identity (add1 (* width size)) (lambda (tile-x tile-y)
-                                                                            (* size tile-x))))
-                      ('left (values sub1 identity 0 (lambda (tile-x tile-y)
-                                                     (+ (* size tile-x) size)))))])
+                      ('up (values identity
+                                   sub1 
+                                   0
+                                   (λ (tile-x tile-y)
+                                     (sub1 (+ (* size tile-y) size)))))
+                      ('down (values identity
+                                     add1
+                                     (* (+ height 1) size) ;; borde egentligen vara strax nedanför skärmen
+                                     (λ (tile-x tile-y)
+                                       (* size tile-y))))
+                      ('right (values add1
+                                      identity
+                                      (add1 (* width size))
+                                      (λ (tile-x tile-y)
+                                        (* size tile-x))))
+                      ('left (values sub1
+                                     identity
+                                     0
+                                     (λ (tile-x tile-y)
+                                       (+ (* size tile-x) size)))))])
       (define (helper tile-x tile-y)
-        (cond ((not (valid-tile-coord? tile-x tile-y)) end-coordinate) 
-              ((get-tile tile-x tile-y)
-               (pixel-result tile-x tile-y))
-              (else (helper (next-x tile-x) (next-y tile-y)))))
-            (helper tile-x tile-y)))
+        (cond [(not (valid-tile-coord? tile-x tile-y)) end-coordinate]
+              [(get-tile tile-x tile-y)
+               (pixel-result tile-x tile-y)]
+              [else (helper (next-x tile-x) (next-y tile-y))]))
+        (helper tile-x tile-y)))
     
     (define/public (get-tile x y)
       (vector-ref tiles (tile x y)))
@@ -65,12 +76,12 @@
           (send dc draw-bitmap tile-picture scaled-x scaled-y))))
       
     (define/public (render canvas dc scrolled-distance)
-      (let* ((canvas-width (send canvas get-width))
-             (canvas-height (send canvas get-height))
-             (left-x (inexact->exact (floor (/ scrolled-distance size))))
-             (right-x (inexact->exact (ceiling (/ canvas-width size))))
-             (x-list (range 0 right-x))
-             (y-list (range 0 height)))
+      (let* ([canvas-width (send canvas get-width)]
+             [canvas-height (send canvas get-height)]
+             [left-x (inexact->exact (floor (/ scrolled-distance size)))]
+             [right-x (inexact->exact (ceiling (/ canvas-width size)))]
+             [x-list (range 0 right-x)]
+             [y-list (range 0 height)])
         (send dc draw-bitmap-section tiles-bitmap
               0 0 ;; dest-x dest-y
               scrolled-distance 0 ;; src-x src-y

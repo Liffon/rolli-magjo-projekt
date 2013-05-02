@@ -1,21 +1,25 @@
 (load "tilemap.scm")
-(define *tilemap* #f) ;;OCH DEN
+(define *tilemap* #f) ;; för debugging - ta bort sen!
 
 (define map%
   (class object%
     (define objects '())
     (define tilemap (new tilemap% [w 16] [h 12]))
-    (set! *tilemap* tilemap) ;TA BORT DENNA NÖRDTRÄSKET LAGGET ÄR BORTA
-    (for-each (lambda (x)
-                (send tilemap set-tile! x 10 'hest)
-                (send tilemap set-tile! x 11 'hest))
-              (range 0 11))
+    (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
     (define scrolled-distance 0)
+
+    (for-each (λ (x) ;; initialisera banan
+                ;;(send tilemap set-tile! x 10 #t)
+                (send tilemap set-tile! x 11 #t))
+              (range 0 11))
+    (send tilemap set-tile! 5 11 #f)
 
     (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-solid-pixel . args)) ;; till tilemap
+    
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))
+    
     (define/public (add-object! object)
       (send object set-map! this)
       (set! objects (cons object objects)))

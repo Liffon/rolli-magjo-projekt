@@ -5,6 +5,7 @@
 (load "map.scm")
 (load "player.scm")
 (load "enemy.scm")
+
 ;; behövs på astmatix, finns inte inbyggd i gamla versionen av Racket
 (define (range x y)
   (if (< x y)
