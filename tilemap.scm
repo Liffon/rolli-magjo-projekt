@@ -6,7 +6,9 @@
     (define width w)
     (define height h)
     (define size tile-size)
-    (define tile-picture (make-object bitmap% "tile.png"))    
+    (define tile-picture (make-object bitmap% "tile.png"))
+    (define empty-tile-pixels (make-bytes (* size size 4) 0)) ;; genomskinlig "tile" som bytestring
+    
     ;; ny bitmap med samma storlek som hela tilemapen
     ;; som har en alpha-kanal (dvs kan vara transparent)
     (define tiles-bitmap (make-object bitmap% (* width size) (* height size) #f #t))
@@ -69,11 +71,11 @@
       (render-tile tiles-dc x y))
     
     (define (render-tile dc x y)
-      (let ((scaled-x (* size x))
-            (scaled-y (* size y)))
-        (when (get-tile x y)
-          ;rita ut det som finns
-          (send dc draw-bitmap tile-picture scaled-x scaled-y))))
+      (let ([scaled-x (* size x)]
+            [scaled-y (* size y)])
+        (if (get-tile x y)
+            (send dc draw-bitmap tile-picture scaled-x scaled-y) ;; Rita om det finns en tile
+            (send dc set-argb-pixels scaled-x scaled-y size size empty-tile-pixels)))) ;; Annars, rensa
       
     (define/public (render canvas dc scrolled-distance)
       (let* ([canvas-width (send canvas get-width)]
