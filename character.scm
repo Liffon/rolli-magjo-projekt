@@ -1,55 +1,51 @@
 (define character%
   (class object%
-    (init [x 0]
-          [y 0]
-          [w 25]
-          [h 50])
-    (define x-pos x)
-    (define y-pos y)
+    (init-field [x 0]
+                [y 0]
+                [width 25]
+                [height 50])
     (define vx 0)
     (define vy 0)
     (define maxspeed 0.05)
-    (define width w)
-    (define height h)
-    (define map #f) 
+    (define the-map #f)
+    
     (define/public (set-map! new-map)
-      (set! map new-map))
+      (set! the-map new-map))
     
     (define/public (on-ground?)
-      (eq? (inexact->exact y-pos) (ground-y)))
+      (eq? (inexact->exact y) (ground-y)))
     
+    ;; Dessa borde generaliseras till t.ex. (get-edge 'direction)!
     (define/public (roof-y)
-      (let ((roof-left-y (send map get-next-solid-pixel 'up x-pos y-pos))
-            (roof-right-y (send map get-next-solid-pixel 'up (+ x-pos width) y-pos)))
-        (max roof-left-y roof-right-y)))
+      (let ([xs (range x (+ x width) (get-field tile-size the-map))])
+        (apply max
+               (map (λ (x)
+                      (send the-map get-next-solid-pixel 'up x y))
+                    xs))))
     
     (define/public (left-x)
-      (let ([upper-left-x (send map get-next-solid-pixel
-                                'left x-pos y-pos)]
-            [middle-left-x (send map get-next-solid-pixel
-                                'left x-pos (+ y-pos 
-                                               (/ height
-                                                  2)))]
-            [lower-left-x (send map get-next-solid-pixel
-                                'left x-pos (+ y-pos (- height 1)))]) ;;kanske borde använda nåt annat än height/2
-                                                         ;;för att kunna ha andra storlekar på en character?
-        (max upper-left-x middle-left-x lower-left-x))) ;för att spelaren är större än en tile
+      ;; bör funka oavsett storlek på karaktären
+      ;; - kollar alla tiles spelaren täcker i y-led
+      (let ([ys (range y (+ y height) (get-field tile-size the-map))])
+        (apply max
+               (map (λ (y)
+                      (send the-map get-next-solid-pixel 'left x y))
+                    ys))))
     
-      (define/public (right-x)
-        (let ((upper-right-x (send map get-next-solid-pixel 'right (+ x-pos width) y-pos))
-            (lower-right-x (send map get-next-solid-pixel 'right (+ x-pos width) (+ y-pos 
-                                                                        (/ height
-                                                                           2)))))
-        (min upper-right-x lower-right-x)))
-            
+    (define/public (right-x)
+      (let ([ys (range y (+ y height) (get-field tile-size the-map))])
+        (apply min
+               (map (λ (y)
+                      (send the-map get-next-solid-pixel 'right (+ x width -1) y))
+                    ys))))
+    
     
     (define/public (ground-y)
-      (let* ((down-edge (+ y-pos height))
-            (new-ground-left-edge (send map get-next-solid-pixel 'down x-pos down-edge))
-            (new-ground-right-edge (send map get-next-solid-pixel 'down (+ x-pos width) down-edge))) ;map ska skicka blabla till tilemap
-        (- (min new-ground-left-edge
-                new-ground-right-edge) ;;för att kunna stå på hela tilen!
-           height)))
+      (let ([xs (range x (+ x width) (get-field tile-size the-map))])
+        (- (apply min
+                  (map (λ (x)
+                         (send the-map get-next-solid-pixel 'down x (+ y height -1)))
+                       xs)) height)))
     
     (define/public (decelerate!)
       (set! vx (* vx 0.85)))
@@ -57,25 +53,26 @@
     (define/public (push! dvx dvy)
       (set! vx (+ vx dvx))
       (set! vy (+ vy dvy)))
-       
+    
     (define/public (jump!)
       (set! vy -1))
     
     (define/public (render canvas dc)
-      (send dc draw-rectangle x-pos y-pos width height))
+      (send dc draw-rectangle x y width height))
     
     (define/public (move!)
-      (push! 0 (* *g* *dt*))
+      (push! 0 (* *g* *dt*)) ;; gravitationsacceleration
       (decelerate!)
-      (let ((new-x (+ x-pos (* vx *dt*)))
-            (new-y (+ y-pos (* vy *dt*))))
+      (let ((new-x (+ x (* vx *dt*)))
+            (new-y (+ y (* vy *dt*))))
         (if (< (+ new-x 
                   width) (right-x)) 
-            (set! x-pos (max new-x (left-x))) ;; Tile-kollision åt vänster
-            (set! x-pos (- (right-x) (+ width 1)))) ;; Tile-kollision åt höger, en pixel ifrån att röra dock...
+            (set! x (max new-x (left-x))) ;; Tile-kollision åt vänster
+            (set! x (- (right-x) width))) ;; Tile-kollision åt höger
+                                          ;;  (tog bort pixeln mellan ty det verkade funka utan)
         (if (> new-y (roof-y))
-            (set! y-pos (min new-y (ground-y)))
-            (set! y-pos (+ (roof-y) 1))))) ;;Tile-kollision uppåt
+            (set! y (min new-y (ground-y)))
+            (set! y (+ (roof-y) 1))))) ;;Tile-kollision uppåt
     
     (define/public (update!)
       (move!))    
@@ -83,4 +80,4 @@
 
 
 
-      
+
