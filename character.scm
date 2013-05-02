@@ -18,6 +18,11 @@
     (define/public (on-ground?)
       (eq? (inexact->exact y-pos) (ground-y)))
     
+    (define/public (roof-y)
+      (let ((roof-left-y (send map get-next-solid-pixel 'up x-pos y-pos))
+            (roof-right-y (send map get-next-solid-pixel 'up (+ x-pos width) y-pos)))
+        (max roof-left-y roof-right-y)))
+    
     (define/public (left-x)
       (let ((upper-left-x (send map get-next-solid-pixel 'left x-pos y-pos))
             (lower-left-x (send map get-next-solid-pixel 'left x-pos (+ y-pos 
@@ -60,10 +65,13 @@
       (decelerate!)
       (let ((new-x (+ x-pos (* vx *dt*)))
             (new-y (+ y-pos (* vy *dt*))))
-        (if (< (+ new-x width) (right-x)) 
-         (set! x-pos (max new-x (left-x))) ;; Tile-kollision åt vänster
-         (set! x-pos (- (right-x) width))) ;; Tile-kollision åt höger
-        (set! y-pos (min new-y (ground-y)))))
+        (if (< (+ new-x 
+                  width) (right-x)) 
+            (set! x-pos (max new-x (left-x))) ;; Tile-kollision åt vänster
+            (set! x-pos (- (right-x) (+ width 1)))) ;; Tile-kollision åt höger, en pixel ifrån att röra dock...
+        (if (> new-y (roof-y))
+            (set! y-pos (min new-y (ground-y)))
+            (set! y-pos (+ (roof-y) 1))))) ;;Tile-kollision uppåt
     
     (define/public (update!)
       (move!))    
