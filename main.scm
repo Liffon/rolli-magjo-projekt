@@ -33,6 +33,8 @@
            (send *player* set-key! 'right #t))
           ((#\x)
            (send *player* set-key! 'sprint #t))
+          ((#\c)
+              (send *player* set-key! 'shoot #t))
           ('release
            (case (send key-event get-key-release-code)
              ((#\space up)
@@ -42,7 +44,9 @@
              ((#\d right)
               (send *player* set-key! 'right #f))
              ((#\x)
-              (send *player* set-key! 'sprint #f)))))))
+              (send *player* set-key! 'sprint #f))
+             ((#\c)
+              (send *player* set-key! 'shoot #f)))))))
     (super-new)))
 
 (define *canvas* (new game-canvas%
