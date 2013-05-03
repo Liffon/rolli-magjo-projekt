@@ -15,39 +15,36 @@
     (define/public (on-ground?)
       (eq? (inexact->exact y) (- (ground-y) height)))
     
-    ;; Dessa borde generaliseras till t.ex. (get-edge 'direction)!
+    (define/public (find-obstacle direction)
+      (let-values
+          ([(lower-val upper-val iterator)
+            (case direction
+              [(up down) ;; kolla flera olika x
+               (values x
+                       (+ x width -1)
+                       (lambda (x)
+                         (send the-map get-next-solid-pixel direction x y)))]
+              [(left right) ;; kolla flera olika y
+               (values y
+                       (+ y height -1)
+                       (lambda (y)
+                         (send the-map get-next-solid-pixel direction x y)))])])
+        (let* ([tile-size (get-field tile-size the-map)]
+               [checklist (cons upper-val (range lower-val upper-val tile-size))])
+          (apply (if (or (eq? direction 'up)
+                         (eq? direction 'left))
+                     max
+                     min)
+                 (map iterator checklist)))))
+    
     (define/public (roof-y)
-      (let ([xs (cons (+ x width -1)
-                      (range x (+ x width) (get-field tile-size the-map)))])
-        (apply max
-               (map (λ (x)
-                      (send the-map get-next-solid-pixel 'up x y))
-                    xs))))
-    
+      (find-obstacle 'up))
     (define/public (left-x)
-      ;; bör funka oavsett storlek på karaktären
-      ;; - kollar alla tiles spelaren täcker i y-led
-      (let ([ys (range y (+ y height) (get-field tile-size the-map))])
-        (apply max
-               (map (λ (y)
-                      (send the-map get-next-solid-pixel 'left x y))
-                    ys))))
-    
+      (find-obstacle 'left))
     (define/public (right-x)
-      (let ([ys (range y (+ y height) (get-field tile-size the-map))])
-        (apply min
-               (map (λ (y)
-                      (send the-map get-next-solid-pixel 'right (+ x width -1) y))
-                    ys))))
-    
-    
+      (find-obstacle 'right))
     (define/public (ground-y)
-      (let ([xs (cons (+ x width -1)
-                      (range x (+ x width) (get-field tile-size the-map)))])
-        (apply min
-               (map (λ (x)
-                      (send the-map get-next-solid-pixel 'down x (+ y height -1)))
-                    xs))))
+      (find-obstacle 'down))
     
     (define/public (decelerate!)
       (set! vx (* vx 0.85)))
