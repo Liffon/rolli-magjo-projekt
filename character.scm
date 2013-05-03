@@ -17,7 +17,7 @@
       (set! the-map new-map))
     
     (define/public (on-ground?)
-      (eq? (inexact->exact y) (- (ground-y) height)))
+      (eq? (inexact->exact y) (ground-y)))
     
     (define/public (find-obstacle direction)
       (let-values
@@ -42,16 +42,19 @@
                  (map iterator checklist)))))
     
     (define/public (roof-y)
-      (find-obstacle 'up))
+      (add1 (find-obstacle 'up)))
     (define/public (left-x)
       (find-obstacle 'left))
     (define/public (right-x)
-      (find-obstacle 'right))
+      (- (find-obstacle 'right) width))
     (define/public (ground-y)
-      (find-obstacle 'down))
+      (- (find-obstacle 'down) height))
     
     (define/public (decelerate!)
       (set! vx (* vx 0.85)))
+    
+    (define/public (gravitate!)
+      (push! 0 (* *g* *dt*)))
     
     (define/public (push! dvx dvy)
       (set! vx (+ vx dvx))
@@ -65,23 +68,24 @@
     
     (define/public (move!)
       (when (not (on-ground?))
-           (push! 0 (* *g* *dt*))) ;; gravitationsacceleration
-      (decelerate!)
-      (let ((new-x (+ x (* vx *dt*)))
-            (new-y (+ y (* vy *dt*))))
-        (if (< (+ new-x 
-                  width) (right-x)) 
-            (set! x (max new-x (left-x))) ;; Tile-kollision åt vänster
-            (set! x (- (right-x) width))) ;; Tile-kollision åt höger
-                                          ;;  (tog bort pixeln mellan ty det verkade funka utan)
-        (if (> new-y (roof-y))
-            (set! y (min new-y (- (ground-y) height)))
-            (set! y (+ (roof-y) 1))))) ;;Tile-kollision uppåt
+        (gravitate!)) ;; gravitationsacceleration
+      
+      (decelerate!) ;; bromsa i x-led
+      
+      (let ([new-x (+ x (* vx *dt*))]
+            [new-y (+ y (* vy *dt*))]
+            [min-x (left-x)] ;; största och minsta tillåtna värden på koordinaterna
+            [max-x (right-x)]
+            [min-y (roof-y)]
+            [max-y (ground-y)])
+        
+        (cond
+          [(positive? vx) (set! x (min new-x max-x))]
+          [(negative? vx) (set! x (max new-x min-x))])
+        (cond
+          [(positive? vy) (set! y (min new-y max-y))]
+          [(negative? vy) (set! y (max new-y min-y))])))
     
     (define/public (update!)
       (move!))    
     (super-new)))
-
-
-
-
