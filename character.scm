@@ -17,7 +17,8 @@
     
     ;; Dessa borde generaliseras till t.ex. (get-edge 'direction)!
     (define/public (roof-y)
-      (let ([xs (range x (+ x width) (get-field tile-size the-map))])
+      (let ([xs (cons (+ x width -1)
+                      (range x (+ x width) (get-field tile-size the-map)))])
         (apply max
                (map (λ (x)
                       (send the-map get-next-solid-pixel 'up x y))
@@ -41,7 +42,8 @@
     
     
     (define/public (ground-y)
-      (let ([xs (range x (+ x width) (get-field tile-size the-map))])
+      (let ([xs (cons (+ x width -1)
+                      (range x (+ x width) (get-field tile-size the-map)))])
         (apply min
                (map (λ (x)
                       (send the-map get-next-solid-pixel 'down x (+ y height -1)))
