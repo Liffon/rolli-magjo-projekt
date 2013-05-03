@@ -9,6 +9,10 @@
     (define maxspeed 0.05)
     (define the-map #f)
     
+    (define/public (x-pos)
+      x)
+    (define/public (y-pos)
+      y)
     (define/public (set-map! new-map)
       (set! the-map new-map))
     
@@ -54,13 +58,14 @@
       (set! vy (+ vy dvy)))
     
     (define/public (jump!)
-      (set! vy -1))
+      (set! vy -0.9))
     
     (define/public (render canvas dc)
       (send dc draw-rectangle x y width height))
     
     (define/public (move!)
-      (push! 0 (* *g* *dt*)) ;; gravitationsacceleration
+      (when (not (on-ground?))
+           (push! 0 (* *g* *dt*))) ;; gravitationsacceleration
       (decelerate!)
       (let ((new-x (+ x (* vx *dt*)))
             (new-y (+ y (* vy *dt*))))
