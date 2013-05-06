@@ -7,9 +7,12 @@
              push!
              move!
              jump!
-             on-ground?)
+             on-ground?
+             hurt!)
     (inherit-field x
-                   y)
+                   y
+                   width
+                   height)
     
     (define shooting-rate #f)
     
@@ -19,14 +22,16 @@
                                             (begin (send *map* add-element! (new bullet% [x x] [y y]))
                                                    (set! shooting-rate #f))
                                         (set! shooting-rate #t)))]))
-    
-    
     (define keys (make-hash))
     (define/public (set-key! key boolean)
       (dict-set! keys key boolean))
     
     (define/public (get-key key)
       (dict-ref keys key #f))
+    
+    (define/override (render canvas dc)
+      (send dc set-brush "blue" 'solid)
+      (send dc draw-rectangle x y width height))
     
     (define/override (update!)
      (let ((holding-right? (get-key 'right))
@@ -36,28 +41,27 @@
            (holding-shoot? (get-key 'shoot))
            (ground-y 250)
            (speed 1))
+       
+       ;(if (send the-map overlapping-width this 
       
        (define can-shoot? #f)
        
        (when holding-shoot?
-         (send timer start 500)
+         (send timer start 500) ;;ska fixa till
          (send *map* add-element! (new bullet% [x x] [y y]))
          (set! shooting-rate #f))
        
        (when holding-sprint?
          (set! speed 2.5))
          
-       (when holding-right?
-         ;;knuff åt höger
+       (when holding-right? ;;knuff åt höger
          (push! (* 0.05 speed) 0))
        
-       (when holding-left?
-         ;;knuff åt vänster
+       (when holding-left? ;;knuff åt vänster
          (push! (* -0.05 speed) 0))
       
-      (when (and (on-ground?) holding-jump?)
-        ;;knuff uppåt
-        (jump!))
+       (when (and (on-ground?) holding-jump?)
+         (jump!))
        (move!)))
     (super-new)))
 
