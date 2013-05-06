@@ -3,7 +3,8 @@
     (init-field [x 0]
                 [y 0]
                 [width 25]
-                [height 50])
+                [height 50]
+                [hp 100])
     (define vx 0)
     (define vy 0)
     (define maxspeed 0.05)
@@ -64,6 +65,7 @@
       (set! vy -0.9))
     
     (define/public (render canvas dc)
+      (send dc set-brush "white" 'solid)
       (send dc draw-rectangle x y width height))
     
     (define/public (move!)
@@ -84,8 +86,21 @@
           [(negative? vx) (set! x (max new-x min-x))])
         (cond
           [(positive? vy) (set! y (min new-y max-y))]
-          [(negative? vy) (set! y (max new-y min-y))])))
+          [(negative? vy) (set! y (max new-y min-y))])
+        
+        (when (or (= x min-x)
+                  (= x max-x))
+          (set! vx 0))
+        (when (or (= y min-y)
+                  (= y max-y))
+          (set! vy 0))))
+    
+    (define/public (die!)
+      (displayln "Blargh!"))
+    
+    (define/public (hurt! damage)
+      (set! hp (- hp damage)))
     
     (define/public (update!)
-      (move!))    
+      (move!))
     (super-new)))

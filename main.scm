@@ -6,7 +6,7 @@
 (load "player.scm")
 (load "enemy.scm")
 
-;; behövs på astmatix, finns inte inbyggd i gamla versionen av Racket
+;; behövs på astmatix, finns ite inbyggd i gamla versionen av Racket
 (define (range x y . step?)
   (let ([step (if (null? step?)
                   1
@@ -64,6 +64,7 @@
 (define *player* (new player%))
 (define *map* (new map% [width 16] [height 12] [tile-size 40]))
 (send *map* add-object! *player*)
+(send *map* add-object! (new enemy% [x 300] [direction 'right]))
 (send *frame* show #t)
 ;(define *enemy* (new enemy%))
 ;(send *map* add-object! *enemy*)
