@@ -9,10 +9,6 @@
     (define maxspeed 0.05)
     (define the-map #f)
     
-    (define/public (x-pos)
-      x)
-    (define/public (y-pos)
-      y)
     (define/public (set-map! new-map)
       (set! the-map new-map))
     
@@ -67,7 +63,7 @@
       (send dc draw-rectangle x y width height))
     
     (define/public (move!)
-      (when (not (on-ground?))
+      (unless (on-ground?)
         (gravitate!)) ;; gravitationsacceleration
       
       (decelerate!) ;; bromsa i x-led

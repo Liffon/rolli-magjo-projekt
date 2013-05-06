@@ -5,7 +5,8 @@
   (class object%
     (init-field width height tile-size)
     
-    (define objects '())
+    (define characters '())
+    (define bullets '())
     (define tilemap (new tilemap% [width width] [height height] [tile-size tile-size]))
     (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
     (define scrolled-distance 0)
@@ -28,24 +29,42 @@
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))
     
-    (define/public (add-object! object)
-      (send object set-map! this)
-      (set! objects (cons object objects)))
+    (define/public (add-element! element)
+      (send element set-map! this)
+      (if (or (is-a? player% element)
+              (is-a? bullet% element))
+          (set! characters (cons element
+                                 characters))
+          (set! bullets (cons element
+                              bullets))))
     
-    (define/public (delete-object! object)
-      (set! objects (filter (λ (obj)
-                              (not (eq? obj object)))
-                            objects)))
+    
+    
+    (define/public (delete-element! element)
+      (if (or (is-a? player% element)
+              (is-a? bullet% element))
+      (set! objects (filter (λ (elem)
+                              (not (eq? elem element)))
+                            objects))
+      (set! bullets (filter (λ (elem)
+                              (not (eq? elem element)))
+                            bullets))))
     
     (define/public (update!)
-      (for-each (λ (obj)
-                 (send obj update!))
-               objects))
+      (for-each (λ (elem)
+                 (send elem update!))
+               characters)
+      (for-each (λ (elem)
+                 (send elem update!))
+               bullets))
     
     (define/public (render canvas dc)
       ;; först: rita bakgrund om man har en
       (send tilemap render canvas dc scrolled-distance)
-      (for-each (λ (obj)
-                  (send obj render canvas dc))
-               objects))
+      (for-each (λ (elem)
+                  (send elem render canvas dc))
+               characters)
+      (for-each (λ (elem)
+                  (send elem render canvas dc))
+               bullets))
     (super-new)))

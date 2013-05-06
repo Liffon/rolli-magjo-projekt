@@ -2,9 +2,9 @@
   (class object%
     (init-field x
                 y
-                [width 10]
-                [height 10])
-    (define vx 10)
+                [width 7]
+                [height 3])
+    (define vx 1)
     (define the-map #f)
     
     (define/public (set-map! new-map)
@@ -14,7 +14,7 @@
       (send dc draw-rectangle x y width height))
     
     (define/public (move!)
-      (set! x (* vx *dt*)))
+      (set! x (+ x (* vx *dt*))))
     
     (define/public (update!)
       (move!))

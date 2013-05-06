@@ -7,11 +7,20 @@
              push!
              move!
              jump!
-             on-ground?
-             x-pos
-             y-pos)
+             on-ground?)
     (inherit-field x
                    y)
+    
+    (define shooting-rate #f)
+    
+    (define timer (new timer%
+                     [notify-callback (lambda ()
+                                        (if (and (get-key 'shoot) shooting-rate)
+                                            (begin (send *map* add-element! (new bullet% [x x] [y y]))
+                                                   (set! shooting-rate #f))
+                                        (set! shooting-rate #t)))]))
+    
+    
     (define keys (make-hash))
     (define/public (set-key! key boolean)
       (dict-set! keys key boolean))
@@ -28,9 +37,12 @@
            (ground-y 250)
            (speed 1))
       
+       (define can-shoot? #f)
+       
        (when holding-shoot?
-         (let ((round (new bullet% [x (x-pos)] [y (y-pos)])))
-           (send *map* add-object! round)))
+         (send timer start 500)
+         (send *map* add-element! (new bullet% [x x] [y y]))
+         (set! shooting-rate #f))
        
        (when holding-sprint?
          (set! speed 2.5))
@@ -45,8 +57,6 @@
       
       (when (and (on-ground?) holding-jump?)
         ;;knuff uppåt
-        ;;todo: kolla att man får hoppa
-;        (displayln "Jump!")
         (jump!))
        (move!)))
     (super-new)))
