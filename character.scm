@@ -4,15 +4,12 @@
                 [y 0]
                 [width 25]
                 [height 50]
-                [hp 100])
+                [hp 100]
+                [the-map #f])
     (define vx 0)
     (define vy 0)
     (define maxspeed 0.05)
-    (define the-map #f)
-    
-    (define/public (set-map! new-map)
-      (set! the-map new-map))
-    
+
     (define/public (on-ground?)
       (eq? (inexact->exact y) (ground-y)))
     

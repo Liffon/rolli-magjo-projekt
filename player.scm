@@ -12,7 +12,8 @@
     (inherit-field x
                    y
                    width
-                   height)
+                   height
+                   the-map)
     
     (define shooting-rate #f)
     
@@ -34,15 +35,18 @@
       (send dc draw-rectangle x y width height))
     
     (define/override (update!)
-     (let ((holding-right? (get-key 'right))
-           (holding-left? (get-key 'left))
-           (holding-jump? (get-key 'jump))
-           (holding-sprint? (get-key 'sprint))
-           (holding-shoot? (get-key 'shoot))
-           (ground-y 250)
-           (speed 1))
+     (let ([holding-right? (get-key 'right)]
+           [holding-left? (get-key 'left)]
+           [holding-jump? (get-key 'jump)]
+           [holding-sprint? (get-key 'sprint)]
+           [holding-shoot? (get-key 'shoot)]
+           [speed 1]
+           [collidees (send the-map colliding-characters this)])
        
-       ;(if (send the-map overlapping-width this 
+       (for-each (λ (collidee)
+                   (hurt! (get-field damage collidee))
+                   (displayln `(Ow! ,(get-field damage collidee))))
+                 collidees))
       
        (define can-shoot? #f)
        

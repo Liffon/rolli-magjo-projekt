@@ -61,9 +61,10 @@
 (send *timer* start *dt*)
 
 (define *player* (new player%))
+(define *edgar* (new enemy% [x 300] [direction 'right]))
 (define *map* (new map% [width 16] [height 12] [tile-size 40]))
 (send *map* add-element! *player*)
-(send *map* add-element! (new enemy% [x 300] [direction 'right]))
+(send *map* add-element! *edgar*)
 (send *frame* show #t)
 ;(define *enemy* (new enemy%))
 ;(send *map* add-object! *enemy*)
