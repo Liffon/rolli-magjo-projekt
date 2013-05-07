@@ -14,14 +14,13 @@
                    width
                    height)
     
-    (define shooting-rate #f)
+    (define can-shoot-press #t)
+    (define can-shoot-hold #t)
     
     (define timer (new timer%
                      [notify-callback (lambda ()
-                                        (if (and (get-key 'shoot) shooting-rate)
-                                            (begin (send *map* add-element! (new bullet% [x x] [y y]))
-                                                   (set! shooting-rate #f))
-                                        (set! shooting-rate #t)))]))
+                                        (set! can-shoot-hold #t))]))
+    
     (define keys (make-hash))
     (define/public (set-key! key boolean)
       (dict-set! keys key boolean))
@@ -43,13 +42,20 @@
            (speed 1))
        
        ;(if (send the-map overlapping-width this 
-      
-       (define can-shoot? #f)
        
-       (when holding-shoot?
-         (send timer start 500) ;;ska fixa till
-         (send *map* add-element! (new bullet% [x x] [y y]))
-         (set! shooting-rate #f))
+       
+       (when (and holding-shoot?
+                  (or can-shoot-press ;;man kan skjuta om man inte har knappen nedtryckt. 
+                      can-shoot-hold)) ;;om man håller inne knappen skjuts ett skott var 250 ms. 
+         (begin
+           (send *map*  add-element! (new bullet% [x x] [y y]))
+           (set! can-shoot-press #f)
+           (set! can-shoot-hold #f)
+           (send timer start 250 #t)))
+       
+       (unless (get-key 'shoot) ;; Kollar om skjutknappen är nedtryckt. 
+         (set! can-shoot-press #t)) ; Gör så att man kan skjuta igen när man släppt skjutknappen. 
+            
        
        (when holding-sprint?
          (set! speed 2.5))

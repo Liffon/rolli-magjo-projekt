@@ -34,7 +34,7 @@
           ((#\x)
            (send *player* set-key! 'sprint #t))
           ((#\c)
-              (send *player* set-key! 'shoot #t))
+           (send *player* set-key! 'shoot #t))
           ('release
            (case (send key-event get-key-release-code)
              ((#\space up)
@@ -63,7 +63,6 @@
 
 (define *player* (new player%))
 (define *map* (new map% [width 16] [height 12] [tile-size 40]))
-(send *map* add-element! *player*)
 (send *map* add-element! *player*)
 (send *map* add-element! (new enemy% [x 300] [direction 'right]))
 (send *frame* show #t)
