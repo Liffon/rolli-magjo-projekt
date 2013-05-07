@@ -7,9 +7,12 @@
     
     (define characters '())
     (define bullets '())
-    (define tilemap (new tilemap% [width width] [height height] [tile-size tile-size]))
+    (define tilemap (new tilemap%
+                         [width width]
+                         [height height]
+                         [tile-size tile-size]))
     (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
-    (define scrolled-distance 0)
+    (field [scrolled-distance 0])
 
     ;; initialisera en testbana
     (for-each (λ (x)
