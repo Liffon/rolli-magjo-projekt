@@ -10,6 +10,12 @@
     (define vy 0)
     (define maxspeed 0.05)
 
+    (define/public (remove-self!)
+      (when the-map
+        (send the-map delete-element! this)
+        (set! the-map #f)
+        (displayln "Removed a character.")))
+
     (define/public (on-ground?)
       (eq? (inexact->exact y) (ground-y)))
     
@@ -62,38 +68,44 @@
       (send dc draw-rectangle x y width height))
     
     (define/public (move!)
-      (unless (on-ground?)
-        (gravitate!)) ;; gravitationsacceleration
-      
-      (decelerate!) ;; bromsa i x-led
-      
-      (let ([new-x (+ x (* vx *dt*))]
-            [new-y (+ y (* vy *dt*))]
-            [min-x (left-x)] ;; största och minsta tillåtna värden på koordinaterna
-            [max-x (right-x)]
-            [min-y (roof-y)]
-            [max-y (ground-y)])
+      (when (is-a? the-map map%)
+        (unless (on-ground?)
+          (gravitate!)) ;; gravitationsacceleration
         
-        (cond
-          [(positive? vx) (set! x (min new-x max-x))]
-          [(negative? vx) (set! x (max new-x min-x))])
-        (cond
-          [(positive? vy) (set! y (min new-y max-y))]
-          [(negative? vy) (set! y (max new-y min-y))])
+        (decelerate!) ;; bromsa i x-led
         
-        (when (or (= x min-x)
-                  (= x max-x))
-          (set! vx 0))
-        (when (or (= y min-y)
-                  (= y max-y))
-          (set! vy 0))))
-    
+        (let ([new-x (+ x (* vx *dt*))]
+              [new-y (+ y (* vy *dt*))]
+              [min-x (left-x)] ;; största och minsta tillåtna värden på koordinaterna
+              [max-x (right-x)]
+              [min-y (roof-y)]
+              [max-y (ground-y)])
+          
+          (cond
+            [(positive? vx) (set! x (min new-x max-x))]
+            [(negative? vx) (set! x (max new-x min-x))])
+          (cond
+            [(positive? vy) (set! y (min new-y max-y))]
+            [(negative? vy) (set! y (max new-y min-y))])
+          
+          (when (or (= x min-x)
+                    (= x max-x))
+            (set! vx 0))
+          (when (or (= y min-y)
+                    (= y max-y))
+            (set! vy 0)))))
+
     (define/public (die!)
-      (displayln "Blargh!"))
+      (displayln "Blargh!")
+      (remove-self!)) ;; detta kanske inte bör göras omedelbart
     
     (define/public (hurt! damage)
-      (set! hp (- hp damage)))
+      (set! hp (- hp damage))
+      (when (not (positive? hp))
+        (die!)))
     
     (define/public (update!)
-      (move!))
+      (when the-map
+        (move!)))
+    
     (super-new)))
