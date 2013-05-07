@@ -17,7 +17,7 @@
     
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
-    (define looking-direction #f)
+    (define looking-direction 'right)
     
     (define timer (new timer%
                      [notify-callback (lambda ()
