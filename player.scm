@@ -12,7 +12,8 @@
     (inherit-field x
                    y
                    width
-                   height)
+                   height
+                   the-map)
     
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
@@ -32,14 +33,25 @@
       (send dc set-brush "blue" 'solid)
       (send dc draw-rectangle x y width height))
     
+    (define (colliding-characters)
+      (if the-map
+          (send the-map colliding-characters this)
+          '()))
+    
     (define/override (update!)
-     (let ((holding-right? (get-key 'right))
-           (holding-left? (get-key 'left))
-           (holding-jump? (get-key 'jump))
-           (holding-sprint? (get-key 'sprint))
-           (holding-shoot? (get-key 'shoot))
-           (ground-y 250)
-           (speed 1))
+      
+      (let ([holding-right? (get-key 'right)]
+            [holding-left? (get-key 'left)]
+            [holding-jump? (get-key 'jump)]
+            [holding-sprint? (get-key 'sprint)]
+            [holding-shoot? (get-key 'shoot)]
+            [speed 1]
+            [collidees (colliding-characters)])
+        
+        (for-each (λ (collidee)
+                    (hurt! (get-field damage collidee))
+                    (displayln `(Ow! ,(get-field damage collidee))))
+                  collidees)
        
        ;(if (send the-map overlapping-width this 
        
@@ -70,7 +82,3 @@
          (jump!))
        (move!)))
     (super-new)))
-
-
-
-      

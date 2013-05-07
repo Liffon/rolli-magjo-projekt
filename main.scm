@@ -1,5 +1,4 @@
 (require racket/gui)
-(require racket/bool)
 (define *g* 0.005) ;; gravitation
 (define *dt* (round (/ 1000 60))) ;; millisekunder
 (load "map.scm")
@@ -51,20 +50,21 @@
 
 (define *canvas* (new game-canvas%
                       [parent *frame*]
-                      [paint-callback (lambda (canvas dc)
+                      [paint-callback (λ (canvas dc)
                                         (send *map* render canvas dc))]))
 
 (define *timer* (new timer%
-                     [notify-callback (lambda ()
+                     [notify-callback (λ ()
                                         (send *map* update!)
                                         (send *canvas* refresh))]))
 
 (send *timer* start *dt*)
 
 (define *player* (new player%))
+(define *edgar* (new enemy% [x 300] [direction 'right]))
 (define *map* (new map% [width 16] [height 12] [tile-size 40]))
 (send *map* add-element! *player*)
-(send *map* add-element! (new enemy% [x 300] [direction 'right]))
+(send *map* add-element! *edgar*)
 (send *frame* show #t)
 ;(define *enemy* (new enemy%))
 ;(send *map* add-object! *enemy*)
