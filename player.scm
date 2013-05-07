@@ -84,7 +84,7 @@
          
          (push! (* -0.05 speed) 0))
       
-       (when (and (on-ground?) holding-jump?)
+       (when (and the-map holding-jump? (on-ground?))
          (jump!))
        (move!)))
     (super-new)))
