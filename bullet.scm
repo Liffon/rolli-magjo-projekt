@@ -2,6 +2,7 @@
   (class object%
     (init-field x
                 y
+                direction
                 [width 7]
                 [height 3]
                 [damage 5]
@@ -17,7 +18,9 @@
       (send dc draw-rectangle x y width height))
     
     (define/public (move!)
-      (set! x (+ x (* vx *dt*))))
+      (if (eq? direction 'right)
+      (set! x (+ x (* vx *dt*)))
+      (set! x (- x (* vx *dt*)))))
     
     (define/public (update!)
       (move!))
