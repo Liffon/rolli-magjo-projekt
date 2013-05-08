@@ -120,7 +120,11 @@
                 bullets)
       (set! bullets (filter (λ (bullet)
                               (not (colliding-tiles bullet)))
-              bullets)))
+                            bullets))
+      (set! bullets (filter (λ (bullet)
+                              (<= scrolled-distance (get-field x bullet) (+ scrolled-distance
+                                                         (send *canvas* get-width)))) bullets)))
+                                                         
     
     (define/public (render canvas dc)
       ;; först: rita bakgrund om man har en

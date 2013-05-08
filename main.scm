@@ -61,3 +61,10 @@
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
 (send *frame* show #t)
+(send *player* take-weapon! (new pistol%
+                                 [x 0]
+                                 [y 0]
+                                 [width 6]
+                                 [height 6]
+                                 [cooldown 6]
+                                 [bullet 6]))
