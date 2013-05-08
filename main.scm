@@ -24,7 +24,7 @@
     (define/override (on-char key-event)
       (let ((key-code (send key-event get-key-code)))
         (case key-code
-          ((#\space up)
+          ((#\space #\z up)
            (send *player* set-key! 'jump #t))
           ((#\a left)
            (send *player* set-key! 'left #t))
@@ -36,7 +36,7 @@
            (send *player* set-key! 'shoot #t))
           ('release
            (case (send key-event get-key-release-code)
-             ((#\space up)
+             ((#\space #\z up)
               (send *player* set-key! 'jump #f))
              ((#\a left)
               (send *player* set-key! 'left #f))
