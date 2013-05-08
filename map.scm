@@ -69,18 +69,14 @@
     
         
     (define/public (colliding-tiles obj)
-      (or (get-position-tile (get-field x obj)
-                             (get-field y obj))
-          (get-position-tile (sub1 (+ (get-field x obj)
-                                      (get-field width obj)))
-                              (get-field y obj))
-          (get-position-tile (get-field x obj)
-                             (sub1 (+ (get-field y obj)
-                                      (get-field height obj))))
-          (get-position-tile (sub1 (+ (get-field x obj)
-                                      (get-field width obj)))
-                               (sub1 (+ (get-field y obj)
-                                      (get-field height obj))))))
+      (let ([x (get-field x obj)]
+            [y (get-field y obj)]
+            [width (get-field width obj)]
+            [height (get-field height obj)])
+        (or (get-position-tile x y)
+            (get-position-tile (+ x width -1) y)
+            (get-position-tile x (+ y height -1))
+            (get-position-tile (+ x width -1) (+ y height -1)))))
         
              
              

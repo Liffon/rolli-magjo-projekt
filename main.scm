@@ -60,7 +60,6 @@
 (define *map* (new map% [width 16] [height 12] [tile-size 40]))
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
-(send *frame* show #t)
 (send *player* take-weapon! (new pistol%
                                  [x 0]
                                  [y 0]
