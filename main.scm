@@ -4,6 +4,7 @@
 (load "map.scm")
 (load "player.scm")
 (load "enemy.scm")
+(load "weapon.scm")
 
 ;; behövs på astmatix, finns ite inbyggd i gamla versionen av Racket
 (define (range x y . step?)
@@ -19,8 +20,8 @@
                      [width 640]
                      [height 480]))
 
-(define controls (make-hash))
-(hash-set*! controls
+(define *controls* (make-hash))
+(hash-set*! *controls*
             #\space 'jump
             #\x 'jump
             'up 'jump
@@ -33,11 +34,11 @@
   (class canvas%
     (define/override (on-char key-event)
       (let* ([key-code (send key-event get-key-code)]
-             [pressed? (not (eq? key-code 'release))]
+             [pressed? (not (eq? key-code 'release))] ; var det nedtryckning eller släpp?
              [key (if pressed?
                       key-code
                       (send key-event get-key-release-code))]
-             [action (hash-ref controls key)])
+             [action (hash-ref *controls* key #f)])
         (when action
           (send *player* set-key! action pressed?))))
     (super-new)))
@@ -60,5 +61,3 @@
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
 (send *frame* show #t)
-;(define *enemy* (new enemy%))
-;(send *map* add-object! *enemy*)

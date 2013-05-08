@@ -7,10 +7,31 @@
                 [hp 100]
                 [the-map #f]
                 [direction 'right])
+    (field [inventory '()]
+           [weapon #f])
     (define vx 0)
     (define vy 0)
     (define maxspeed 0.05)
-
+    
+    (define/public (add-item! item)
+      (set! inventory (cons item inventory))
+      (set-field! wielder item this))
+    
+    (define/public (remove-item! removee)
+      (set! inventory (filter (λ (item)
+                                (not (eq? item removee)))
+                              inventory))
+      (set-field! wielder removee the-map))
+    
+    (define/public (take-weapon! new-weapon)
+      (set! weapon new-weapon)
+      (add-item! new-weapon))
+    
+    (define/public (shoot!)
+      (when weapon
+        (displayln "*shoot*")
+        (send weapon fire! the-map direction)))
+    
     (define/public (remove-self!)
       (when the-map
         (send the-map delete-element! this)

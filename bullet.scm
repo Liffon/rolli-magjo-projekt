@@ -1,13 +1,13 @@
 (define bullet%
   (class object%
-    (init-field x
-                y
-                direction
-                [width 7]
-                [height 3]
-                [damage 20]
+    (init-field width
+                height
+                damage
+                [x #f]
+                [y #f]
+                [direction #f]
+                [speed 1]
                 [the-map #f])
-    (define vx 1)
 
     (define/public (remove-self!)
       (when the-map
@@ -20,7 +20,7 @@
     (define/public (move!)
       (set! x ((if (eq? direction 'left) - +) ;; flytta åt rätt håll beroende på riktning
                x
-               (* vx *dt*))))
+               (* speed *dt*))))
     
     (define/public (update!)
       (move!))

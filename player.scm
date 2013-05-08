@@ -8,7 +8,8 @@
              move!
              jump!
              on-ground?
-             hurt!)
+             hurt!
+             shoot!)
     (inherit-field x
                    y
                    width
@@ -53,7 +54,7 @@
                    (or can-shoot-press ;;man kan skjuta om man inte har knappen nedtryckt. 
                        can-shoot-hold)) ;;om man håller inne knappen skjuts ett skott var 250 ms. 
           
-          (send *map*  add-element! (new bullet% [x x] [y y] [direction direction]))
+          (shoot!)
           (set! can-shoot-press #f)
           (set! can-shoot-hold #f)
           (send timer start 250 #t))
