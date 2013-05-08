@@ -18,9 +18,9 @@
       (send dc draw-rectangle x y width height))
     
     (define/public (move!)
-      (if (eq? direction 'right)
-      (set! x (+ x (* vx *dt*)))
-      (set! x (- x (* vx *dt*)))))
+      (set! x ((if (eq? direction 'left) - +) ;; flytta åt rätt håll beroende på riktning
+               x
+               (* vx *dt*))))
     
     (define/public (update!)
       (move!))

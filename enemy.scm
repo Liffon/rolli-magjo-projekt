@@ -2,21 +2,18 @@
 
 (define enemy%
   (class character%
-    (init-field [damage 10] [direction 'right])
+    (init-field [damage 10])
     (inherit push!
              jump!
              move!
              decelerate!
              left-x
              right-x
-             hurt!)
+             hurt!
+             swap-direction)
     (inherit-field x
-                   the-map)
-    
-    (define (swap-direction direction)
-      (case direction
-        ('left 'right)
-        ('right 'left)))
+                   the-map
+                   direction)
     
     (define (colliding-bullets)
       (if the-map

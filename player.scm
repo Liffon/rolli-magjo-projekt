@@ -13,11 +13,11 @@
                    y
                    width
                    height
-                   the-map)
+                   the-map
+                   direction)
     
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
-    (define looking-direction 'right)
     
     (define timer (new timer%
                      [notify-callback (lambda ()
@@ -60,7 +60,7 @@
        (when (and holding-shoot?
                   (or can-shoot-press ;;man kan skjuta om man inte har knappen nedtryckt. 
                       can-shoot-hold)) ;;om man håller inne knappen skjuts ett skott var 250 ms. 
-           (send *map*  add-element! (new bullet% [x x] [y y] [direction looking-direction]))
+           (send *map*  add-element! (new bullet% [x x] [y y] [direction direction]))
            (set! can-shoot-press #f)
            (set! can-shoot-hold #f)
            (send timer start 250 #t))
@@ -73,14 +73,12 @@
          (set! speed 2.5))
          
        (when holding-right? ;;knuff åt höger
-         (unless (eq? looking-direction 'right)
-           (set! looking-direction 'right))
+         (set! direction 'right)
          
          (push! (* 0.05 speed) 0))
        
        (when holding-left? ;;knuff åt vänster
-         (unless (eq? looking-direction 'left)
-           (set! looking-direction 'left))
+         (set! direction 'left)
          
          (push! (* -0.05 speed) 0))
       
