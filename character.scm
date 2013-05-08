@@ -5,7 +5,8 @@
                 [width 25]
                 [height 50]
                 [hp 100]
-                [the-map #f])
+                [the-map #f]
+                [direction 'right])
     (define vx 0)
     (define vy 0)
     (define maxspeed 0.05)
@@ -16,6 +17,11 @@
         (set! the-map #f)
         (displayln "Removed a character.")))
 
+    (define/public (swap-direction direction)
+      (case direction
+        ('left 'right)
+        ('right 'left)))
+    
     (define/public (on-ground?)
       (eq? (inexact->exact y) (ground-y)))
     

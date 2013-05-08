@@ -19,33 +19,27 @@
                      [width 640]
                      [height 480]))
 
+(define controls (make-hash))
+(hash-set*! controls
+            #\space 'jump
+            #\x 'jump
+            'up 'jump
+            'left 'left
+            'right 'right
+            #\z 'sprint
+            #\c 'shoot)
+
 (define game-canvas%
   (class canvas%
     (define/override (on-char key-event)
-      (let ((key-code (send key-event get-key-code)))
-        (case key-code
-          ((#\space up)
-           (send *player* set-key! 'jump #t))
-          ((#\a left)
-           (send *player* set-key! 'left #t))
-          ((#\d right)
-           (send *player* set-key! 'right #t))
-          ((#\x)
-           (send *player* set-key! 'sprint #t))
-          ((#\c)
-           (send *player* set-key! 'shoot #t))
-          ('release
-           (case (send key-event get-key-release-code)
-             ((#\space up)
-              (send *player* set-key! 'jump #f))
-             ((#\a left)
-              (send *player* set-key! 'left #f))
-             ((#\d right)
-              (send *player* set-key! 'right #f))
-             ((#\x)
-              (send *player* set-key! 'sprint #f))
-             ((#\c)
-              (send *player* set-key! 'shoot #f)))))))
+      (let* ([key-code (send key-event get-key-code)]
+             [pressed? (not (eq? key-code 'release))]
+             [key (if pressed?
+                      key-code
+                      (send key-event get-key-release-code))]
+             [action (hash-ref controls key)])
+        (when action
+          (send *player* set-key! action pressed?))))
     (super-new)))
 
 (define *canvas* (new game-canvas%
