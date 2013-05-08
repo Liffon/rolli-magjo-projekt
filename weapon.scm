@@ -26,4 +26,11 @@
     
     (super-new)))
 
-(load "pistol.scm")
+(define (make-pistol x y) (new weapon%
+                               [x x]
+                               [y y]
+                               [width 7]
+                               [height 5]
+                               [cooldown 250]
+                               [bullet (new bullet% [width 7] [height 3] [damage 20])]))
+;(load "pistol.scm")
