@@ -5,7 +5,7 @@
                 direction
                 [width 7]
                 [height 3]
-                [damage 5]
+                [damage 20]
                 [the-map #f])
     (define vx 1)
 

@@ -67,6 +67,24 @@
                      (colliding? character obj)))
               characters))
     
+        
+    (define/public (colliding-tiles obj)
+      (or (get-position-tile (get-field x obj)
+                             (get-field y obj))
+          (get-position-tile (sub1 (+ (get-field x obj)
+                                      (get-field width obj)))
+                              (get-field y obj))
+          (get-position-tile (get-field x obj)
+                             (sub1 (+ (get-field y obj)
+                                      (get-field height obj))))
+          (get-position-tile (sub1 (+ (get-field x obj)
+                                      (get-field width obj)))
+                               (sub1 (+ (get-field y obj)
+                                      (get-field height obj))))))
+        
+             
+             
+             
     (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-solid-pixel . args)) ; till tilemap
     
@@ -99,7 +117,10 @@
                 characters)
       (for-each (λ (elem)
                   (send elem update!))
-                bullets))
+                bullets)
+      (set! bullets (filter (λ (bullet)
+                              (not (colliding-tiles bullet)))
+              bullets)))
     
     (define/public (render canvas dc)
       ;; först: rita bakgrund om man har en

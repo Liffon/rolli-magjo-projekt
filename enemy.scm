@@ -26,7 +26,8 @@
     (define/override (update!)
       (let ([colliding-bullets (colliding-bullets)])
         (for-each (λ (bullet)
-                    (hurt! (get-field damage bullet)))
+                    (hurt! (get-field damage bullet))
+                    (send bullet remove-self!))
                   colliding-bullets)
         
         (when the-map

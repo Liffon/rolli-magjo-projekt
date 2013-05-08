@@ -22,7 +22,7 @@
       (and (<= 0 x (- width 1))
            (<= 0 y (- height 1))))
           
-    (define/public (get-position-tile x y)
+    (define/public (get-position-tile x y) ;tar in pixlar som argument. 
         (get-tile
          (inexact->exact (floor (/ x tile-size))) ;;la till heltalskonvertering
          (inexact->exact (floor (/ y tile-size)))));;la till heltalskonvertering
