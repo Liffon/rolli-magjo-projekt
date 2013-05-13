@@ -12,7 +12,8 @@
     (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
     (field [scrolled-distance 0]
            [characters '()]
-           [bullets '()])
+           [bullets '()]
+           [canvas #f])
     
     ;; initialisera en testbana
     (for-each (λ (x)
@@ -120,11 +121,17 @@
                 bullets)
       
       ;; justera scrolled-distance så att spelaren är på skärmen
-      (let ([canvas-width (send *canvas* get-width)])
+      (let ([canvas-width (send canvas get-width)]
+            [player-x (get-field x *player*)]
+            [scroll-width 280])
         (set! scrolled-distance
-              (max 0
-                   (min (- (* tile-size width) canvas-width)
-                        (- (get-field x *player*) 160)))))
+              (cond
+                [(< player-x (+ scrolled-distance scroll-width))
+                 (max 0 (- player-x scroll-width))]
+                [(> player-x (+ scrolled-distance canvas-width (- scroll-width)))
+                 (min (- (* tile-size width) canvas-width)
+                      (+ player-x scroll-width (- canvas-width)))]
+                [else scrolled-distance])))
       
       ;; ta bort bullets som kolliderar med tiles
       (set! bullets (filter (λ (bullet)
@@ -132,6 +139,8 @@
                             bullets))
       ;; ta bort bullets som är utanför skärmen
       ;; (hänsyn bör tas till varje bullets storlek också)
+      ;; Ska det verkligen vara utanför skärmen eller bör det vara utanför banan?
+      ;; Den egentliga frågan: ska man kunna skjuta fiender utanför skärmen?
       (set! bullets (filter (λ (bullet)
                               (<= scrolled-distance
                                   (get-field x bullet)

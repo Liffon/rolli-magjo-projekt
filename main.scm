@@ -60,5 +60,6 @@
 (define *map* (new map% [width 32] [height 12] [tile-size 40]))
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
+(set-field! canvas *map* *canvas*)
 (send *frame* show #t)
 (send *player* take-weapon! (make-machine-gun 23 23))
