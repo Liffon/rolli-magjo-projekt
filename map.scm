@@ -17,18 +17,18 @@
     
     ;; initialisera en testbana
     (for-each (λ (x)
-                (send tilemap set-tile! x 11 #t))
+                (send tilemap set-tile! x 11 'ground))
               (range 0 28))
     (for-each (λ (x)
-                (send tilemap set-tile! x 10 #t))
+                (send tilemap set-tile! x 10 'ground))
               (range 29 32))
     (send tilemap set-tile! 5 11 #f)
     (for-each (λ (x)
-                (send tilemap set-tile! x 7 #t))
+                (send tilemap set-tile! x 7 'ground))
               (range 6 13))
-    (send tilemap set-tile! 13 8 #t)
-    (send tilemap set-tile! 15 9 #t)
-    (send tilemap set-tile! 15 10 #t)
+    (send tilemap set-tile! 13 8 'ground)
+    (send tilemap set-tile! 15 9 'ground)
+    (send tilemap set-tile! 15 10 'ground)
     
     ;; Hjälpfunktion för kollisionshantering mellan objekt
     (define/public (colliding? obj1 obj2)
@@ -58,32 +58,27 @@
                                         y2 (+ y2 h2)))))
           #f))
     
-    ;; dessa två procedurer kanske bör generaliseras
     (define/public (colliding-bullets obj)
-      (filter (λ (bullet)
-                (and (not (eq? bullet obj)) ;; krockar inte med sig själv
-                     (colliding? bullet obj)))
-              bullets))
+      (colliding-in bullets obj))
     
     (define/public (colliding-characters obj)
-      (filter (λ (character)
-                (and (not (eq? obj character)) ;; krockar inte med sig själv
-                     (colliding? character obj)))
-              characters))
+      (colliding-in characters obj))
     
+    (define/public (colliding-in lst obj)
+      (filter (λ (element)
+                (and (not (eq? obj element)) ;; krockar inte med sig själv
+                     (colliding? obj element)))
+              lst))
         
     (define/public (colliding-tiles obj)
       (let ([x (get-field x obj)]
             [y (get-field y obj)]
             [width (get-field width obj)]
             [height (get-field height obj)])
-        (or (get-position-tile x y)
-            (get-position-tile (+ x width -1) y)
-            (get-position-tile x (+ y height -1))
-            (get-position-tile (+ x width -1) (+ y height -1)))))
-        
-             
-             
+        (or (solid-tile-at? x y)
+            (solid-tile-at? (+ x width -1) y)
+            (solid-tile-at? x (+ y height -1))
+            (solid-tile-at? (+ x width -1) (+ y height -1)))))
              
     (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-solid-pixel . args)) ; till tilemap
@@ -91,8 +86,11 @@
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))
     
+    (define/public (solid-tile-at? . args)
+      (send tilemap solid-tile-at? . args))
+    
     (define/public (add-element! element)
-      (set-field! the-map element this) ;; berätta vad the-map är för objektet
+      (set-field! the-map element this) ;; berätta för objektet vad the-map är
       (if (or (is-a? element player%)
               (is-a? element enemy%))
           (set! characters (cons element

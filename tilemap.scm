@@ -9,7 +9,7 @@
     (define tiles-bitmap (make-object bitmap% (* width tile-size) (* height tile-size) #f #t))
     (define tiles-dc (make-object bitmap-dc% tiles-bitmap))
     
-    (define tiles (make-vector (* width height) #f))
+    (define tiles (make-vector (* width height) 'empty))
     
     (define (tile x y)
       (+ (* width y) x))
@@ -22,10 +22,9 @@
       (and (<= 0 x (- width 1))
            (<= 0 y (- height 1))))
           
-    (define/public (get-position-tile x y) ;tar in pixlar som argument. 
-        (get-tile
-         (inexact->exact (floor (/ x tile-size))) ;;la till heltalskonvertering
-         (inexact->exact (floor (/ y tile-size)))));;la till heltalskonvertering
+    (define/public (get-position-tile x y) ;tar in pixlar som argument.
+      (let-values ([(x y) (get-tile-coord-pos x y)])
+        (get-tile x y)))
     
     (define/public (get-next-solid-pixel direction pixel-x pixel-y)
       (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x pixel-y)]
@@ -53,11 +52,20 @@
                                        (+ (* tile-size tile-x) tile-size)))))])
       (define (helper tile-x tile-y)
         (cond [(not (valid-tile-coord? tile-x tile-y)) end-coordinate]
-              [(get-tile tile-x tile-y)
+              [(solid-tile? tile-x tile-y)
                (pixel-result tile-x tile-y)]
               [else (helper (next-x tile-x) (next-y tile-y))]))
         (helper tile-x tile-y)))
     
+    (define/public (solid-tile? x y)
+      (eq? (get-tile x y) 'ground))
+    
+    (define/public (solid-tile-at? pixel-x pixel-y)
+      (let-values ([(x y) (get-tile-coord-pos pixel-x pixel-y)])
+        (if (valid-tile-coord? x y)
+            (solid-tile? x y)
+            #f)))
+
     (define/public (get-tile x y)
       (vector-ref tiles (tile x y)))
     
@@ -68,9 +76,9 @@
     (define (render-tile dc x y)
       (let ([scaled-x (* tile-size x)]
             [scaled-y (* tile-size y)])
-        (if (get-tile x y)
-            (send dc draw-bitmap tile-picture scaled-x scaled-y) ;; Rita om det finns en tile
-            (send dc set-argb-pixels scaled-x scaled-y tile-size tile-size empty-tile-pixels)))) ;; Annars, rensa
+        (case (get-tile x y)
+         ['ground (send dc draw-bitmap tile-picture scaled-x scaled-y)] ;; Rita om det finns en tile
+         [else (send dc set-argb-pixels scaled-x scaled-y tile-size tile-size empty-tile-pixels)]))) ;; Annars, rensa
       
     (define/public (render canvas dc scrolled-distance)
       (let* ([canvas-width (send canvas get-width)]
