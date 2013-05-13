@@ -29,7 +29,6 @@
     
     (define/public (shoot!)
       (when weapon
-        (displayln "*shoot*")
         (send weapon fire! the-map direction)))
     
     (define/public (remove-self!)

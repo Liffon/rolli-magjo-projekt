@@ -15,7 +15,8 @@
                    width
                    height
                    the-map
-                   direction)
+                   direction
+                   weapon)
     
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
@@ -52,12 +53,13 @@
         
         (when (and holding-shoot?
                    (or can-shoot-press ;;man kan skjuta om man inte har knappen nedtryckt. 
-                       can-shoot-hold)) ;;om man håller inne knappen skjuts ett skott var 250 ms. 
+                       can-shoot-hold)
+                   weapon) 
           
           (shoot!)
           (set! can-shoot-press #f)
           (set! can-shoot-hold #f)
-          (send timer start 250 #t))
+          (send timer start (get-field cooldown weapon) #t)) ;;olika vapen kan ha olika cooldown
         
         (unless (get-key 'shoot) ;; Kollar om skjutknappen är nedtryckt. 
           (set! can-shoot-press #t)) ; Gör så att man kan skjuta igen när man släppt skjutknappen. 
