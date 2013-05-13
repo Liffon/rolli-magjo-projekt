@@ -17,7 +17,10 @@
     ;; initialisera en testbana
     (for-each (λ (x)
                 (send tilemap set-tile! x 11 #t))
-              (range 0 16))
+              (range 0 28))
+    (for-each (λ (x)
+                (send tilemap set-tile! x 10 #t))
+              (range 29 32))
     (send tilemap set-tile! 5 11 #f)
     (for-each (λ (x)
                 (send tilemap set-tile! x 7 #t))
@@ -106,20 +109,35 @@
                                   (not (eq? elem element)))
                                 bullets))))
     
-    
     (define/public (update!)
-      (for-each (λ (elem)
-                  (send elem update!))
+      ;; uppdatera characters
+      (for-each (λ (character)
+                  (send character update!))
                 characters)
-      (for-each (λ (elem)
-                  (send elem update!))
+      ;; uppdatera bullets
+      (for-each (λ (bullet)
+                  (send bullet update!))
                 bullets)
+      
+      ;; justera scrolled-distance så att spelaren är på skärmen
+      (let ([canvas-width (send *canvas* get-width)])
+        (set! scrolled-distance
+              (max 0
+                   (min (- (* tile-size width) canvas-width)
+                        (- (get-field x *player*) 160)))))
+      
+      ;; ta bort bullets som kolliderar med tiles
       (set! bullets (filter (λ (bullet)
                               (not (colliding-tiles bullet)))
                             bullets))
+      ;; ta bort bullets som är utanför skärmen
+      ;; (hänsyn bör tas till varje bullets storlek också)
       (set! bullets (filter (λ (bullet)
-                              (<= scrolled-distance (get-field x bullet) (+ scrolled-distance
-                                                         (send *canvas* get-width)))) bullets)))
+                              (<= scrolled-distance
+                                  (get-field x bullet)
+                                  (+ scrolled-distance
+                                     (send *canvas* get-width))))
+                            bullets)))
                                                          
     
     (define/public (render canvas dc)
@@ -131,4 +149,10 @@
       (for-each (λ (elem)
                   (send elem render canvas dc))
                 bullets))
+    
+    ;; Ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning
+    (define/public (draw-rectangle x y width height color canvas dc)
+      (send dc set-brush color 'solid)
+      (send dc draw-rectangle (- x scrolled-distance) y width height))
+    
     (super-new)))

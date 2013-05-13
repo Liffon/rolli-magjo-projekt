@@ -33,8 +33,7 @@
       (dict-ref keys key #f))
     
     (define/override (render canvas dc)
-      (send dc set-brush "blue" 'solid)
-      (send dc draw-rectangle x y width height))
+      (send the-map draw-rectangle x y width height "blue" canvas dc))
     
     (define (colliding-characters)
       (if the-map

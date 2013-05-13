@@ -43,7 +43,7 @@
                                        (* tile-size tile-y))))
                       ('right (values add1
                                       identity
-                                      (add1 (* width tile-size))
+                                      (* width tile-size)
                                       (λ (tile-x tile-y)
                                         (* tile-size tile-x))))
                       ('left (values sub1

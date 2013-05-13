@@ -90,8 +90,7 @@
       (set! vy -0.9))
     
     (define/public (render canvas dc)
-      (send dc set-brush "white" 'solid)
-      (send dc draw-rectangle x y width height))
+      (send the-map draw-rectangle x y width height "white" canvas dc))
     
     (define/public (move!)
       (when (is-a? the-map map%)
