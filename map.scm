@@ -29,6 +29,7 @@
     (send tilemap set-tile! 13 8 'ground)
     (send tilemap set-tile! 15 9 'ground)
     (send tilemap set-tile! 15 10 'ground)
+    (send tilemap set-tile! 31 9 'exit)
     
     ;; Hjälpfunktion för kollisionshantering mellan objekt
     (define/public (colliding? obj1 obj2)
@@ -69,7 +70,26 @@
                 (and (not (eq? obj element)) ;; krockar inte med sig själv
                      (colliding? obj element)))
               lst))
-        
+    
+    ;; returnerar en lista med alla koordinater (x . y) för tiles som obj överlappar
+    (define/public (overlapping-tiles obj)
+      (let ([x (round (inexact->exact (get-field x obj)))]
+            [y (round (inexact->exact (get-field y obj)))]
+            [obj-width (get-field width obj)]
+            [obj-height (get-field height obj)])
+        (let ([xs (cons (+ x obj-width -1) (range x (+ x obj-width -1) tile-size))]
+              [ys (cons (+ y obj-height -1) (range y (+ y obj-height -1) tile-size))]
+              [xy-pairs '()])
+          (for-each (λ (x)
+                      (for-each (λ (y)
+                                  (let-values ([(x y) (send tilemap get-tile-coord-pos x y)])
+                                    (set! xy-pairs (cons (cons x y) xy-pairs))))
+                                ys))
+                    xs)
+          (remove-duplicates xy-pairs))))
+    
+    ;; returnerar #t om obj överlappar en solid tile, annars #f
+    ;  TODO: implementation m.h.a. overlapping-tiles
     (define/public (colliding-tiles obj)
       (let ([x (get-field x obj)]
             [y (get-field y obj)]
@@ -117,6 +137,14 @@
       (for-each (λ (bullet)
                   (send bullet update!))
                 bullets)
+      
+      ;; kolla om spelaren har vunnit, dvs befinner sig på minst en exit-tile
+      (when (not (null? (filter (λ (coords)
+                                  (let ([x (car coords)]
+                                        [y (cdr coords)])
+                                    (eq? (send *tilemap* get-tile x y) 'exit)))
+                                (overlapping-tiles *player*))))
+        (displayln "Yay, you won! Now go celebrate."))
       
       ;; justera scrolled-distance så att spelaren är på skärmen
       (let ([canvas-width (send canvas get-width)]
