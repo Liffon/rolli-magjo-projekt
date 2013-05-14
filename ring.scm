@@ -22,9 +22,12 @@
 
 ; returnerar värdet på första elementet i en ring
 (define (ring-first-value ring)
-  (c2r (ring-first ring)))
+  (if (empty-ring? ring)
+      (error "No first value of empty ring!" ring)
+      (c2r (ring-first ring))))
 
-; kanske behövs: procedur som returnerar längden på en ring
+; kanske behövs: (ring-length ring)
+;   som returnerar längden på en ring
 
 ;; Mutatorer
 ; stoppar in ett nytt element med givet värde först i ringen
@@ -41,6 +44,9 @@
           (set-c1r! first-element new-element)
           (set-c3r! left-element new-element)
           (set-mcar! ring new-element)))))
+
+; kanske behövs: (ring-delete! ring value)
+;   som tar bort första förekomsten av angivet värde i ringen
 
 ; roterar ringen ett steg åt "vänster"
 (define (ring-rotate-left! ring)

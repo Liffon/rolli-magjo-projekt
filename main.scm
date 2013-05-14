@@ -29,7 +29,8 @@
             'right 'right
             #\z 'sprint
             #\c 'shoot
-            #\s 'next-weapon)
+            #\s 'prev-weapon
+            #\d 'next-weapon)
 
 (define game-canvas%
   (class canvas%
@@ -64,4 +65,11 @@
 (set-field! canvas *map* *canvas*)
 (send *frame* show #t)
 (send *player* take-weapon! (make-machine-gun 23 23))
-(send *player* add-item! (make-pistol 42 32))
+(send *player* take-weapon! (make-pistol 42 32))
+(send *player* take-weapon! (new weapon% ;; improviserat köttvapen
+                                 [x 0]
+                                 [y 0]
+                                 [width 16]
+                                 [height 16]
+                                 [cooldown 1500]
+                                 [bullet (new bullet% [width 16] [height 16] [damage 200] [speed 0.3])]))

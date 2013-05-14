@@ -9,6 +9,7 @@
              jump!
              on-ground?
              hurt!
+             switch-weapon!
              shoot!)
     (inherit-field x
                    y
@@ -21,7 +22,7 @@
     
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
-    (define holding-next-weapon? #f)
+    (define holding-switch-weapon? #f)
     
     (define timer (new timer%
                        [notify-callback (lambda ()
@@ -42,14 +43,6 @@
           (send the-map colliding-characters this)
           '()))
     
-    (define/public (switch-weapon!)
-      (unless (null? inventory) ;; borde kunna göras snyggare med en ring istället
-        (let ([rest (member weapon inventory)])
-          (if (null? (cdr rest))
-              (set! weapon (car inventory))
-              (set! weapon (cadr rest)))))
-      (displayln "Switch!"))
-    
     (define/override (update!)
       
       (let ([holding-right? (get-key 'right)]
@@ -57,14 +50,19 @@
             [holding-jump? (get-key 'jump)]
             [holding-sprint? (get-key 'sprint)]
             [holding-shoot? (get-key 'shoot)]
-            [switch-weapon? (and (not holding-next-weapon?)
-                                 (get-key 'next-weapon))]
+            [next-weapon? (and (not holding-switch-weapon?)
+                               (get-key 'next-weapon))]
+            [prev-weapon? (and (not holding-switch-weapon?)
+                               (get-key 'prev-weapon))]
             [speed 1]
             [collidees (colliding-characters)])
         
-        (when switch-weapon?
-            (switch-weapon!))
-        (set! holding-next-weapon? (get-key 'next-weapon))
+        (when next-weapon?
+          (switch-weapon! 'next))
+        (when prev-weapon?
+          (switch-weapon! 'prev))
+        (set! holding-switch-weapon? (or (get-key 'next-weapon)
+                                         (get-key 'prev-weapon)))
         
         (when (and holding-shoot?
                    (or can-shoot-press ;;man kan skjuta om man inte har knappen nedtryckt. 
