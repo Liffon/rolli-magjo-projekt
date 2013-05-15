@@ -22,7 +22,7 @@
     (for-each (λ (x)
                 (send tilemap set-tile! x 10 'ground))
               (range 29 32))
-    (send tilemap set-tile! 5 11 #f)
+    (send tilemap set-tile! 5 11 'empty)
     (for-each (λ (x)
                 (send tilemap set-tile! x 7 'ground))
               (range 6 13))
@@ -86,7 +86,9 @@
                                     (set! xy-pairs (cons (cons x y) xy-pairs))))
                                 ys))
                     xs)
-          (remove-duplicates xy-pairs))))
+          (filter (λ (coord) ;; returnera bara koorinater som existerar i tilemapen
+                    (send *tilemap* valid-tile-coord? (car coord) (cdr coord)))
+                  (remove-duplicates xy-pairs)))))
     
     ;; returnerar #t om obj överlappar en solid tile, annars #f
     ;  TODO: implementation m.h.a. overlapping-tiles

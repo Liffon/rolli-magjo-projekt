@@ -1,7 +1,10 @@
 (define tilemap%
   (class object%
     (init-field width height tile-size)
-    (define tile-picture (make-object bitmap% "tile.png"))
+    (define tile-bitmaps (make-hash))
+    (hash-set*! tile-bitmaps
+               'ground (make-object bitmap% "tile.png")
+               'exit (make-object bitmap% "tile.png"))
     (define empty-tile-pixels (make-bytes (* tile-size tile-size 4) 0)) ;; genomskinlig "tile" som bytestring
     
     ;; ny bitmap med samma storlek som hela tilemapen
@@ -74,11 +77,16 @@
       (render-tile tiles-dc x y))
     
     (define (render-tile dc x y)
-      (let ([scaled-x (* tile-size x)]
-            [scaled-y (* tile-size y)])
-        (case (get-tile x y)
-         ['ground (send dc draw-bitmap tile-picture scaled-x scaled-y)] ;; Rita om det finns en tile
-         [else (send dc set-argb-pixels scaled-x scaled-y tile-size tile-size empty-tile-pixels)]))) ;; Annars, rensa
+      (let* ([scaled-x (* tile-size x)]
+             [scaled-y (* tile-size y)]
+             [tile-type (get-tile x y)]
+             [tile-bitmap (hash-ref tile-bitmaps tile-type #f)])
+        (cond
+          [(eq? tile-type 'empty) ; om det ska vara tomt, rensa
+            (send dc set-argb-pixels scaled-x scaled-y tile-size tile-size empty-tile-pixels)]
+          [tile-bitmap ; om det fanns någon bitmap för den typen av tile, rita den
+           (send dc draw-bitmap tile-bitmap scaled-x scaled-y)]
+          [else (error "Unknown tile type: " tile-type)])))
       
     (define/public (render canvas dc scrolled-distance)
       (let* ([canvas-width (send canvas get-width)]
