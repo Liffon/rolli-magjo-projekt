@@ -11,14 +11,24 @@
              swap-direction
              find-obstacle)
     (inherit-field x
+                   y
                    width
                    the-map
                    direction)
+    
+    (define bitmap-left (read-bitmap "sprites/enemy-left.png"))
+    (define bitmap-right (read-bitmap "sprites/enemy-right.png"))
     
     (define (colliding-bullets)
       (if the-map
           (send the-map colliding-bullets this)
           '()))
+    
+    (define/override (render canvas dc)
+      (let ([bitmap (if (eq? direction 'left)
+                        bitmap-left
+                        bitmap-right)])
+        (send the-map draw-bitmap bitmap x y canvas dc)))
     
     (define/override (left-x)
       (max (find-obstacle #t 'left)

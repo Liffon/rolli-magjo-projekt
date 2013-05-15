@@ -4,8 +4,8 @@
   (class object%
     (init-field [x 0]
                 [y 0]
-                [width 25]
-                [height 50]
+                [width 40]
+                [height 80]
                 [hp 100]
                 [the-map #f]
                 [direction 'right])
