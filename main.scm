@@ -5,6 +5,7 @@
 (load "player.scm")
 (load "enemy.scm")
 (load "weapon.scm")
+(load "hud.scm")
 
 ;; behövs på astmatix, finns inte inbyggd i gamla versionen av Racket
 (define (range x y . maybe-step)
@@ -48,7 +49,8 @@
 (define *canvas* (new game-canvas%
                       [parent *frame*]
                       [paint-callback (λ (canvas dc)
-                                        (send *map* render canvas dc))]))
+                                        (send *map* render canvas dc)
+                                        (send *hud* render canvas dc))]))
 
 (define *timer* (new timer%
                      [notify-callback (λ ()
@@ -60,6 +62,7 @@
 (define *player* (new player%))
 (define *edgar* (new enemy% [x 300] [direction 'right]))
 (define *map* (new map% [width 32] [height 12] [tile-size 40]))
+(define *hud* (new hud% [player *player*]))
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
 (set-field! canvas *map* *canvas*)

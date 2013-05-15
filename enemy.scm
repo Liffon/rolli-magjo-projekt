@@ -36,7 +36,6 @@
                   colliding-bullets)
         
         (when the-map
-          (displayln (list x (left-x) (right-x)))
           (when (or (= x (left-x))
                     (= x (right-x)))
             (set! direction (swap-direction direction)));; Vänd när den stöter emot något
