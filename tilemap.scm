@@ -3,8 +3,8 @@
     (init-field width height tile-size)
     (define tile-bitmaps (make-hash))
     (hash-set*! tile-bitmaps
-               'ground (make-object bitmap% "ground.png")
-               'exit (make-object bitmap% "tile.png"))
+               'ground (make-object bitmap% "sprites/ground.png")
+               'exit (make-object bitmap% "sprites/exit.png"))
     (define empty-tile-pixels (make-bytes (* tile-size tile-size 4) 0)) ;; genomskinlig "tile" som bytestring
     
     ;; ny bitmap med samma storlek som hela tilemapen
