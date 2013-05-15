@@ -15,7 +15,7 @@
         (set! the-map #f)))
     
     (define/public (render canvas dc)
-      (send dc draw-rectangle x y width height))
+      (send the-map draw-rectangle x y width height "black" canvas dc))
     
     (define/public (move!)
       (set! x ((if (eq? direction 'left) - +) ;; flytta åt rätt håll beroende på riktning

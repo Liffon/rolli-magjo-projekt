@@ -12,19 +12,24 @@
     (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
     (field [scrolled-distance 0]
            [characters '()]
-           [bullets '()])
+           [bullets '()]
+           [canvas #f])
     
     ;; initialisera en testbana
     (for-each (λ (x)
-                (send tilemap set-tile! x 11 #t))
-              (range 0 16))
-    (send tilemap set-tile! 5 11 #f)
+                (send tilemap set-tile! x 11 'ground))
+              (range 0 28))
     (for-each (λ (x)
-                (send tilemap set-tile! x 7 #t))
+                (send tilemap set-tile! x 10 'ground))
+              (range 29 32))
+    (send tilemap set-tile! 5 11 'empty)
+    (for-each (λ (x)
+                (send tilemap set-tile! x 7 'ground))
               (range 6 13))
-    (send tilemap set-tile! 13 8 #t)
-    (send tilemap set-tile! 15 9 #t)
-    (send tilemap set-tile! 15 10 #t)
+    (send tilemap set-tile! 13 8 'ground)
+    (send tilemap set-tile! 15 9 'ground)
+    (send tilemap set-tile! 15 10 'ground)
+    (send tilemap set-tile! 31 9 'exit)
     
     ;; Hjälpfunktion för kollisionshantering mellan objekt
     (define/public (colliding? obj1 obj2)
@@ -54,32 +59,48 @@
                                         y2 (+ y2 h2)))))
           #f))
     
-    ;; dessa två procedurer kanske bör generaliseras
     (define/public (colliding-bullets obj)
-      (filter (λ (bullet)
-                (and (not (eq? bullet obj)) ;; krockar inte med sig själv
-                     (colliding? bullet obj)))
-              bullets))
+      (colliding-in bullets obj))
     
     (define/public (colliding-characters obj)
-      (filter (λ (character)
-                (and (not (eq? obj character)) ;; krockar inte med sig själv
-                     (colliding? character obj)))
-              characters))
+      (colliding-in characters obj))
     
-        
+    (define/public (colliding-in lst obj)
+      (filter (λ (element)
+                (and (not (eq? obj element)) ;; krockar inte med sig själv
+                     (colliding? obj element)))
+              lst))
+    
+    ;; returnerar en lista med alla koordinater (x . y) för tiles som obj överlappar
+    (define/public (overlapping-tiles obj)
+      (let ([x (round (inexact->exact (get-field x obj)))]
+            [y (round (inexact->exact (get-field y obj)))]
+            [obj-width (get-field width obj)]
+            [obj-height (get-field height obj)])
+        (let ([xs (cons (+ x obj-width -1) (range x (+ x obj-width -1) tile-size))]
+              [ys (cons (+ y obj-height -1) (range y (+ y obj-height -1) tile-size))]
+              [xy-pairs '()])
+          (for-each (λ (x)
+                      (for-each (λ (y)
+                                  (let-values ([(x y) (send tilemap get-tile-coord-pos x y)])
+                                    (set! xy-pairs (cons (cons x y) xy-pairs))))
+                                ys))
+                    xs)
+          (filter (λ (coord) ;; returnera bara koorinater som existerar i tilemapen
+                    (send *tilemap* valid-tile-coord? (car coord) (cdr coord)))
+                  (remove-duplicates xy-pairs)))))
+    
+    ;; returnerar #t om obj överlappar en solid tile, annars #f
+    ;  TODO: implementation m.h.a. overlapping-tiles
     (define/public (colliding-tiles obj)
       (let ([x (get-field x obj)]
             [y (get-field y obj)]
             [width (get-field width obj)]
             [height (get-field height obj)])
-        (or (get-position-tile x y)
-            (get-position-tile (+ x width -1) y)
-            (get-position-tile x (+ y height -1))
-            (get-position-tile (+ x width -1) (+ y height -1)))))
-        
-             
-             
+        (or (solid-tile-at? x y)
+            (solid-tile-at? (+ x width -1) y)
+            (solid-tile-at? x (+ y height -1))
+            (solid-tile-at? (+ x width -1) (+ y height -1)))))
              
     (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-solid-pixel . args)) ; till tilemap
@@ -88,8 +109,11 @@
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))
     
+    (define/public (solid-tile-at? . args)
+      (send tilemap solid-tile-at? . args))
+    
     (define/public (add-element! element)
-      (set-field! the-map element this) ;; berätta vad the-map är för objektet
+      (set-field! the-map element this) ;; berätta för objektet vad the-map är
       (if (or (is-a? element player%)
               (is-a? element enemy%))
           (set! characters (cons element
@@ -107,20 +131,51 @@
                                   (not (eq? elem element)))
                                 bullets))))
     
-    
     (define/public (update!)
-      (for-each (λ (elem)
-                  (send elem update!))
+      ;; uppdatera characters
+      (for-each (λ (character)
+                  (send character update!))
                 characters)
-      (for-each (λ (elem)
-                  (send elem update!))
+      ;; uppdatera bullets
+      (for-each (λ (bullet)
+                  (send bullet update!))
                 bullets)
+      
+      ;; kolla om spelaren har vunnit, dvs befinner sig på minst en exit-tile
+      (when (not (null? (filter (λ (coords)
+                                  (let ([x (car coords)]
+                                        [y (cdr coords)])
+                                    (eq? (send *tilemap* get-tile x y) 'exit)))
+                                (overlapping-tiles *player*))))
+        (displayln "Yay, you won! Now go celebrate."))
+      
+      ;; justera scrolled-distance så att spelaren är på skärmen
+      (let ([canvas-width (send canvas get-width)]
+            [player-x (get-field x *player*)]
+            [scroll-width 280])
+        (set! scrolled-distance
+              (cond
+                [(< player-x (+ scrolled-distance scroll-width))
+                 (max 0 (- player-x scroll-width))]
+                [(> player-x (+ scrolled-distance canvas-width (- scroll-width)))
+                 (min (- (* tile-size width) canvas-width)
+                      (+ player-x scroll-width (- canvas-width)))]
+                [else scrolled-distance])))
+      
+      ;; ta bort bullets som kolliderar med tiles
       (set! bullets (filter (λ (bullet)
                               (not (colliding-tiles bullet)))
                             bullets))
+      ;; ta bort bullets som är utanför skärmen
+      ;; (hänsyn bör tas till varje bullets storlek också)
+      ;; Ska det verkligen vara utanför skärmen eller bör det vara utanför banan?
+      ;; Den egentliga frågan: ska man kunna skjuta fiender utanför skärmen?
       (set! bullets (filter (λ (bullet)
-                              (<= scrolled-distance (get-field x bullet) (+ scrolled-distance
-                                                         (send *canvas* get-width)))) bullets)))
+                              (<= scrolled-distance
+                                  (get-field x bullet)
+                                  (+ scrolled-distance
+                                     (send *canvas* get-width))))
+                            bullets)))
                                                          
     
     (define/public (render canvas dc)
@@ -132,4 +187,10 @@
       (for-each (λ (elem)
                   (send elem render canvas dc))
                 bullets))
+    
+    ;; Ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning
+    (define/public (draw-rectangle x y width height color canvas dc)
+      (send dc set-brush color 'solid)
+      (send dc draw-rectangle (- x scrolled-distance) y width height))
+    
     (super-new)))

@@ -6,19 +6,19 @@
 (load "enemy.scm")
 (load "weapon.scm")
 
-;; behövs på astmatix, finns ite inbyggd i gamla versionen av Racket
-(define (range x y . step?)
-  (let ([step (if (null? step?)
-                  1
-                  (car step?))])
+;; behövs på astmatix, finns inte inbyggd i gamla versionen av Racket
+(define (range x y . maybe-step)
+  (let ([step (if (null? maybe-step) 1 (car maybe-step))])
     (if (< x y)
-        (cons x (apply range `(,(+ x step) ,y . ,step?))) ;; rekursionen borde gå att skriva snyggare
+        (cons x (apply range `(,(+ x step) ,y . ,maybe-step))) ;; rekursionen borde gå att skriva snyggare
         '())))
 
 (define *frame* (new frame%
                      [label "testbana"]
-                     [width 640]
-                     [height 480]))
+                     [min-width 640]
+                     [min-height 480]
+                     [stretchable-width #f]
+                     [stretchable-height #f]))
 
 (define *controls* (make-hash))
 (hash-set*! *controls*
@@ -28,7 +28,9 @@
             'left 'left
             'right 'right
             #\z 'sprint
-            #\c 'shoot)
+            #\c 'shoot
+            #\s 'prev-weapon
+            #\d 'next-weapon)
 
 (define game-canvas%
   (class canvas%
@@ -57,8 +59,17 @@
 
 (define *player* (new player%))
 (define *edgar* (new enemy% [x 300] [direction 'right]))
-(define *map* (new map% [width 16] [height 12] [tile-size 40]))
+(define *map* (new map% [width 32] [height 12] [tile-size 40]))
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
+(set-field! canvas *map* *canvas*)
 (send *frame* show #t)
 (send *player* take-weapon! (make-machine-gun 23 23))
+(send *player* take-weapon! (make-pistol 42 32))
+(send *player* take-weapon! (new weapon% ;; improviserat köttvapen
+                                 [x 0]
+                                 [y 0]
+                                 [width 16]
+                                 [height 16]
+                                 [cooldown 1500]
+                                 [bullet (new bullet% [width 16] [height 16] [damage 200] [speed 0.3])]))

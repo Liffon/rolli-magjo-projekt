@@ -9,6 +9,7 @@
              jump!
              on-ground?
              hurt!
+             switch-weapon!
              shoot!)
     (inherit-field x
                    y
@@ -16,10 +17,12 @@
                    height
                    the-map
                    direction
+                   inventory
                    weapon)
     
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
+    (define holding-switch-weapon? #f)
     
     (define timer (new timer%
                        [notify-callback (lambda ()
@@ -32,9 +35,9 @@
     (define/public (get-key key)
       (dict-ref keys key #f))
     
-    (define/override (render canvas dc)
-      (send dc set-brush "yellow" 'solid)
-      (send dc draw-rectangle x y width height))
+    (define/override (render canvas dc) 
+      (send the-map draw-rectangle x y width height "blue" canvas dc))
+    
     
     (define (colliding-characters)
       (if the-map
@@ -48,8 +51,19 @@
             [holding-jump? (get-key 'jump)]
             [holding-sprint? (get-key 'sprint)]
             [holding-shoot? (get-key 'shoot)]
+            [next-weapon? (and (not holding-switch-weapon?)
+                               (get-key 'next-weapon))]
+            [prev-weapon? (and (not holding-switch-weapon?)
+                               (get-key 'prev-weapon))]
             [speed 1]
             [collidees (colliding-characters)])
+        
+        (when next-weapon?
+          (switch-weapon! 'next))
+        (when prev-weapon?
+          (switch-weapon! 'prev))
+        (set! holding-switch-weapon? (or (get-key 'next-weapon)
+                                         (get-key 'prev-weapon)))
         
         (when (and holding-shoot?
                    (or can-shoot-press ;;man kan skjuta om man inte har knappen nedtryckt. 

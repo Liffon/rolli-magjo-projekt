@@ -1,3 +1,5 @@
+(load "ring.scm")
+
 (define character%
   (class object%
     (init-field [x 0]
@@ -7,25 +9,33 @@
                 [hp 100]
                 [the-map #f]
                 [direction 'right])
-    (field [inventory '()]
+    (field [inventory (make-ring)]
            [weapon #f])
     (define vx 0)
     (define vy 0)
     (define maxspeed 0.05)
     
     (define/public (add-item! item)
-      (set! inventory (cons item inventory))
+      (ring-insert! inventory item)
       (set-field! wielder item this))
     
-    (define/public (remove-item! removee)
-      (set! inventory (filter (λ (item)
-                                (not (eq? item removee)))
-                              inventory))
-      (set-field! wielder removee the-map))
+;    implementeras i ring.scm om det visar sig behövas
+;    (define/public (remove-item! removee)
+;      (ring-delete! inventory removee)
+;      (set-field! wielder removee the-map))
     
     (define/public (take-weapon! new-weapon)
       (set! weapon new-weapon)
       (add-item! new-weapon))
+
+    (define/public (switch-weapon! next/prev)
+      (unless (empty-ring? inventory)
+        (displayln "Not empty")
+        (if (eq? next/prev 'next)
+            (ring-rotate-right! inventory)
+            (ring-rotate-left! inventory))
+        (set! weapon (ring-first-value inventory)))
+      (displayln "Switch!"))
     
     (define/public (shoot!)
       (when weapon
@@ -90,8 +100,7 @@
       (set! vy -0.9))
     
     (define/public (render canvas dc)
-      (send dc set-brush "white" 'solid)
-      (send dc draw-rectangle x y width height))
+      (send the-map draw-rectangle x y width height "white" canvas dc))
     
     (define/public (move!)
       (when (is-a? the-map map%)
