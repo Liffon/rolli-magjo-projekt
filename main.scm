@@ -59,7 +59,7 @@
 
 (send *timer* start *dt*)
 
-(define *player* (new player% [width 40] [height 80]))
+(define *player* (new player% [width 40] [height 80] [hp 100]))
 (define *edgar* (new enemy% [x 300] [direction 'right]))
 (define *map* (new map% [width 32] [height 12] [tile-size 40]))
 (define *hud* (new hud% [player *player*]))
