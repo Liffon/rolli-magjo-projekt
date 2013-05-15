@@ -55,7 +55,7 @@
     (define/public (on-ground?)
       (eq? (inexact->exact y) (ground-y)))
     
-    (define/public (find-obstacle direction)
+    (define/public (find-obstacle solid? direction)
       (let-values
           ([(lower-val upper-val iterator)
             (case direction
@@ -63,12 +63,12 @@
                (values x
                        (+ x width -1)
                        (lambda (x)
-                         (send the-map get-next-tile-pixel #t direction x y)))]
+                         (send the-map get-next-tile-pixel solid? direction x y)))]
               [(left right) ;; kolla flera olika y
                (values y
                        (+ y height -1)
                        (lambda (y)
-                         (send the-map get-next-tile-pixel #t direction x y)))])])
+                         (send the-map get-next-tile-pixel solid? direction x y)))])])
         (let* ([tile-size (get-field tile-size the-map)]
                [checklist (cons upper-val (range lower-val upper-val tile-size))])
           (apply (if (or (eq? direction 'up)
@@ -78,13 +78,13 @@
                  (map iterator checklist)))))
     
     (define/public (roof-y)
-      (add1 (find-obstacle 'up)))
+      (add1 (find-obstacle #t 'up)))
     (define/public (left-x)
-      (find-obstacle 'left))
+      (find-obstacle #t 'left))
     (define/public (right-x)
-      (- (find-obstacle 'right) width))
+      (- (find-obstacle #t 'right) width))
     (define/public (ground-y)
-      (- (find-obstacle 'down) height))
+      (- (find-obstacle #t 'down) height))
     
     (define/public (decelerate!)
       (set! vx (* vx 0.85)))
