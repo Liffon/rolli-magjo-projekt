@@ -29,7 +29,7 @@
       (let-values ([(x y) (get-tile-coord-pos x y)])
         (get-tile x y)))
     
-    (define/public (get-next-solid-pixel direction pixel-x pixel-y)
+    (define/public (get-next-tile-pixel solid? direction pixel-x pixel-y)
       (let-values ([(tile-x tile-y) (get-tile-coord-pos pixel-x pixel-y)]
                    [(next-x next-y end-coordinate pixel-result) ;; fortsätt loopen olika beroende på riktning
                     (case direction
@@ -55,7 +55,7 @@
                                        (+ (* tile-size tile-x) tile-size)))))])
       (define (helper tile-x tile-y)
         (cond [(not (valid-tile-coord? tile-x tile-y)) end-coordinate]
-              [(solid-tile? tile-x tile-y)
+              [((if solid? identity not) (solid-tile? tile-x tile-y))
                (pixel-result tile-x tile-y)]
               [else (helper (next-x tile-x) (next-y tile-y))]))
         (helper tile-x tile-y)))

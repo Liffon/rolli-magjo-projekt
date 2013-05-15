@@ -63,12 +63,12 @@
                (values x
                        (+ x width -1)
                        (lambda (x)
-                         (send the-map get-next-solid-pixel direction x y)))]
+                         (send the-map get-next-tile-pixel #t direction x y)))]
               [(left right) ;; kolla flera olika y
                (values y
                        (+ y height -1)
                        (lambda (y)
-                         (send the-map get-next-solid-pixel direction x y)))])])
+                         (send the-map get-next-tile-pixel #t direction x y)))])])
         (let* ([tile-size (get-field tile-size the-map)]
                [checklist (cons upper-val (range lower-val upper-val tile-size))])
           (apply (if (or (eq? direction 'up)
