@@ -57,18 +57,16 @@
 
 (send *timer* start *dt*)
 
-(define *player* (new player%))
+(define *player* (new player% [width 40] [height 80]))
 (define *edgar* (new enemy% [x 300] [direction 'right]))
 (define *map* (new map% [width 32] [height 12] [tile-size 40]))
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
 (set-field! canvas *map* *canvas*)
 (send *frame* show #t)
-(send *player* take-weapon! (make-machine-gun 23 23))
-(send *player* take-weapon! (make-pistol 42 32))
+(send *player* take-weapon! (make-machine-gun))
+(send *player* take-weapon! (make-pistol))
 (send *player* take-weapon! (new weapon% ;; improviserat köttvapen
-                                 [x 0]
-                                 [y 0]
                                  [width 16]
                                  [height 16]
                                  [cooldown 1500]

@@ -197,4 +197,7 @@
       (send dc set-brush color 'solid)
       (send dc draw-rectangle (- x scrolled-distance) y width height))
     
+    (define/public (draw-bitmap bitmap x y canvas dc)
+      (send dc draw-bitmap bitmap (- x scrolled-distance) y))
+    
     (super-new)))

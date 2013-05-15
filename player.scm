@@ -20,6 +20,7 @@
                    inventory
                    weapon)
     
+    (define bitmap (read-bitmap "sprites/player.png"))
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
     (define holding-switch-weapon? #f)
@@ -36,7 +37,7 @@
       (dict-ref keys key #f))
     
     (define/override (render canvas dc) 
-      (send the-map draw-rectangle x y width height "blue" canvas dc))
+      (send the-map draw-bitmap bitmap x y canvas dc))
     
     
     (define (colliding-characters)
@@ -94,7 +95,6 @@
           (jump!))
         (move!)
         (for-each (λ (collidee)
-                    (hurt! (get-field damage collidee))
-                    (displayln `(Ow! ,(get-field damage collidee))))
+                    (hurt! (get-field damage collidee)))
                   collidees)))
     (super-new)))
