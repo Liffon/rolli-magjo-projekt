@@ -105,7 +105,7 @@
     (define/public (move!)
       (when (is-a? the-map map%)
         (unless (on-ground?)
-          (gravitate!)) ;; gravitationsacceleration
+          (gravitate!)) ;; tyngdacceleration
         
         (decelerate!) ;; bromsa i x-led
         

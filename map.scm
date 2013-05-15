@@ -101,9 +101,14 @@
             (solid-tile-at? (+ x width -1) y)
             (solid-tile-at? x (+ y height -1))
             (solid-tile-at? (+ x width -1) (+ y height -1)))))
-             
+
     (define/public (get-next-tile-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-tile-pixel . args)) ; till tilemap
+    
+    (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
+      (send tilemap get-next-tile-pixel #t . args)) ; till tilemap
+    (define/public (get-next-empty-pixel . args) ;; skicka vidare alla argument
+      (send tilemap get-next-tile-pixel #f . args))
     
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))

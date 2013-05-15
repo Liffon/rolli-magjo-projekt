@@ -29,9 +29,8 @@
         
         (when the-map
           (when (or (= x (left-x))
-                    (= x (right-x)))
-            (set! direction (swap-direction direction))) ;; Vänd när den stöter emot något
-          
+                    (= x (right-x))
+            (set! direction (swap-direction direction)));; Vänd när den stöter emot något
           (push! (if (eq? direction 'right)
                      0.02
                      -0.02)

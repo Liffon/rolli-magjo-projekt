@@ -17,7 +17,7 @@
     (define (tile x y)
       (+ (* width y) x))
     
-    (define/public (get-tile-coord-pos x y)
+    (define/public (get-tile-coord-pos x y) ;;tar in pixlar och returnerar tile-koord. 
       (values (inexact->exact (floor (/ x tile-size)))
               (inexact->exact (floor (/ y tile-size)))))
 
@@ -53,7 +53,7 @@
                                      0
                                      (λ (tile-x tile-y)
                                        (+ (* tile-size tile-x) tile-size)))))])
-      (define (helper tile-x tile-y)
+        (define (helper tile-x tile-y)
         (cond [(not (valid-tile-coord? tile-x tile-y)) end-coordinate]
               [((if solid? identity not) (solid-tile? tile-x tile-y))
                (pixel-result tile-x tile-y)]

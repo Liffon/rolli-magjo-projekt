@@ -35,8 +35,9 @@
     (define/public (get-key key)
       (dict-ref keys key #f))
     
-    (define/override (render canvas dc)
+    (define/override (render canvas dc) 
       (send the-map draw-rectangle x y width height "blue" canvas dc))
+    
     
     (define (colliding-characters)
       (if the-map
