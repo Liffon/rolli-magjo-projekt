@@ -105,9 +105,9 @@
     (define/public (get-next-tile-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-tile-pixel . args)) ; till tilemap
     
-    (define/public (get-next-solid-pixel . args) ;; skicka vidare alla argument
-      (send tilemap get-next-tile-pixel #t . args)) ; till tilemap
-    (define/public (get-next-empty-pixel . args) ;; skicka vidare alla argument
+    (define/public (get-next-solid-pixel . args)
+      (send tilemap get-next-tile-pixel #t . args))
+    (define/public (get-next-empty-pixel . args)
       (send tilemap get-next-tile-pixel #f . args))
     
     (define/public (get-position-tile . args)
