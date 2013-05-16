@@ -32,19 +32,19 @@
     (define/public (set-key! key boolean)
       (dict-set! keys key boolean))
     
-    (define/public (get-key key)
-      (dict-ref keys key #f))
+    (define/public (get-key key) ;; Tar in en knapptryckning som argument och returnerar ett booleskt värde som representerar om
+      (dict-ref keys key #f))    ;; knappen har någon funktion. 
     
-    (define/override (render canvas dc) 
+    (define/override (render canvas dc) ;; Tar canvas och dc som argument och säger till banan att rita ut spelaren. 
       (send the-map draw-bitmap bitmap x y canvas dc))
     
     
-    (define (colliding-characters)
+    (define (colliding-characters) ;; Sänder banan en lista med de karaktärer som spelaren krockar med. 
       (if the-map
           (send the-map colliding-characters this)
           '()))
     
-    (define/override (update!)
+    (define/override (update!) ;; Avgör vad som ska hända under varje frame. 
       
       (let ([holding-right? (get-key 'right)]
             [holding-left? (get-key 'left)]
@@ -66,7 +66,7 @@
                                          (get-key 'prev-weapon)))
         
         (when (and holding-shoot?
-                   (or can-shoot-press ;;man kan skjuta om man inte har knappen nedtryckt. 
+                   (or can-shoot-press
                        can-shoot-hold)
                    weapon) 
           
@@ -90,7 +90,7 @@
           (set! direction 'left)
           (push! (* -0.05 speed) 0))
         
-        (when (and holding-jump? (on-ground?))
+        (when (and holding-jump? (on-ground?)) ;; Gör så att man hoppar om man står på marken och trycker på hoppknappen. 
           (jump!))
         (move!)
         (for-each (λ (collidee)
