@@ -2,7 +2,7 @@
 
 (define enemy%
   (class character%
-    (init-field [damage 10])
+    (init-field [damage 20])
     (inherit push!
              jump!
              move!

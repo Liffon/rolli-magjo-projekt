@@ -13,6 +13,7 @@
                 height
                 cooldown
                 bullet
+                [name "Weapon"]
                 [bitmap #f]
                 [x 0]
                 [y 0]
@@ -51,6 +52,7 @@
                                [height 20]
                                [x x]
                                [y y]
+                               [name "Pistol"]
                                [bitmap (read-bitmap "sprites/pistol.png")]
                                [cooldown 250]
                                [bullet (new bullet% [width 7] [height 3] [damage 20])]))
@@ -61,5 +63,6 @@
                                [height 8]
                                [x x]
                                [y y]
+                               [name "Machine gun"]
                                [cooldown 100]
                                [bullet (new bullet% [width 5] [height 2] [damage 10])]))
