@@ -3,17 +3,21 @@
 
 (define map%
   (class object%
-    (init-field width height tile-size)
+    (init-field width
+                height
+                tile-size
+                canvas) ;; för att kunna läsa av storleken på utritningsytan
 
     (define tilemap (new tilemap%
                          [width width]
                          [height height]
                          [tile-size tile-size]))
     (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
-    (field [scrolled-distance 0]
+    (field [scrolled-distance 0] ;; anger hur långt skärmen har scrollat åt höger
+           [items '()]
            [characters '()]
            [bullets '()]
-           [canvas #f])
+           [player #f])
     
     ;; initialisera en testbana
     (for-each (λ (x)
@@ -31,7 +35,8 @@
     (send tilemap set-tile! 15 10 'ground)
     (send tilemap set-tile! 31 9 'exit)
     
-    ;; Hjälpfunktion för kollisionshantering mellan objekt
+    ;; colliding? : objekt, objekt -> boolean
+    ;; returnerar sant om objekten överlappar varandra
     (define/public (colliding? obj1 obj2)
       ;; kollar om paren ligger utan "överlappande punkter"
       (define (separated-pairs? x1a x1b x2a x2b)
@@ -59,6 +64,7 @@
                                         y2 (+ y2 h2)))))
           #f))
     
+    ;; returnerar alla 
     (define/public (colliding-bullets obj)
       (colliding-in bullets obj))
     
@@ -87,7 +93,7 @@
                                 ys))
                     xs)
           (filter (λ (coord) ;; returnera bara koorinater som existerar i tilemapen
-                    (send *tilemap* valid-tile-coord? (car coord) (cdr coord)))
+                    (send tilemap valid-tile-coord? (car coord) (cdr coord)))
                   (remove-duplicates xy-pairs)))))
     
     ;; returnerar #t om obj överlappar en solid tile, annars #f
@@ -102,39 +108,89 @@
             (solid-tile-at? x (+ y height -1))
             (solid-tile-at? (+ x width -1) (+ y height -1)))))
 
+    ;; get-next-tile-pixel : solid? x y direction -> heltal
+    ;;   Börjar på position (x,y) och går åt hållet direction
+    ;;   tills den stöter på en solid eller tom (beroende på "solid?") tile
+    ;;   eller tills banan tar slut. Returnerar x- eller y-koordinaten för den punkten
+    ;;   (beroende på om den letade i x- eller y-led)
     (define/public (get-next-tile-pixel . args) ;; skicka vidare alla argument
       (send tilemap get-next-tile-pixel . args)) ; till tilemap
     
+    ;; samma som get-next-tile-pixel fast kollar alltid efter solid tile
     (define/public (get-next-solid-pixel . args)
-      (send tilemap get-next-tile-pixel #t . args))
-    (define/public (get-next-empty-pixel . args)
-      (send tilemap get-next-tile-pixel #f . args))
+      (get-next-tile-pixel #t . args))
     
+    ;; samma som get-next-tile-pixel fast kollar alltid efter tom tile
+    (define/public (get-next-empty-pixel . args)
+      (get-next-tile-pixel #f . args))
+    
+    ;; get-position-tile : x, y -> tile
+    ;; returnerar värdet på en tile vid pixlar (x,y)
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))
     
+    ;; solid-tile-at? : x, y -> boolean
+    ;; returnerar sant om givna pixelkoordinater är del av en solid tile
     (define/public (solid-tile-at? . args)
       (send tilemap solid-tile-at? . args))
     
+    ;; player-or-enemy? : object -> boolean
+    ;; returnerar sant om object är en player% eller en enemy%
+    (define (player-or-enemy? object)
+      (or (is-a? object player%)
+          (is-a? object enemy%)))
+    
+    ;; player-or-enemy? : object -> boolean
+    ;; returnerar sant om object är en bullet%
+    (define (bullet? object)
+      (is-a? object bullet%))
+    
+    ;; Lägger in ett element i banan.
+    ;; sätter fältet wielder (för vapen) eller the-map (för characters)
+    ;; och lägger in elementet i rätt lista beroende på klass
     (define/public (add-element! element)
-      (set-field! the-map element this) ;; berätta för objektet vad the-map är
-      (if (or (is-a? element player%)
-              (is-a? element enemy%))
-          (set! characters (cons element
-                                 characters))
-          (set! bullets (cons element
-                              bullets))))
+      (if (is-a? element weapon%) ;; om element är ett vapen, sätt wielder istället för the-map
+          (set-field! wielder element this)
+          (set-field! the-map element this)) ;; berätta för objektet vad the-map är
+      
+      ;; om elementet är en spelare, låt player peka på den
+      (when (is-a? element player%)
+        (set! player element))
+      
+      ;; lägg elementet i rätt lista beroende på klass
+      (cond
+        [(player-or-enemy? element)
+          (set! characters (cons element characters))]
+        [(bullet? element)
+         (set! bullets (cons element bullets))]
+        [else (set! items (cons element items))])) ;; om varken bullet eller player/enemy, lägg i items
     
+    ;; Tar bort ett element från banan.
+    ;; dvs tar bort elementet ur rätt lista (characters, bullets eller items)
+    ;; och rensar the-map eller wielder (för vapen)
     (define/public (delete-element! element)
-      (if (or (is-a? element player%)
-              (is-a? element enemy%))
-          (set! characters (filter (λ (elem)
-                                     (not (eq? elem element)))
-                                   characters))
-          (set! bullets (filter (λ (elem)
+      ;; elementet tillhör ingen map längre
+      (if (is-a? element weapon%) ;; om element är ett vapen, rensa wielder istället för the-map
+          (set-field! wielder element #f)
+          (set-field! the-map element #f))
+      (cond
+        [(player-or-enemy? element)
+         (set! characters (filter (λ (elem)
+                                    (not (eq? elem element)))
+                                  characters))]
+        [(bullet? element)
+         (set! bullets (filter (λ (elem)
+                                 (not (eq? elem element)))
+                               bullets))]
+        [else (set! items (filter (λ (elem)
                                   (not (eq? elem element)))
-                                bullets))))
+                                items))])) ;; om varken bullet eller player/enemy, ta bort ur items
     
+    ;; uppdaterar alla characters och bullets på banan
+    ;; - uppdatera positioner
+    ;; - kolla om spelaren har vunnit
+    ;; - justera scrolled-distance
+    ;; - ta bort bullets som inte ska vara kvar
     (define/public (update!)
       ;; uppdatera characters
       (for-each (λ (character)
@@ -149,13 +205,14 @@
       (when (not (null? (filter (λ (coords)
                                   (let ([x (car coords)]
                                         [y (cdr coords)])
-                                    (eq? (send *tilemap* get-tile x y) 'exit)))
-                                (overlapping-tiles *player*))))
-        (displayln "Yay, you won! Now go celebrate."))
+                                    (eq? (send tilemap get-tile x y) 'exit)))
+                                (overlapping-tiles player))))
+        (displayln "Yay, you won! Now go celebrate.")) ;; Här bör något annat hända!
+                                                       ;; Typ en "du vann!"-skärm
       
       ;; justera scrolled-distance så att spelaren är på skärmen
       (let ([canvas-width (send canvas get-width)]
-            [player-x (get-field x *player*)]
+            [player-x (get-field x player)]
             [scroll-width 280])
         (set! scrolled-distance
               (cond
@@ -173,30 +230,31 @@
       ;; ta bort bullets som är utanför skärmen
       ;; (hänsyn bör tas till varje bullets storlek också)
       ;; Ska det verkligen vara utanför skärmen eller bör det vara utanför banan?
-      ;; Den egentliga frågan: ska man kunna skjuta fiender utanför skärmen?
+      ;;   Dvs ska man kunna skjuta fiender utanför skärmen?
       (set! bullets (filter (λ (bullet)
                               (<= scrolled-distance
                                   (get-field x bullet)
                                   (+ scrolled-distance
-                                     (send *canvas* get-width))))
-                            bullets)))
-                                                         
+                                     (send canvas get-width))))
+                            bullets)))                       
     
+    ;; ritar ut allting i banan
     (define/public (render canvas dc)
       ;; först: rita bakgrund om man har en
-      (send tilemap render canvas dc scrolled-distance)
-      (for-each (λ (elem)
+      (send tilemap render canvas dc scrolled-distance) ;; alla tiles
+      (for-each (λ (elem) ;; alla bullets
                   (send elem render canvas dc))
-                characters)
-      (for-each (λ (elem)
+                bullets)
+      (for-each (λ (elem) ;; alla characters
                   (send elem render canvas dc))
-                bullets))
+                characters))
     
     ;; Ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning
     (define/public (draw-rectangle x y width height color canvas dc)
       (send dc set-brush color 'solid)
       (send dc draw-rectangle (- x scrolled-distance) y width height))
     
+    ;; Ritar ut en bitmap och kompenserar i x-led för sidoscrollning
     (define/public (draw-bitmap bitmap x y canvas dc)
       (send dc draw-bitmap bitmap (- x scrolled-distance) y))
     
