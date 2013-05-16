@@ -45,11 +45,13 @@
       (if (and (or (is-a? obj1 player%) ;; den här kollen bör göras med ett interface istället
                    (is-a? obj1 enemy%)
                    (is-a? obj1 bullet%)
-                   (is-a? obj1 character%))
+                   (is-a? obj1 character%)
+                   (is-a? obj1 weapon%))
                (or (is-a? obj2 player%)
                    (is-a? obj2 enemy%)
                    (is-a? obj2 bullet%)
-                   (is-a? obj2 character%)))
+                   (is-a? obj2 character%)
+                   (is-a? obj2 weapon%)))
           (let ([x1 (get-field x obj1)]
                 [y1 (get-field y obj1)]
                 [x2 (get-field x obj2)]
@@ -62,15 +64,21 @@
                                         x2 (+ x2 w2)))
                  (not (separated-pairs? y1 (+ y1 h1)
                                         y2 (+ y2 h2)))))
-          #f))
+          (error "Cannot check collision for these objects:" obj1 obj2)))
     
-    ;; returnerar alla 
+    ;; returnerar alla bullets som kolliderar med obj
     (define/public (colliding-bullets obj)
       (colliding-in bullets obj))
     
+    ;; returnerar alla characters som kolliderar med obj
     (define/public (colliding-characters obj)
       (colliding-in characters obj))
     
+    ;; returnerar alla items som kolliderar med obj
+    (define/public (colliding-items obj)
+      (colliding-in items obj))
+    
+    ;; returnerar alla element i lst som kolliderar med obj
     (define/public (colliding-in lst obj)
       (filter (λ (element)
                 (and (not (eq? obj element)) ;; krockar inte med sig själv
@@ -203,9 +211,10 @@
       
       ;; kolla om spelaren har vunnit, dvs befinner sig på minst en exit-tile
       (when (not (null? (filter (λ (coords)
-                                  (let ([x (car coords)]
-                                        [y (cdr coords)])
-                                    (eq? (send tilemap get-tile x y) 'exit)))
+                                  (let* ([x (car coords)]
+                                         [y (cdr coords)]
+                                         [tile-type (send tilemap get-tile x y)])
+                                    (eq? tile-type 'exit)))
                                 (overlapping-tiles player))))
         (displayln "Yay, you won! Now go celebrate.")) ;; Här bör något annat hända!
                                                        ;; Typ en "du vann!"-skärm

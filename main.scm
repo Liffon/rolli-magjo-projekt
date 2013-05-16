@@ -82,13 +82,7 @@
 ;; lägg in spelaren och fienden i banan
 (send *map* add-element! *player*)
 (send *map* add-element! *edgar*)
+(send *map* add-element! (new enemy% [x 400] [y 400] [direction 'left]))
+(send *map* add-element! (make-pistol 140 360))
 
 (send *frame* show #t)
-(send *player* take-weapon! (make-machine-gun))
-(send *player* take-weapon! (make-pistol))
-(send *player* take-weapon! (new weapon% ;; improviserat köttvapen
-                                 [width 16]
-                                 [height 16]
-                                 [name "The Great Big Kötter"]
-                                 [cooldown 1500]
-                                 [bullet (new bullet% [width 16] [height 16] [damage 200] [speed 0.3])]))

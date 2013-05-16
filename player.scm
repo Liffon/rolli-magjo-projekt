@@ -8,6 +8,7 @@
              jump!
              on-ground?
              hurt!
+             take-weapon!
              switch-weapon!
              die!
              shoot!)
@@ -44,9 +45,14 @@
       (send the-map draw-bitmap bitmap x y canvas dc))
     
     
-    (define (colliding-characters) ;; Sänder banan en lista med de karaktärer som spelaren krockar med. 
+    (define (colliding-characters) ;; Returnerar en lista med de karaktärer som spelaren krockar med. 
       (if the-map
           (send the-map colliding-characters this)
+          '()))
+    
+    (define (colliding-items) ;; Returnerar en lista med de items (vapen) som spelaren krockar med.
+      (if the-map
+          (send the-map colliding-items this)
           '()))
     
     (define/override (update!) ;; Avgör vad som ska hända under varje frame.
@@ -61,6 +67,11 @@
                                (get-key 'prev-weapon))]
             [speed 1]
             [collidees (colliding-characters)])
+        
+        (for-each (λ (item) ;; ta upp alla vapen som kolliderar med spelaren
+                    (send the-map delete-element! item)
+                    (take-weapon! item))
+                  (colliding-items))
         
         (when next-weapon?
           (switch-weapon! 'next))

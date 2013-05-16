@@ -26,6 +26,7 @@
     
     (define/public (take-weapon! new-weapon) ;; Tar ett vapen som argument, gör det till aktuellt vapen (som karaktären 
       (set! weapon new-weapon)               ;; använder) och lägger in vapnet i inventariet. 
+      (set-field! wielder weapon this)
       (add-item! new-weapon))
 
     (define/public (switch-weapon! next/prev) ;; Tar in 'next eller 'prev, roterar inventariet (som är en ring)
