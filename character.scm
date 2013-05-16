@@ -26,6 +26,7 @@
     
     (define/public (take-weapon! new-weapon) ;; Tar ett vapen som argument, gör det till aktuellt vapen (som karaktären 
       (set! weapon new-weapon)               ;; använder) och lägger in vapnet i inventariet. 
+      (set-field! wielder weapon this)
       (add-item! new-weapon))
 
     (define/public (switch-weapon! next/prev) ;; Tar in 'next eller 'prev, roterar inventariet (som är en ring)
@@ -131,7 +132,7 @@
             (set! vy 0)))))
 
     (define/public (die!) ;; Se remove-self!
-      (displayln "Blargh!")
+      (set! hp 0)
       (remove-self!)) ;; detta kanske inte bör göras omedelbart
     
     (define/public (hurt! damage) ;; Tar in ett heltal som argument och minskar karaktärens liv med det talet. 

@@ -8,7 +8,9 @@
              jump!
              on-ground?
              hurt!
+             take-weapon!
              switch-weapon!
+             die!
              shoot!)
     (inherit-field x
                    y
@@ -43,13 +45,17 @@
       (send the-map draw-bitmap bitmap x y canvas dc))
     
     
-    (define (colliding-characters) ;; Sänder banan en lista med de karaktärer som spelaren krockar med. 
+    (define (colliding-characters) ;; Returnerar en lista med de karaktärer som spelaren krockar med. 
       (if the-map
           (send the-map colliding-characters this)
           '()))
     
-    (define/override (update!) ;; Avgör vad som ska hända under varje frame. 
-      
+    (define (colliding-items) ;; Returnerar en lista med de items (vapen) som spelaren krockar med.
+      (if the-map
+          (send the-map colliding-items this)
+          '()))
+    
+    (define/override (update!) ;; Avgör vad som ska hända under varje frame.
       (let ([holding-right? (get-key 'right)]
             [holding-left? (get-key 'left)]
             [holding-jump? (get-key 'jump)]
@@ -61,6 +67,11 @@
                                (get-key 'prev-weapon))]
             [speed 1]
             [collidees (colliding-characters)])
+        
+        (for-each (λ (item) ;; ta upp alla vapen som kolliderar med spelaren
+                    (send the-map delete-element! item)
+                    (take-weapon! item))
+                  (colliding-items))
         
         (when next-weapon?
           (switch-weapon! 'next))
@@ -83,18 +94,20 @@
           (set! can-shoot-press #t)) ; Gör så att man kan skjuta igen när man släppt skjutknappen. 
         
         
-        (when holding-sprint?
+        (when holding-sprint? ;; öka hastigheten om man håller nere sprint
           (set! speed 2.5))
         
-        (when holding-right? ;;knuff åt höger
+        ;; ändra hastigheten när man håller nere vänster eller höger
+        (when holding-right?
           (set! direction 'right)
           (push! (* 0.05 speed) 0))
         
-        (when holding-left? ;;knuff åt vänster
+        (when holding-left?
           (set! direction 'left)
           (push! (* -0.05 speed) 0))
         
-        (when (and holding-jump? (on-ground?)) ;; Gör så att man hoppar om man står på marken och trycker på hoppknappen. 
+        ;; Gör så att man hoppar om man står på marken och trycker på hoppknappen.
+        (when (and holding-jump? (on-ground?))
           (jump!))
         (move!)
         (for-each (λ (collidee)
@@ -109,5 +122,8 @@
                       (hurt! (get-field damage collidee))
                       (set! can-be-hurt #f)
                       (send hurt-timer start 500 #t)))
-                  collidees)))
+                  collidees)
+        (when (>= y (* (get-field height the-map)
+                       (get-field tile-size the-map)))
+          (die!))))
     (super-new)))
