@@ -31,13 +31,10 @@
     
     ;; ritar ut vapnet på skärmen om det har en bitmap specifierad och befinner sig i en map
     (define/public (render canvas dc)
-      (when (and bitmap
-                 (is-a? wielder map%))
-        (send wielder draw-bitmap bitmap x y canvas dc)))
-    
-    ;; uppdaterar vapnet -- gör som standard ingenting
-    (define/public (update!)
-      void)
+      (when (is-a? wielder map%)
+        (if bitmap
+            (send wielder draw-bitmap bitmap x y canvas dc)
+            (send wielder draw-rectangle x y width height "red" canvas dc))))
     
     ;; avlossar ett skott om vapnet befinner sig hos en spelare
     (define/public (fire! the-map direction)

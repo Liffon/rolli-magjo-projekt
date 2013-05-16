@@ -245,6 +245,9 @@
       (for-each (λ (elem) ;; alla bullets
                   (send elem render canvas dc))
                 bullets)
+      (for-each (λ (elem) ;; alla items
+                  (send elem render canvas dc))
+                items)
       (for-each (λ (elem) ;; alla characters
                   (send elem render canvas dc))
                 characters))
