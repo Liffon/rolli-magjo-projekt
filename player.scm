@@ -1,5 +1,4 @@
 (load "character.scm")
-(load "bullet.scm")
 
 (define player%
   (class character%
