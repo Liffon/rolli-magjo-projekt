@@ -23,10 +23,14 @@
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
     (define holding-switch-weapon? #f)
+    (define can-be-hurt #t)
     
-    (define timer (new timer%
+    (define shoot-timer (new timer%
                        [notify-callback (lambda ()
                                           (set! can-shoot-hold #t))]))
+    (define hurt-timer (new timer%
+                            [notify-callback (lambda ()
+                                               (set! can-be-hurt #t))]))
     
     (define keys (make-hash))
     (define/public (set-key! key boolean)
@@ -73,7 +77,7 @@
           (shoot!)
           (set! can-shoot-press #f)
           (set! can-shoot-hold #f)
-          (send timer start (get-field cooldown weapon) #t)) ;;olika vapen kan ha olika cooldown
+          (send shoot-timer start (get-field cooldown weapon) #t)) ;;olika vapen kan ha olika cooldown
         
         (unless (get-key 'shoot) ;; Kollar om skjutknappen är nedtryckt. 
           (set! can-shoot-press #t)) ; Gör så att man kan skjuta igen när man släppt skjutknappen. 
@@ -94,9 +98,12 @@
           (jump!))
         (move!)
         (for-each (λ (collidee)
-                    (hurt! (get-field damage collidee))
-                    (if (eq? (get-field direction collidee) 'right)
-                        (push! 0.2 0)
-                        (push! -0.2 0)))
+                      (if (eq? (get-field direction collidee) 'right)
+                          (push! 0.2 0)
+                          (push! -0.2 0))
+                    (when can-be-hurt
+                      (hurt! (get-field damage collidee))
+                      (set! can-be-hurt #f)
+                      (send hurt-timer start 500 #t)))
                   collidees)))
     (super-new)))
