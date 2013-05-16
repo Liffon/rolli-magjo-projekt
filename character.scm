@@ -131,7 +131,7 @@
             (set! vy 0)))))
 
     (define/public (die!) ;; Se remove-self!
-      (displayln "Blargh!")
+      (set! hp 0)
       (remove-self!)) ;; detta kanske inte bör göras omedelbart
     
     (define/public (hurt! damage) ;; Tar in ett heltal som argument och minskar karaktärens liv med det talet. 

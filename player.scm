@@ -9,6 +9,7 @@
              on-ground?
              hurt!
              switch-weapon!
+             die!
              shoot!)
     (inherit-field x
                    y
@@ -48,8 +49,7 @@
           (send the-map colliding-characters this)
           '()))
     
-    (define/override (update!) ;; Avgör vad som ska hända under varje frame. 
-      
+    (define/override (update!) ;; Avgör vad som ska hända under varje frame.
       (let ([holding-right? (get-key 'right)]
             [holding-left? (get-key 'left)]
             [holding-jump? (get-key 'jump)]
@@ -83,18 +83,20 @@
           (set! can-shoot-press #t)) ; Gör så att man kan skjuta igen när man släppt skjutknappen. 
         
         
-        (when holding-sprint?
+        (when holding-sprint? ;; öka hastigheten om man håller nere sprint
           (set! speed 2.5))
         
-        (when holding-right? ;;knuff åt höger
+        ;; ändra hastigheten när man håller nere vänster eller höger
+        (when holding-right?
           (set! direction 'right)
           (push! (* 0.05 speed) 0))
         
-        (when holding-left? ;;knuff åt vänster
+        (when holding-left?
           (set! direction 'left)
           (push! (* -0.05 speed) 0))
         
-        (when (and holding-jump? (on-ground?)) ;; Gör så att man hoppar om man står på marken och trycker på hoppknappen. 
+        ;; Gör så att man hoppar om man står på marken och trycker på hoppknappen.
+        (when (and holding-jump? (on-ground?))
           (jump!))
         (move!)
         (for-each (λ (collidee)
@@ -105,5 +107,8 @@
                       (hurt! (get-field damage collidee))
                       (set! can-be-hurt #f)
                       (send hurt-timer start 500 #t)))
-                  collidees)))
+                  collidees)
+        (when (>= y (* (get-field height the-map)
+                       (get-field tile-size the-map)))
+          (die!))))
     (super-new)))

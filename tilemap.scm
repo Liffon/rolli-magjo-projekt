@@ -40,7 +40,7 @@
                                      (sub1 (+ (* tile-size tile-y) tile-size)))))
                       ('down (values identity
                                      add1
-                                     (* (+ height 1) tile-size) ;; borde egentligen vara strax nedanför skärmen
+                                     (+ (* height tile-size) 80)
                                      (λ (tile-x tile-y)
                                        (* tile-size tile-y))))
                       ('right (values add1
