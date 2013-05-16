@@ -10,9 +10,9 @@
                 [the-map #f]
                 [direction 'right])
     (field [inventory (make-ring)]
-           [weapon #f])
-    (define vx 0)
-    (define vy 0)
+           [weapon #f]
+           [vx 0]
+           [vy 0])
     (define maxspeed 0.05)
     
     (define/public (add-item! item) ;; Tar ett föremål som argument och lägger in det i karaktärens inventarium
