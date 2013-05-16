@@ -89,5 +89,6 @@
 (send *player* take-weapon! (new weapon% ;; improviserat köttvapen
                                  [width 16]
                                  [height 16]
+                                 [name "The Great Big Kötter"]
                                  [cooldown 1500]
                                  [bullet (new bullet% [width 16] [height 16] [damage 200] [speed 0.3])]))
