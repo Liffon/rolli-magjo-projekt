@@ -71,7 +71,7 @@
 ;; starta timern
 (send *timer* start *dt*)
 
-(define *player* (new player% [width 40] [height 80]))
+(define *player* (new player% [width 40] [height 80] [hp 100]))
 (define *edgar* (new enemy% [x 300] [direction 'right]))
 
 ;; skapa en bana med storlek 32x12 tiles och varje tile är 40x40 pixlar
