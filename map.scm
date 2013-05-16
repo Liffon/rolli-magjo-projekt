@@ -137,10 +137,28 @@
     (define/public (get-position-tile . args)
       (send tilemap get-position-tile . args))
     
+    ;; get-screen-position-tile : x, y -> tile
+    ;; returnerar värdet på en tile vid pixlar (x,y)
+    ;; med x kompenserat för scrollning
+    (define/public (get-screen-position-tile x y)
+      (get-position-tile (+ x scrolled-distance) y))
+    
     ;; solid-tile-at? : x, y -> boolean
     ;; returnerar sant om givna pixelkoordinater är del av en solid tile
     (define/public (solid-tile-at? . args)
       (send tilemap solid-tile-at? . args))
+    
+    ;; valid-tile-coord? : x, y (tile-koordinater) -> boolean
+    ;; returnerar sant om x, y är giltiga koordinater för tiles
+    (define/public (valid-tile-coord? . args)
+      (send tilemap valid-tile-coord? . args))
+    
+    ;; set-tile-at-screen! : pixel-x, pixel-y, value -> void
+    ;; ändrar tilen vid pixel-koordinater x, y till value
+    ;; med x kompenserat för scrollning
+    (define/public (set-tile-at-screen! x y value)
+      (let-values ([(x y) (send tilemap get-tile-coord-pos (+ x scrolled-distance) y)])
+        (send tilemap set-tile! x y value)))
     
     ;; player-or-enemy? : object -> boolean
     ;; returnerar sant om object är en player% eller en enemy%
@@ -249,17 +267,21 @@
     
     ;; ritar ut allting i banan
     (define/public (render canvas dc)
-      ;; först: rita bakgrund om man har en
-      (send tilemap render canvas dc scrolled-distance) ;; alla tiles
-      (for-each (λ (elem) ;; alla bullets
-                  (send elem render canvas dc))
-                bullets)
-      (for-each (λ (elem) ;; alla items
-                  (send elem render canvas dc))
+      (let-values ([(canvas-width canvas-height) (send canvas get-virtual-size)])
+        ;; En enkel bakgrund
+        (send dc set-brush (make-color 200 200 255) 'solid)
+        (send dc set-pen "black" 0 'transparent)
+        (send dc draw-rectangle 0 0 canvas-width canvas-height)
+        (send tilemap render canvas dc scrolled-distance) ;; alla tiles
+        (for-each (λ (elem) ;; alla bullets
+                    (send elem render canvas dc))
+                  bullets)
+        (for-each (λ (elem) ;; alla items
+                    (send elem render canvas dc))
                 items)
-      (for-each (λ (elem) ;; alla characters
-                  (send elem render canvas dc))
-                characters))
+        (for-each (λ (elem) ;; alla characters
+                    (send elem render canvas dc))
+                  characters)))
     
     ;; Ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning
     (define/public (draw-rectangle x y width height color canvas dc)

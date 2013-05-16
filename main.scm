@@ -39,6 +39,9 @@
             #\s 'prev-weapon
             #\d 'next-weapon)
 
+(define *editing* #f)
+(define *current-tile* 'ground)
+
 ;; en ny canvas som kan hantera tangenttryckningar
 (define game-canvas%
   (class canvas%
@@ -52,7 +55,25 @@
                       (send key-event get-key-release-code))]
              [action (hash-ref *controls* key #f)])
         (when action
-          (send *player* set-key! action pressed?))))
+          (send *player* set-key! action pressed?))
+        (when (and (eq? key-code #\e)
+                   (send key-event get-control-down))
+          (set! *editing* (not *editing*)))))
+    (define/override (on-event event)
+      (when *editing* ;; bara för leveleditorn
+        (cond
+          [(or (send event button-down? 'left) ;; vänsterklick sätter ut en tile
+               (and (send event dragging?) ;; men också att klicka och dra för att sätta ut flera i taget
+                    (send event get-left-down)))
+           (let ([x (send event get-x)]
+                 [y (send event get-y)])
+             (when (send *map* valid-tile-coord? x y)
+               (send *map* set-tile-at-screen! x y *current-tile*)))]
+          [(send event button-down? 'right) ;; högerklick kopierar en tile
+           (let ([x (send event get-x)]
+                 [y (send event get-y)])
+             (when (send *map* valid-tile-coord? x y)
+               (set! *current-tile* (send *map* get-screen-position-tile x y))))])))
     (super-new)))
 
 ;; skapa canvasen
@@ -71,18 +92,28 @@
 ;; starta timern
 (send *timer* start *dt*)
 
-(define *player* (new player% [width 40] [height 80] [hp 100]))
-(define *edgar* (new enemy% [x 300] [direction 'right]))
+(define *player* (new player%
+                      [width 40] [height 80]
+                      [x 20] [y 400]
+                      [hp 100] [direction 'right]))
 
 ;; skapa en bana med storlek 32x12 tiles och varje tile är 40x40 pixlar
-(define *map* (new map% [width 32] [height 12] [tile-size 40] [canvas *canvas*]))
+(define *map* (new map%
+                   [width 32] [height 12]
+                   [tile-size 40]
+                   [canvas *canvas*]))
 
 (define *hud* (new hud% [player *player*]))
 
-;; lägg in spelaren och fienden i banan
+;; lägg in spelaren och fiender i banan
 (send *map* add-element! *player*)
-(send *map* add-element! *edgar*)
-(send *map* add-element! (new enemy% [x 400] [y 400] [direction 'left]))
+(send *map* add-element! (new enemy%
+                              [x 300] [y 200]
+                              [direction 'right]))
+(send *map* add-element! (new enemy%
+                              [x 400] [y 400]
+                              [direction 'left]))
 (send *map* add-element! (make-pistol 140 360))
 
+;; visa spelfönstret
 (send *frame* show #t)
