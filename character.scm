@@ -9,7 +9,7 @@
                 [hp 100] ;; Liv
                 [the-map #f]
                 [bitmap-right #f]
-                [bitmap-left bitmap-right]
+                [bitmap-left #f]
                 [direction 'right])
     (field [inventory (make-ring)]
            [weapon #f]
@@ -45,9 +45,7 @@
     
     (define/public (remove-self!) ;; Tar bort karaktären ur banans lista över element. 
       (when the-map
-        (send the-map delete-element! this)
-        (set! the-map #f)
-        (displayln "Removed a character.")))
+        (send the-map delete-element! this)))
 
     (define/public (swap-direction direction) ;; Tar in riktningen höger eller vänster som argument och byter från
       (case direction                         ;; vänster till höger eller höger till vänster. 
@@ -105,7 +103,9 @@
       (let ([bitmap (if (eq? direction 'left)
                         bitmap-left
                         bitmap-right)])
-        (send the-map draw-bitmap bitmap x y canvas dc)))
+        (if bitmap
+            (send the-map draw-bitmap bitmap x y canvas dc)
+            (send the-map draw-rectangle x y width height "black" canvas dc))))
     
     (define/public (move!) ;; Exekverar en rad procedurer vid anrop, som talar om hur karaktären skall röra sig.
       (when (is-a? the-map map%)

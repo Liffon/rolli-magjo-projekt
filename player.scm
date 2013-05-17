@@ -16,6 +16,7 @@
                    y
                    width
                    height
+                   hp
                    the-map
                    direction
                    inventory
@@ -122,8 +123,10 @@
                       (set! can-be-hurt #f)
                       (send hurt-timer start 500 #t)))
                   collidees)
-        (when (>= y (* (get-field height the-map)
-                       (get-field tile-size the-map)))
+        ;; om man är nedanför banan, dö!
+        (when (and the-map
+                   (>= y (* (get-field height the-map)
+                            (get-field tile-size the-map))))
           (die!))))
     (super-new [bitmap-left (read-bitmap "sprites/player.png")]
                [bitmap-right (read-bitmap "sprites/player.png")])))
