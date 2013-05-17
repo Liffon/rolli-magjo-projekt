@@ -5,6 +5,10 @@
     (define game-over-bitmap (read-bitmap "sprites/game-over2.png"))
     (define empty-heart-bitmap (read-bitmap "sprites/empty-heart.png"))
     (define heart-bitmap (read-bitmap "sprites/heart.png"))
+    (define the-end-bitmap (read-bitmap "sprites/the-end.png"))
+    
+    (define (end-screen dc)
+      (send dc draw-bitmap the-end-bitmap 0 0))
     
     (define (hit-points life dc)
       (for-each (λ (x)
@@ -38,9 +42,10 @@
         (send dc draw-bitmap game-over-bitmap 0 0)))
       
     (define/public (render canvas dc)
-      (game-over dc)
-      (hit-points (/ (get-field hp player) 10) dc)
-      (draw-weapon canvas dc)
-      (draw-editing canvas dc))
+      (if (get-field has-won? player)
+          (end-screen dc)
+          (begin (game-over dc)
+                 (hit-points (/ (get-field hp player) 10) dc)
+                 (draw-weapon canvas dc)
+                 (draw-editing canvas dc))))
     (super-new)))
-               
