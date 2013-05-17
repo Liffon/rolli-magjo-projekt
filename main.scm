@@ -97,7 +97,6 @@
 (send *timer* start *dt*)
 
 (define *player* (new player%
-                      [width 40] [height 80]
                       [x 20] [y 400]
                       [hp 100] [direction 'right]))
 
