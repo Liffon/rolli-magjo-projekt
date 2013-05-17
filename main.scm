@@ -119,6 +119,7 @@
 ;                              [x 400] [y 400]
 ;                              [direction 'left]))
 (send *map* add-element! (make-pistol 320 280))
+(send *map* add-element! (make-machine-gun 640 280))
 
 ;; visa spelfönstret
 (send *frame* show #t)

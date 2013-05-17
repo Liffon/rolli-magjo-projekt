@@ -40,13 +40,15 @@
     ;; avlossar ett skott om vapnet befinner sig hos en spelare
     (define/public (fire! the-map direction)
       (when (is-a? wielder player%)
-        (let ([x (get-field x wielder)]
-              [y (get-field y wielder)])
-          (send the-map add-element! (make-bullet the-map
-                                                  (if (eq? direction 'left)
-                                                      x
-                                                      (+ x (get-field width wielder)))
-                                                  (+ y (/ (get-field height wielder) 3)) direction)))))
+        (let* ([wielder-x (get-field x wielder)]
+               [wielder-y (get-field y wielder)]
+               [wielder-width (get-field width wielder)]
+               [wielder-height (get-field height wielder)]
+               [x (if (eq? direction 'left)
+                      wielder-x
+                      (+ wielder-x wielder-width))]
+               [y (+ y (/ wielder-height 3))])
+          (send the-map add-element! (make-bullet the-map x y direction)))))
     
     (super-new)))
 
@@ -63,10 +65,11 @@
 
 ;; returnerar ett automatvapen på de angivna koordinaterna eller (0,0)
 (define (make-machine-gun [x 0] [y 0]) (new weapon%
-                               [width 12]
-                               [height 8]
+                               [width 73]
+                               [height 27]
                                [x x]
                                [y y]
                                [name "Machine gun"]
+                               [bitmap (read-bitmap "sprites/machine-gun.png")]
                                [cooldown 100]
                                [bullet (new bullet% [width 5] [height 2] [damage 10])]))
