@@ -20,7 +20,7 @@
                    direction
                    inventory
                    weapon)
-    
+    (field [has-won? #f])
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
     (define holding-switch-weapon? #f)

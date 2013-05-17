@@ -232,8 +232,8 @@
                                          [tile-type (send tilemap get-tile x y)])
                                     (eq? tile-type 'exit)))
                                 (overlapping-tiles player))))
-        (displayln "Yay, you won! Now go celebrate.")) ;; Här bör något annat hända!
-                                                       ;; Typ en "du vann!"-skärm
+        (set-field! has-won? *player* #t)
+        (send *timer* stop))
       
       ;; justera scrolled-distance så att spelaren är på skärmen
       (let ([canvas-width (send canvas get-width)]
