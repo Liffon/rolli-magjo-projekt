@@ -112,14 +112,14 @@
 
 ;; lägg in spelaren och fiender i banan
 (send *map* add-element! *player*)
-;(send *map* add-element! (new enemy%
-;                              [x 300] [y 200]
-;                              [direction 'right]))
+(send *map* add-element! (new enemy%
+                              [x 1069] [y 280]
+                              [direction 'right]))
 ;(send *map* add-element! (new enemy%
 ;                              [x 400] [y 400]
 ;                              [direction 'left]))
-(send *map* add-element! (make-pistol 320 280))
-(send *map* add-element! (make-machine-gun 640 280))
+(send *map* add-element! (make-pistol 760 300))
+;(send *map* add-element! (make-machine-gun 640 280))
 
 ;; visa spelfönstret
 (send *frame* show #t)

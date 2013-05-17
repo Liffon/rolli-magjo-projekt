@@ -8,6 +8,7 @@
     (define tile-bitmaps (make-hash))
     (hash-set*! tile-bitmaps
                 'ground (read-bitmap "sprites/ground.png")
+                'ground2 (read-bitmap "sprites/ground2.png")
                 'exit (read-bitmap "sprites/exit.png"))
     
     ;; genomskinlig "tile" som bytestring
@@ -88,7 +89,7 @@
         (helper tile-x tile-y)))
     
     (define/public (solid-tile? x y)
-      (eq? (get-tile x y) 'ground))
+      (member (get-tile x y) '(ground ground2)))
     
     (define/public (solid-tile-at? pixel-x pixel-y)
       (let-values ([(x y) (get-tile-coord-pos pixel-x pixel-y)])
