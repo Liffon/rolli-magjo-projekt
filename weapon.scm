@@ -47,7 +47,7 @@
                [x (if (eq? direction 'left)
                       wielder-x
                       (+ wielder-x wielder-width))]
-               [y (+ y (/ wielder-height 3))])
+               [y (+ wielder-y (/ wielder-height 3))])
           (send the-map add-element! (make-bullet the-map x y direction)))))
     
     (super-new)))
