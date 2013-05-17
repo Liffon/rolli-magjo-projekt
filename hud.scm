@@ -29,7 +29,7 @@
             (send dc draw-text name (+ 10 width) 30 #t)))))
     
     (define (draw-editing canvas dc)
-      (when *editing*
+      (when *editing?*
         (send dc set-text-foreground "red")
         (send dc draw-text "EDITING" (- (send canvas get-width) 80) 10)))
     

@@ -31,12 +31,10 @@
 
     (define/public (switch-weapon! next/prev) ;; Tar in 'next eller 'prev, roterar inventariet (som är en ring)
       (unless (empty-ring? inventory)         ;; i en viss riktning och sätter det första värdet i ringen till aktuellt vapen. 
-        (displayln "Not empty")
         (if (eq? next/prev 'next)
             (ring-rotate-right! inventory)
             (ring-rotate-left! inventory))
-        (set! weapon (ring-first-value inventory)))
-      (displayln "Switch!"))
+        (set! weapon (ring-first-value inventory))))
     
     (define/public (shoot!) ;; Om karaktären har ett vapen så sänder den proceduren fire! till vapnet som gör att vapnet avfyras
       (when weapon          ;; i rätt riktning. 

@@ -6,12 +6,14 @@
     (init-field width
                 height
                 tile-size
-                canvas) ;; för att kunna läsa av storleken på utritningsytan
+                canvas ;; för att kunna läsa av storleken på utritningsytan
+                [tiles #f]) ;; för initiering av tiles (vector eller filnamn)
 
     (define tilemap (new tilemap%
                          [width width]
                          [height height]
-                         [tile-size tile-size]))
+                         [tile-size tile-size]
+                         [tiles tiles]))
     (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
     (field [scrolled-distance 0] ;; anger hur långt skärmen har scrollat åt höger
            [items '()]
@@ -19,21 +21,9 @@
            [bullets '()]
            [player #f])
     
-    ;; initialisera en testbana
-    (for-each (λ (x)
-                (send tilemap set-tile! x 11 'ground))
-              (range 0 28))
-    (for-each (λ (x)
-                (send tilemap set-tile! x 10 'ground))
-              (range 29 32))
-    (send tilemap set-tile! 5 11 'empty)
-    (for-each (λ (x)
-                (send tilemap set-tile! x 7 'ground))
-              (range 6 13))
-    (send tilemap set-tile! 13 8 'ground)
-    (send tilemap set-tile! 15 9 'ground)
-    (send tilemap set-tile! 15 10 'ground)
-    (send tilemap set-tile! 31 9 'exit)
+    ;; spara tiles-vectorn till en fil med filnamn filename
+    (define/public (dump-tiles-to-file filename)
+      (send tilemap dump-tiles-to-file filename))
     
     ;; colliding? : objekt, objekt -> boolean
     ;; returnerar sant om objekten överlappar varandra
@@ -152,6 +142,13 @@
     ;; returnerar sant om x, y är giltiga koordinater för tiles
     (define/public (valid-tile-coord? . args)
       (send tilemap valid-tile-coord? . args))
+    
+    ;; valid-tile-coord-at-screen? : x, y (pixel-koordinater) -> boolean
+    ;; returnerar sant om x, y konverterat till tile-koordinater är giltiga koordinater för tiles
+    ;; (x kompenseras för scrollning)
+    (define/public (valid-tile-coord-at-screen? x y)
+      (let-values ([(x y) (send tilemap get-tile-coord-pos (+ x scrolled-distance) y)])
+        (valid-tile-coord? x y)))
     
     ;; set-tile-at-screen! : pixel-x, pixel-y, value -> void
     ;; ändrar tilen vid pixel-koordinater x, y till value

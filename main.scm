@@ -2,13 +2,15 @@
 ;; ========
 
 (require racket/gui)
-(define *g* 0.005) ;; gravitation
-(define *dt* (round (/ 1000 60))) ;; uppdateringen ska ske 60 gånger per sekund
 (load "map.scm")
 (load "player.scm")
 (load "enemy.scm")
 (load "weapon.scm")
 (load "hud.scm")
+
+(define *g* 0.005) ;; gravitation
+(define *dt* (round (/ 1000 60))) ;; uppdateringen ska ske 60 gånger per sekund
+(define *level-filename* "level.sexpr")
 
 ;; behövs på astmatix, finns inte inbyggd i gamla versionen av Racket
 (define (range x y . maybe-step)
@@ -39,7 +41,7 @@
             #\s 'prev-weapon
             #\d 'next-weapon)
 
-(define *editing* #f)
+(define *editing?* #f)
 (define *current-tile* 'ground)
 
 ;; en ny canvas som kan hantera tangenttryckningar
@@ -56,23 +58,25 @@
              [action (hash-ref *controls* key #f)])
         (when action
           (send *player* set-key! action pressed?))
-        (when (and (eq? key-code #\e)
-                   (send key-event get-control-down))
-          (set! *editing* (not *editing*)))))
+        (when (send key-event get-control-down)
+          (case (send key-event get-key-code)
+            ['#\e (set! *editing?* (not *editing?*))]
+            ['#\s (displayln (string-append "Saving level to " *level-filename* "..."))
+                  (send *map* dump-tiles-to-file *level-filename*)]))))
     (define/override (on-event event)
-      (when *editing* ;; bara för leveleditorn
+      (when *editing?* ;; bara för leveleditorn
         (cond
           [(or (send event button-down? 'left) ;; vänsterklick sätter ut en tile
                (and (send event dragging?) ;; men också att klicka och dra för att sätta ut flera i taget
                     (send event get-left-down)))
            (let ([x (send event get-x)]
                  [y (send event get-y)])
-             (when (send *map* valid-tile-coord? x y)
+             (when (send *map* valid-tile-coord-at-screen? x y)
                (send *map* set-tile-at-screen! x y *current-tile*)))]
           [(send event button-down? 'right) ;; högerklick kopierar en tile
            (let ([x (send event get-x)]
                  [y (send event get-y)])
-             (when (send *map* valid-tile-coord? x y)
+             (when (send *map* valid-tile-coord-at-screen? x y)
                (set! *current-tile* (send *map* get-screen-position-tile x y))))])))
     (super-new)))
 
@@ -101,7 +105,8 @@
 (define *map* (new map%
                    [width 32] [height 12]
                    [tile-size 40]
-                   [canvas *canvas*]))
+                   [canvas *canvas*]
+                   [tiles *level-filename*]))
 
 (define *hud* (new hud% [player *player*]))
 
