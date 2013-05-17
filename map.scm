@@ -1,5 +1,4 @@
 (load "tilemap.scm")
-(define *tilemap* #f) ;; för debugging - ta bort sen!
 
 (define map%
   (class object%
@@ -14,7 +13,6 @@
                          [height height]
                          [tile-size tile-size]
                          [tiles tiles]))
-    (set! *tilemap* tilemap) ;; för debugging - ta bort sen!
     (field [scrolled-distance 0] ;; anger hur långt skärmen har scrollat åt höger
            [items '()]
            [characters '()]
