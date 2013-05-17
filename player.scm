@@ -128,5 +128,6 @@
                    (>= y (* (get-field height the-map)
                             (get-field tile-size the-map))))
           (die!))))
-    (super-new [bitmap-left (read-bitmap "sprites/player.png")]
-               [bitmap-right (read-bitmap "sprites/player.png")])))
+    (super-new [bitmap-left (read-bitmap "sprites/player-left.png")]
+               [bitmap-right (read-bitmap "sprites/player-right.png")]
+               [width 31] [height 73])))
