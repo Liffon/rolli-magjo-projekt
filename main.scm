@@ -118,7 +118,7 @@
 ;(send *map* add-element! (new enemy%
 ;                              [x 400] [y 400]
 ;                              [direction 'left]))
-;(send *map* add-element! (make-pistol 140 360))
+(send *map* add-element! (make-pistol 320 280))
 
 ;; visa spelfönstret
 (send *frame* show #t)

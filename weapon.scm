@@ -42,7 +42,11 @@
       (when (is-a? wielder player%)
         (let ([x (get-field x wielder)]
               [y (get-field y wielder)])
-          (send the-map add-element! (make-bullet the-map x y direction)))))
+          (send the-map add-element! (make-bullet the-map
+                                                  (if (eq? direction 'left)
+                                                      x
+                                                      (+ x (get-field width wielder)))
+                                                  (+ y (/ (get-field height wielder) 3)) direction)))))
     
     (super-new)))
 
