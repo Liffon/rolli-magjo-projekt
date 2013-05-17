@@ -103,7 +103,7 @@
 
 ;; skapa en bana med storlek 32x12 tiles och varje tile är 40x40 pixlar
 (define *map* (new map%
-                   [width 32] [height 12]
+                   [width 64] [height 12]
                    [tile-size 40]
                    [canvas *canvas*]
                    [tiles *level-filename*]))
@@ -112,13 +112,13 @@
 
 ;; lägg in spelaren och fiender i banan
 (send *map* add-element! *player*)
-(send *map* add-element! (new enemy%
-                              [x 300] [y 200]
-                              [direction 'right]))
-(send *map* add-element! (new enemy%
-                              [x 400] [y 400]
-                              [direction 'left]))
-(send *map* add-element! (make-pistol 140 360))
+;(send *map* add-element! (new enemy%
+;                              [x 300] [y 200]
+;                              [direction 'right]))
+;(send *map* add-element! (new enemy%
+;                              [x 400] [y 400]
+;                              [direction 'left]))
+;(send *map* add-element! (make-pistol 140 360))
 
 ;; visa spelfönstret
 (send *frame* show #t)

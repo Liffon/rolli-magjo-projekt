@@ -16,19 +16,19 @@
                    the-map
                    direction)
     
-    (define bitmap-left (read-bitmap "sprites/enemy-left.png"))
-    (define bitmap-right (read-bitmap "sprites/enemy-right.png"))
+;    (define bitmap-left (read-bitmap "sprites/enemy-left.png"))
+;    (define bitmap-right (read-bitmap "sprites/enemy-right.png"))
     
     (define (colliding-bullets)
       (if the-map
           (send the-map colliding-bullets this)
           '()))
     
-    (define/override (render canvas dc)
-      (let ([bitmap (if (eq? direction 'left)
-                        bitmap-left
-                        bitmap-right)])
-        (send the-map draw-bitmap bitmap x y canvas dc)))
+;    (define/override (render canvas dc)
+;      (let ([bitmap (if (eq? direction 'left)
+;                        bitmap-left
+;                        bitmap-right)])
+;        (send the-map draw-bitmap bitmap x y canvas dc)))
     
     (define/override (left-x)
       (max (find-obstacle #t 'left)
@@ -55,4 +55,5 @@
                      -0.02)
                  0) ;; gå framåt åt rätt håll hela tiden
           (move!))))
-    (super-new)))
+    (super-new [bitmap-right (read-bitmap "sprites/enemy-right.png")]
+               [bitmap-left (read-bitmap "sprites/enemy-left.png")])))

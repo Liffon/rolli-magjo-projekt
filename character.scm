@@ -8,21 +8,24 @@
                 [height 80]
                 [hp 100] ;; Liv
                 [the-map #f]
+                [bitmap-right #f]
+                [bitmap-left bitmap-right]
                 [direction 'right])
     (field [inventory (make-ring)]
            [weapon #f]
            [vx 0]
-           [vy 0])
-    (define maxspeed 0.05)
+           [vy 0]
+           [maxspeed 0.05])
+    
+    ;; returnerar ett par med karaktärens x- och y-position.
+    ;; (används i leveleditorn för att kunna se var man ska sätta ut fiender)
+    (define/public (get-position)
+      (cons (inexact->exact (round x))
+            (inexact->exact (round y))))
     
     (define/public (add-item! item) ;; Tar ett föremål som argument och lägger in det i karaktärens inventarium
       (ring-insert! inventory item) ;; samt gör så att föremålet vet vem/vad som bär det. 
       (set-field! wielder item this))
-    
-;    implementeras i ring.scm om det visar sig behövas
-;    (define/public (remove-item! removee)
-;      (ring-delete! inventory removee)
-;      (set-field! wielder removee the-map))
     
     (define/public (take-weapon! new-weapon) ;; Tar ett vapen som argument, gör det till aktuellt vapen (som karaktären 
       (set! weapon new-weapon)               ;; använder) och lägger in vapnet i inventariet. 
@@ -99,7 +102,10 @@
       (set! vy -0.9))
     
     (define/public (render canvas dc) ;; Tar in canvas och dc som argument och säger åt banan att rita en rektangel. 
-      (send the-map draw-rectangle x y width height "white" canvas dc))
+      (let ([bitmap (if (eq? direction 'left)
+                        bitmap-left
+                        bitmap-right)])
+        (send the-map draw-bitmap bitmap x y canvas dc)))
     
     (define/public (move!) ;; Exekverar en rad procedurer vid anrop, som talar om hur karaktären skall röra sig.
       (when (is-a? the-map map%)

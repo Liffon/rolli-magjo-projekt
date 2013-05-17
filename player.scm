@@ -21,7 +21,6 @@
                    inventory
                    weapon)
     
-    (define bitmap (read-bitmap "sprites/player.png"))
     (define can-shoot-press #t)
     (define can-shoot-hold #t)
     (define holding-switch-weapon? #f)
@@ -41,8 +40,8 @@
     (define/public (get-key key) ;; Tar in en knapptryckning som argument och returnerar ett booleskt värde som representerar om
       (dict-ref keys key #f))    ;; knappen har någon funktion. 
     
-    (define/override (render canvas dc) ;; Tar canvas och dc som argument och säger till banan att rita ut spelaren. 
-      (send the-map draw-bitmap bitmap x y canvas dc))
+;    (define/override (render canvas dc) ;; Tar canvas och dc som argument och säger till banan att rita ut spelaren. 
+;      (send the-map draw-bitmap bitmap x y canvas dc))
     
     
     (define (colliding-characters) ;; Returnerar en lista med de karaktärer som spelaren krockar med. 
@@ -126,4 +125,5 @@
         (when (>= y (* (get-field height the-map)
                        (get-field tile-size the-map)))
           (die!))))
-    (super-new)))
+    (super-new [bitmap-left (read-bitmap "sprites/player.png")]
+               [bitmap-right (read-bitmap "sprites/player.png")])))

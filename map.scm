@@ -19,6 +19,9 @@
            [bullets '()]
            [player #f])
     
+    ;; tillfällig start-bana
+    (send tilemap set-tile! 1 11 'ground)
+    
     ;; spara tiles-vectorn till en fil med filnamn filename
     (define/public (dump-tiles-to-file filename)
       (send tilemap dump-tiles-to-file filename))
