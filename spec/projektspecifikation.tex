@@ -2,6 +2,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage[swedish]{babel}
 \usepackage{booktabs}
+\usepackage{caption}
+\usepackage{wasysym}
+
+% utseende på labels
+\captionsetup{margin=10pt,font=small,labelfont=bf,labelsep=period}
 
 \author{\textbf{Rolf Lifvergren}\\
 		rolli107@student.liu.se\\ \\
@@ -26,9 +31,9 @@ Varje gång spelaren blir skadad så tappar denne hitpoints. När spelarens hitp
 \subsection{Utvecklingsmetodik}\label{utvecklingsmetodik}
 Det är tänkt att vi ska dela upp kodandet lika mellan oss (vilka delar specificeras senare) så att arbetet kan färdigställas snabbare. Vi har tänkt att använda oss av Git för versionshantering, till exempel med Astmatix som central server (vilket borde lösa problemet med att koden ska vara tillgänglig även om en gruppmedlem är sjuk eller borta). Vi kommunicerar med varandra via sms, mejl och Skype samt muntligt.
 
-I första hand har vi tänkt att jobba under normal skoltid, dvs 8--17 på vardagar, men kommer även att arbeta på kvällar och helger i de fall tiden inte räcker till på dagarna. Att sitta tillsammans så ofta som möjligt när vi arbetar är önskvärt för att effektivt kunna dela idéer och samarbeta.
+I första hand har vi tänkt att jobba under normal skoltid, dvs 8-17 på vardagar, men kommer även att arbeta på kvällar och helger i de fall tiden inte räcker till på dagarna. Att sitta tillsammans så ofta som möjligt när vi arbetar är önskvärt för att effektivt kunna dela idéer och samarbeta.
 
-Vi räknar med att lägga 160 timmar totalt, vilket motsvarar de 3 hp som projektet är på. Det betyder att vi ska jobba 80 h/person, vilket i snitt blir 2{,}2 h/dag om vi jobbar 6 dagar i veckan.
+Vi räknar med att lägga 160 timmar totalt, vilket motsvarar de 3hp som projektet är på. Det betyder att vi ska jobba 80h/person, vilket i snitt blir 2{,}2 h/dag om vi jobbar 6 dagar i veckan.
 
 \subsection{Grov tidplan}
 I vår kravlista ses i vilken ordning vi tänker göra saker. Målsättningen är att krav av prioritet 1 skall göras direkt och prioritet 2 innan halvtidsmötet. Högre ordningens krav kommer efter halvtidsmötet.
@@ -39,10 +44,57 @@ Se kapitel \ref{utvecklingsmetodik} för preliminär tidsplan.
 Vi vill göra ett så bra projekt som möjligt på den tid vi hinner lägga på projektet och därför satsar vi högt, men eftersom duggorna har gått riktigt bra för oss båda är det inte avgörande för våra betyg i kursen hur högt vi når. Dock är vi båda väldigt intresserade av spelprogrammering så vi kommer med glädje att arbeta med projektet.
 
 \section{Användarmanual}
-\emph{Den här delen skrivs inför slutinlämningen (dvs nu!).}
 
 \subsection{Kravlista}
-Tabell här.
+Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
+
+\begin{table}[ht]
+	\caption{Kravlista}\label{kravlista}
+	\centering
+	\begin{tabular}{llrl}
+	\toprule
+		\# & Beskrivning & Prioritet &  \\
+	\midrule
+	1 & Spelet ska kunna styras med tangentbordet &
+		1 & $\CheckedBox$ \\
+	1.A & Spelaren ska kunna hoppa &
+		1 & $\CheckedBox$ \\
+	1.B & Spelaren ska kunna gå i sidled &
+		1 & $\CheckedBox$ \\
+	2 & Fiender skall finnas och vara möjliga att interagera med &
+		1 & $\CheckedBox$ \\
+	3 & Vapen skall kunna användas för att eliminera fiender &
+		1 & $\CheckedBox$ \\
+	4 & Banan skall innehålla olika hinder och objekt  &
+		1 & $\CheckedBox$ \\
+	5 & Man ska kunna klara spelet &
+		2 & $\CheckedBox$ \\
+	6 & Ett poängsystem, poäng fås av prylar och att döda fiender &
+		3 & $\Box$ \\
+	7 & Bakgrundsmiljön skall bestå av olika lager för att ge ett djup &
+		3 & $\Box$ \\
+	8 & En huvudmeny &
+		3 & $\Box$ \\
+	9 & En startskärm som inviger spelaren i sammanhanget &
+		3 & $\Box$ \\
+	10 & ”Hit points” &
+		3 & $\CheckedBox$ \\
+	11 & Extraliv &
+		3 & $\Box$ \\
+	12 & High scores &
+		4 & $\Box$ \\
+	13 & En boss skall finnas i slutet av banan &
+		4 & $\Box$ \\
+	14 & Flera banor &
+		5 & $\Box$ \\
+	15 & Power-ups: odödlighet, etc. &
+		5 & $\Box$ \\
+	16 & Musik &
+		5 & $\Box$ \\
+
+	\bottomrule
+	\end{tabular}
+\end{table}
 
 \section{Implementation}
 Det här kapitlet behandlar spelets implementation.
