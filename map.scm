@@ -33,7 +33,7 @@
       (define (separated-pairs? x1a x1b x2a x2b)
         (or (> (min x1a x1b) (max x2a x2b))
             (< (max x1a x1b) (min x2a x2b))))
-      (if (and (or (is-a? obj1 player%) ;; den här kollen bör göras med ett interface istället
+      (if (and (or (is-a? obj1 player%)
                    (is-a? obj1 enemy%)
                    (is-a? obj1 bullet%)
                    (is-a? obj1 character%)
