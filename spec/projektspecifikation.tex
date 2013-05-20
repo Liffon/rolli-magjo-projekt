@@ -101,7 +101,32 @@ Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
 Det här kapitlet behandlar spelets implementation.
 
 \subsection{Abstrakta datatyper}
-Tabeller här.
+\begin{tabular}{c c c}
+\toprule
+\multicolumn{3}{c}{Bana (map\%)} \\ 
+\midrule
+Metod & Argument & Beskrivning \\ 
+ 
+dump-tiles-to-file & filnamn & skickar vidare argumentet till tilemap  \\ 
+ 
+colliding? & obj1, obj2 & returnerar sant om objekten överlappar varandra \\ 
+ 
+colliding-bullets & obj & returnerar alla bullets som kolliderar med obj \\ 
+ 
+colliding-characters & obj & returnerar alla characters som kolliderar med obj \\ 
+ 
+colliding-items & obj & returnerar alla items som kolliderar med obj \\ 
+ 
+colliding-in & lst, obj & returnerar alla element i lst som kolliderar med obj \\ 
+ 
+• & • & • \\ 
+ 
+• & • & • \\ 
+ 
+• & • & • \\ 
+ 
+• & • & • \\ \bottomrule
+\end{tabular} 
 
 \subsection{Testning}
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
