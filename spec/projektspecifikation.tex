@@ -151,15 +151,17 @@ get-next-empty-pixel & x, y, direction & samma som get-next-tile-pixel fast koll
 
 get-position-tile & x, y & returnerar värdet på en tile vid pixlar (x,y) \\
 
-• & • & • \\
+get-screen-position-tile & x, y & returnerar värdet på en tile vid pixlar (x,y) med x kompenserat för scrollning \\
 
-• & • & • \\
+solid-tile-at? & x, y & returnerar sant om givna pixelkoordinater är del av en solid tile \\
 
-• & • & • \\
+valid-tile-coord? & x, y & returnerar sant om x, y är giltiga koordinater för tiles \\
 
-• & • & • \\
+valid-tile-coord-at-screen? & x, y & returnerar sant om x, y konverterat till tile-koordinater är giltiga koordinater för tiles (x kompenseras för scrollning) \\
 
-• & • & • \\ \bottomrule
+set-tile-at-screen! & x, y, value & ändrar tilen vid pixel-koordinater x, y till value med x kompenserat för scrollning \\
+
+add-element! & element & lägger in ett element i banan.\\ \bottomrule
 \end{adt-table}
 
 \subsection{Testning}
