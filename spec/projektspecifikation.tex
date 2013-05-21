@@ -1,20 +1,46 @@
-\documentclass{article}
+\documentclass{scrartcl}
 \usepackage[utf8]{inputenc}
 \usepackage[swedish]{babel}
 \usepackage{booktabs}
+\usepackage{tabulary}
 \usepackage{caption}
 \usepackage{wasysym}
+\usepackage{environ}
+\usepackage{array}
 
 % utseende på labels
 \captionsetup{margin=10pt,font=small,labelfont=bf,labelsep=period}
 
-\author{\textbf{Rolf Lifvergren}\\
-		rolli107@student.liu.se\\ \\
-		\textbf{Magnus Johansson}\\
-		magjo722@student.liu.se}
+\author{\textbf{Magnus Johansson}\\
+		magjo722@student.liu.se\\ \\
+		\textbf{Rolf Lifvergren}\\
+		rolli107@student.liu.se}
 
-\title{Projektspecifikation \\
-	Plattformsspel}
+\title{Projektspecifikation}
+\subtitle{Plattformsspel}
+
+%% Kommando för kod inne i texten
+%% Användningsexempel:
+% \code{(define (square x) (* x x))}
+\newcommand{\code}[1]%
+{\texttt{#1}}
+
+%% Kommando för ADT-tabell
+%% Användningsexempel:
+% \begin{adt-table}{\texttt{map\%}}{map-adt}
+% 	render & canvas, dc & Ritar ut banan på skärmen
+% \end{adt-table}
+\NewEnviron{adt-table}[2]%
+{\begin{table}
+\caption{#1}\label{#2}
+\begin{tabulary}{\textwidth}{>{\bfseries}lcJ}
+\toprule
+Metod & Argument & Beskrivning \\ 
+\midrule
+\BODY \\
+\bottomrule
+\end{tabulary}
+\end{table}}
 
 \begin{document}
 \maketitle
@@ -51,7 +77,7 @@ Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
 \begin{table}[ht]
 	\caption{Kravlista}\label{kravlista}
 	\centering
-	\begin{tabular}{llrl}
+	\begin{tabular}{lp{8cm}rl}
 	\toprule
 		\# & Beskrivning & Prioritet &  \\
 	\midrule
@@ -100,12 +126,7 @@ Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
 Det här kapitlet behandlar spelets implementation.
 
 \subsection{Abstrakta datatyper}
-\begin{tabular}{c c c}
-\toprule
-\multicolumn{3}{c}{Bana (map\%)} \\ 
-\midrule
-Metod & Argument & Beskrivning \\ 
- 
+\begin{adt-table}{\code{map\%} (bana)}{map-adt}
 dump-tiles-to-file & filnamn & skickar vidare argumentet till tilemap  \\ 
  
 colliding? & obj1, obj2 & returnerar sant om objekten överlappar varandra \\ 
@@ -116,16 +137,8 @@ colliding-characters & obj & returnerar alla characters som kolliderar med obj \
  
 colliding-items & obj & returnerar alla items som kolliderar med obj \\ 
  
-colliding-in & lst, obj & returnerar alla element i lst som kolliderar med obj \\ 
- 
-• & • & • \\ 
- 
-• & • & • \\ 
- 
-• & • & • \\ 
- 
-• & • & • \\ \bottomrule
-\end{tabular} 
+colliding-in & lst, obj & returnerar alla element i lst som kolliderar med obj
+\end{adt-table}
 
 \subsection{Testning}
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
