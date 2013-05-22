@@ -92,6 +92,27 @@ Se kapitel \ref{utvecklingsmetodik} för preliminär tidsplan.
 Vi vill göra ett så bra projekt som möjligt på den tid vi hinner lägga på projektet och därför satsar vi högt, men eftersom duggorna har gått riktigt bra för oss båda är det inte avgörande för våra betyg i kursen hur högt vi når. Dock är vi båda väldigt intresserade av spelprogrammering så vi kommer med glädje att arbeta med projektet.
 
 \section{Användarmanual}
+\subsection{Användarmanual}
+
+Spelet styrs med hjälp av tangentbordet. I tabell \ref{kontroller} ses vilka kommandon som är möjliga. 
+
+\begin{table}[ht]
+\caption{Spelkontroller}\label{kontroller}
+\centering
+    \begin{tabular}{ll}
+    \toprule
+    Tangent  & Funktion \\
+    \midrule
+    space, $\uparrow$ , x & hoppa \\
+    $\leftarrow$  & gå vänster   \\
+    $\rightarrow$ & gå höger     \\
+    a, s     & byta aktuellt vapen \\
+    z        & springa      \\
+    c        & skjuta         \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
 
 \subsection{Kravlista}
 Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
@@ -198,7 +219,7 @@ draw-bitmap & bitmap, x, y, canvas, dc & ritar ut en bitmap och kompenserar i x-
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
 \subsection{Beskrivning av implementationen}
-Spelet har programmerats objektorienterat vilket innebär att spelaren, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag så har en karaktärsklass skapats, som båda dessa bygger på. Rackets inbyggda objektsystem har använts för de olika klasserna.  
+Spelet har programmerats objektorienterat vilket innebär att spelare, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag så har en karaktärsklass skapats, som båda dessa bygger på. Rackets inbyggda objektsystem har använts för de olika klasserna.  
 \section{Utvärdering och erfarenheter}
 
 %Detta avsnittet är en väldigt viktig del av projektspecifikationen. Här ska ni %tänka tillbaka och utvärdera projektet (något som alltid ska göra efter ett %projekt). Som en hjälp på vägen kan ni utgå från följande frågeställningar:
