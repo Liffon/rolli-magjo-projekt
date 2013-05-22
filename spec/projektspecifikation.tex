@@ -8,6 +8,7 @@
 \usepackage{wasysym}
 \usepackage{environ}
 \usepackage{array}
+\usepackage[table]{xcolor}
 
 % utseende på labels
 \captionsetup{margin=10pt,font=small,labelfont=bf,labelsep=period}
@@ -32,7 +33,9 @@
 % 	render & canvas, dc & Ritar ut banan på skärmen
 % \end{adt-table}
 \NewEnviron{adt-table}[2]%
-{\begin{longtable}{>{\bfseries}lcp{8cm}}
+{\rowcolors{2}{gray!25}{white}
+\begin{longtabu}{>{\bfseries}lp{4cm}X}
+\hiderowcolors
 \caption{#1}\label{#2}\\
 
 \toprule
@@ -40,22 +43,26 @@
 \midrule
 \endfirsthead
 
+\hiderowcolors
 \toprule
 \multicolumn{3}{c}%
 {\bfseries \tablename\ \thetable{}. (forts)} \\
 \textbf{Metod} & \textbf{Argument} & \textbf{Beskrivning} \\ 
 \midrule
+\showrowcolors
 \endhead
 
+\hiderowcolors
 \multicolumn{3}{r}%
-{(fortsätter på nästa sida)} \\
+{\bfseries(fortsätter på nästa sida)} \\
+\showrowcolors
 \endfoot
 
 \bottomrule
 \endlastfoot
 
 \BODY
-\end{longtable}}
+\end{longtabu}}
 
 \begin{document}
 \maketitle
@@ -90,6 +97,7 @@ Vi vill göra ett så bra projekt som möjligt på den tid vi hinner lägga på 
 Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
 
 \begin{table}[ht]
+\rowcolors{2}{gray!25}{white}
 	\caption{Kravlista}\label{kravlista}
 	\centering
 	\begin{tabular}{lp{8cm}rl}
@@ -183,20 +191,7 @@ update & - & uppdaterar alla characters och bullets på banan, uppdaterar positi
 render & canvas, dc & ritar ut allting i banan \\
 draw-rectangle & x, y, width, height, color, canvas, dc & ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning \\
 draw-bitmap & bitmap, x, y, canvas, dc & ritar ut en bitmap och kompenserar i x-led för sidoscrollning \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
-a & b & c \\
 
- \bottomrule
 \end{adt-table}
 
 \subsection{Testning}
