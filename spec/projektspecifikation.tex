@@ -161,7 +161,27 @@ valid-tile-coord-at-screen? & x, y & returnerar sant om x, y konverterat till ti
 
 set-tile-at-screen! & x, y, value & ändrar tilen vid pixel-koordinater x, y till value med x kompenserat för scrollning \\
 
-add-element! & element & lägger in ett element i banan.\\ \bottomrule
+add-element! & element & lägger in ett element i banan\\
+
+delete-element! & element & tar bort ett element från banan \\
+update & - & uppdaterar alla characters och bullets på banan, uppdaterar positioner, kollar om spelaren har vunnit, justerar scrolled-distance, tar bort bullets som inte ska vara kvar \\
+render & canvas, dc & ritar ut allting i banan \\
+draw-rectangle & x, y, width, height, color, canvas, dc & ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning \\
+draw-bitmap & bitmap, x, y, canvas, dc & ritar ut en bitmap och kompenserar i x-led för sidoscrollning \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+a & b & c \\
+
+ \bottomrule
 \end{adt-table}
 
 \subsection{Testning}
