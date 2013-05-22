@@ -2,7 +2,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[swedish]{babel}
 \usepackage{booktabs}
-\usepackage{tabulary}
+\usepackage{longtable}
+\usepackage{tabu}
 \usepackage{caption}
 \usepackage{wasysym}
 \usepackage{environ}
@@ -31,16 +32,30 @@
 % 	render & canvas, dc & Ritar ut banan på skärmen
 % \end{adt-table}
 \NewEnviron{adt-table}[2]%
-{\begin{table}
-\caption{#1}\label{#2}
-\begin{tabulary}{\textwidth}{>{\bfseries}lcJ}
+{\begin{longtable}{>{\bfseries}lcp{8cm}}
+\caption{#1}\label{#2}\\
+
 \toprule
-Metod & Argument & Beskrivning \\ 
+\textbf{Metod} & \textbf{Argument} & \textbf{Beskrivning} \\ 
 \midrule
-\BODY \\
+\endfirsthead
+
+\toprule
+\multicolumn{3}{c}%
+{\bfseries \tablename\ \thetable{}. (forts)} \\
+\textbf{Metod} & \textbf{Argument} & \textbf{Beskrivning} \\ 
+\midrule
+\endhead
+
+\multicolumn{3}{r}%
+{(fortsätter på nästa sida)} \\
+\endfoot
+
 \bottomrule
-\end{tabulary}
-\end{table}}
+\endlastfoot
+
+\BODY
+\end{longtable}}
 
 \begin{document}
 \maketitle
