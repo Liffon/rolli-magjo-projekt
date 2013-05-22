@@ -210,7 +210,7 @@
                                   (not (eq? elem element)))
                                 items))])) ;; om varken bullet eller player/enemy, ta bort ur items
     
-    ;; uppdaterar alla characters och bullets på banan
+    ;; - uppdaterar alla characters och bullets på banan
     ;; - uppdatera positioner
     ;; - kolla om spelaren har vunnit
     ;; - justera scrolled-distance
