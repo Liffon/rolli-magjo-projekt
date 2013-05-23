@@ -114,7 +114,7 @@ Spelet styrs med hjälp av tangentbordet. I tabell \ref{kontroller} ses vilka ko
     \end{tabular}
 \end{table}
 
-För att starta spelet körs filen "main.scm" i Dr Racket. Spelkaraktären går genast att interagera med när spelet startas. I skärmens övre vänstra hörn syns spelarens head-up-display (HUD). Den innehåller information om hur mycket skada spelaren kan ta emot utan att dö. Dessutom visas vilket vapen som spelaren bär (om något). 
+För att starta spelet körs filen \textsl{main.scm} i Dr Racket. Spelkaraktären går genast att interagera med när spelet startas. I skärmens övre vänstra hörn syns spelarens head-up-display (HUD). Den innehåller information om hur mycket skada spelaren kan ta emot utan att dö. Dessutom visas vilket vapen som spelaren bär (om något). 
 
 \begin{figure}[h!]
 \centering
@@ -303,7 +303,20 @@ fire! & the-map, direction & avlossar ett skott om vapnet befinner sig hos en sp
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
 \subsection{Beskrivning av implementationen}
-Spelet har programmerats objektorienterat vilket innebär att spelare, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag så har en karaktärsklass skapats, som båda dessa bygger på. Rackets inbyggda objektsystem har använts för de olika klasserna.  
+Spelet har programmerats objektorienterat vilket innebär att spelare, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag så har en karaktärsklass skapats, som båda dessa bygger på. Rackets inbyggda objektsystem har använts för de olika klasserna.
+
+\subsubsection{Allmän kodstruktur}
+
+Koden har delats upp så att varje klass ligger i en egen fil. I filen \textsl{main.scm} laddas all annan kod in. Här skapas spelaren, fienderna och banan etc. En timer som tickar 60 ggr/sekund styr hur ofta spellogiken skall uppdateras. 
+
+\subsubsection{Banan}
+En tile-map (brickkarta) har skapats för att användas som bana. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder). 
+
+\subsubsection{Karaktärer}
+
+Karaktärklassen är gemensam för fiender och spelare. Denna klass hanterar
+
+
 \section{Utvärdering och erfarenheter}
 
 %Detta avsnittet är en väldigt viktig del av projektspecifikationen. Här ska ni %tänka tillbaka och utvärdera projektet (något som alltid ska göra efter ett %projekt). Som en hjälp på vägen kan ni utgå från följande frågeställningar:
@@ -321,9 +334,11 @@ Vi har i princip använt specifikationen till att titta på vår kravlista. Om v
 
 \textbf{Har arbetet fungerat som ni tänkt er? Har ni följt arbetsmetodiken? Något som skiljer sig? Till det bättre? Till det sämre?}
 
+
+
 \textbf{Vad har varit mest problematiskt, om man utesluter den programmeringstekniska delen? Alltså saker runt omkring, som att hitta ledig tid eller plats att vara på.}
 
-\textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?}
+\textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?} Vi har bland annatlärt oss att dela upp kodandet och samarbeta via versionhanteringssystemet git.
 
 \section{Tidrapportering}
 Rapportering av arbetstid har skett fortlöpande i ett separat dokument som finns på Google Drive.
