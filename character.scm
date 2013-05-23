@@ -137,7 +137,7 @@
 
     (define/public (die!) ;; Se remove-self!
       (set! hp 0)
-      (remove-self!)) ;; detta kanske inte bör göras omedelbart
+      (remove-self!))
     
     (define/public (hurt! damage) ;; Tar in ett heltal som argument och minskar karaktärens liv med det talet. 
       (set! hp (- hp damage))

@@ -35,11 +35,16 @@
                                                (set! can-be-hurt #t))]))
     
     (define keys (make-hash))
+    
+    ;; Tar in en nyckel och ett booleskt värde som argument och sätter rätt nyckel till det booleska värdet. 
+    
     (define/public (set-key! key boolean)
       (dict-set! keys key boolean))
     
-    (define/public (get-key key) ;; Tar in en knapptryckning som argument och returnerar ett booleskt värde som representerar om
-      (dict-ref keys key #f))    ;; knappen har någon funktion. 
+    ;; Tar in en knapptryckning som argument och returnerar ett booleskt värde som representerar om
+    ;; knappen har någon funktion. 
+    (define/public (get-key key) 
+      (dict-ref keys key #f))    
     
 ;    (define/override (render canvas dc) ;; Tar canvas och dc som argument och säger till banan att rita ut spelaren. 
 ;      (send the-map draw-bitmap bitmap x y canvas dc))

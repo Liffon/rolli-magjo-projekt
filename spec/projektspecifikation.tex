@@ -8,6 +8,7 @@
 \usepackage{wasysym}
 \usepackage{environ}
 \usepackage{array}
+\usepackage{graphicx}
 \usepackage[table]{xcolor}
 
 % utseende på labels
@@ -104,14 +105,25 @@ Spelet styrs med hjälp av tangentbordet. I tabell \ref{kontroller} ses vilka ko
     Tangent  & Funktion \\
     \midrule
     space, $\uparrow$ , x & hoppa \\
-    $\leftarrow$  & gå vänster   \\
-    $\rightarrow$ & gå höger     \\
+    $\leftarrow$  & gå vänster \\
+    $\rightarrow$ & gå höger \\
     a, s     & byta aktuellt vapen \\
-    z        & springa      \\
-    c        & skjuta         \\
+    z        & springa \\
+    c        & skjuta \\
     \bottomrule
     \end{tabular}
 \end{table}
+
+För att starta spelet körs filen "main.scm" i Dr Racket. Spelkaraktären går genast att interagera med när spelet startas. I skärmens övre vänstra hörn syns spelarens head-up-display (HUD). Den innehåller information om hur mycket skada spelaren kan ta emot utan att dö. Dessutom visas vilket vapen som spelaren bär (om något). 
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=11cm]{skarmdomp}
+\caption{En typisk spelsituation.}\label{screenshot}
+\end{figure}
+
+Om spelaren dör så tar spelet slut och måste startas om för att kunna spelas igen. Målet med spelet är att ta sig till slutet av banan. 
+
 
 
 \subsection{Kravlista}
@@ -215,6 +227,53 @@ draw-bitmap & bitmap, x, y, canvas, dc & ritar ut en bitmap och kompenserar i x-
 
 \end{adt-table}
 
+\begin{adt-table}{\code{character\%} (karaktär)}{spelar-adt}
+get-position & - & returnerar ett par med karaktärens x- och y-position \\
+
+add- & item & lägger in föremålet i karaktärens inventarium \\
+
+take-weapon! & weapon & gör vapnet aktuellt och lägger in vapnet i inventariet. \\
+
+switch-weapon! & next/prev & roterar inventariet \\
+
+shoot! & - & avfyrar aktuellt vapen \\
+
+remove-self! & - & tar bort karaktären från banan \\
+
+swap-direction & direction & byter karaktärens riktning \\
+
+on-ground? & - & returnerar \#t om karaktären står på marken \\
+
+find-obstacle & solid?, direction & returnerar en pixel-koordinat för en tom eller solid tile i riktningen direction \\
+
+roof-y & - & Returnerar närmsta solida pixel-koordinat ovan karaktären.  \\
+
+left-y & - & Returnerar närmsta solida pixel-koordinat till vänster karaktären.  \\
+
+right-y & - & Returnerar närmsta solida pixel-koordinat till höger karaktären.  \\
+
+ground-y & - & Returnerar närmsta solida pixel-koordinat under karaktären.  \\
+
+decelerate! & - & Minskar karaktärens hastighet i x-led.  \\
+
+gravitate! & - & Ökar karaktärens hastighet i y-led.  \\
+
+push! & dvx, dvy & ändrar karaktärens hastighet i x- och/eller yled \\
+
+jump! & - & Ger karaktären en negativ hastighet i y-led.  \\
+
+render & canvas, dc & säger åt banan att rita en rektangel. \\
+
+move! & - & bestämmer hur spelaren skall röra sig \\
+
+die! & - & se remove-self! \\
+
+hurt! & damage & skadar karaktären \\
+
+update! & - & kör move! \\
+
+\end{adt-table}
+
 \subsection{Testning}
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
@@ -228,12 +287,17 @@ Spelet har programmerats objektorienterat vilket innebär att spelare, fiender o
 Projektet har gått bra överlag. 
 \textbf{Lade ni ned för mycket/lite tid?}
 Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 20 timmar mindre per person. Dock skulle jag (Magnus) inte vilja påstå att vi har lagt ner för lite tid, eftersom vi inte hade hunnit jobba så mycket mer på den utsatta tiden om vi inte hade suttit ännu mer på kvällar och helger. Eftersom vi ändå hann göra ett riktigt bra spel så är vi nöjda. 
+
 \textbf{Var arbetsfördelningen jämn? Om inte: Vad hade ni kunnat göra för att förbättra den?}
 Arbetsfördelningen var relativt jämn, dock så hann Rolf göra mer än Magnus på samma antal timmar arbete eftersom han är en mer erfaren programmerare. Vi hade kunnat...
+
 \textbf{Har ni haft någon nytta av specifikationen? Vad har varit mest användbart med den? Minst?}
 Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång och skrivit in tankarna hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet av fundera eftersom man kommer vidare vad som kan behövas osv. Vi ville absolut inte låsa oss till vissa grejer, utan ville känna friheten att kunna ändra oss efterhand. 
+
 \textbf{Har arbetet fungerat som ni tänkt er? Har ni följt arbetsmetodiken? Något som skiljer sig? Till det bättre? Till det sämre?}
+
 \textbf{Vad har varit mest problematiskt, om man utesluter den programmeringstekniska delen? Alltså saker runt omkring, som att hitta ledig tid eller plats att vara på.}
+
 \textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?}
 
 \section{Tidrapportering}
