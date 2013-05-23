@@ -41,6 +41,9 @@
       (when (zero? (get-field hp player))
         (send dc draw-bitmap game-over-bitmap 0 0)))
       
+    
+    ;; ritar ut HUD:en
+    
     (define/public (render canvas dc)
       (if (get-field has-won? player)
           (end-screen dc)

@@ -227,7 +227,7 @@ draw-bitmap & bitmap, x, y, canvas, dc & ritar ut en bitmap och kompenserar i x-
 
 \end{adt-table}
 
-\begin{adt-table}{\code{character\%} (karaktär)}{spelar-adt}
+\begin{adt-table}{\code{character\%} (karaktär)}{karak-adt}
 get-position & - & returnerar ett par med karaktärens x- och y-position \\
 
 add- & item & lägger in föremålet i karaktärens inventarium \\
@@ -276,10 +276,29 @@ update! & - & kör move! \\
 
 \begin{adt-table}{\code{bullet\%} (kula)}{kula-adt}
 
-a & a & a \\
+remove-self & - & tar bort kulan från banan \\
+
+render & canvas, dc & ritar kulan på banan \\
+
+update! & - & kör move! \\
+
+move & - & flyttar kulan \\
 
 \end{adt-table}
 
+\begin{adt-table}{\code{hud\%} (hud)}{hud-adt}
+
+render & canvas, dc & ritar HUD:en på skärmen \\
+
+\end{adt-table}
+
+\begin{adt-table}{\code{weapon\%} (vapen)}{vapen-adt}
+
+render & canvas, dc & ritar vapnet på skärmen  \\
+
+fire! & the-map, direction & avlossar ett skott om vapnet befinner sig hos en spelare \\
+ 
+\end{adt-table}
 \subsection{Testning}
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
