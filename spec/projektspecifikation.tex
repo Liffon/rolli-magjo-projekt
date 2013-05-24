@@ -10,7 +10,7 @@
 \usepackage{array}
 \usepackage{graphicx}
 \usepackage[table]{xcolor}
-
+\usepackage{alltt}
 % utseende på labels
 \captionsetup{margin=10pt,font=small,labelfont=bf,labelsep=period}
 
@@ -352,8 +352,23 @@ Koden har delats upp så att varje klass ligger i en egen fil. I filen \textsl{m
 \subsubsection{Banan}
 En tile-map (brickkarta) har skapats för att användas som bana. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
 
-Det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet render till varje element på banan. 
- 
+Det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet render till varje element. 
+
+\subsubsection{Tile-map}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=11cm]{tilekoordinater}
+\caption{En rutnät av tiles.}\label{tile-rutnat}
+\end{figure}
+
+Något som sker väldigt ofta i tile-map är konvertering mellan vanliga pixel-koordinater och tile-koordinater. Tile-mapen kan ses som en hinna som ligger över banan och har sitt eget koordinatsystem, se figur \ref{tile-rutnat}. Eftersom varje tile är 40x40 pixlar så ligger tex. punkten (50.50) i den tile som har tile-koordinaterna (1.1). Punkten (0.0) ligger i övre vänstra hörnet av skärmen, och båda koordinatsystemen utgår från övre vänstra hörnet. För att räkna ut vilken tile en viss koordinat ligger i tas därför hänsyn till en tiles mått. Dessutom avrundas de erhållna koordinaterna till heltal med hjälp av proceduren \code{inexact->exact} för att kunna appliceras till en befintlig tile-koordinat, se exempelkod nedan. 
+\begin{alltt}
+(define/public (get-tile-coord-pos x y) 
+      (values (inexact->exact (floor (/ x tile-size)))
+              (inexact->exact (floor (/ y tile-size)))))
+\end{alltt}         
+
 
 \subsubsection{Karaktärer}
 

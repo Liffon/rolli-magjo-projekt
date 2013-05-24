@@ -102,7 +102,7 @@
                       [x 20] [y 400]
                       [hp 100] [direction 'right]))
 
-;; skapa en bana med storlek 32x12 tiles och varje tile är 40x40 pixlar
+;; skapa en bana med storlek 64x12 tiles och varje tile är 40x40 pixlar
 (define *map* (new map%
                    [width 64] [height 12]
                    [tile-size 40]
