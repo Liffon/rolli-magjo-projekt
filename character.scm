@@ -1,3 +1,13 @@
+;; character.scm
+;; =============
+
+;; innehåller klassen character%
+;; Init-argument: x, y, width, hp, the-map, bitmap-right, bitmap-left, direction
+;; (samtliga frivilliga)
+
+;; Användningsexempel:
+; (new character% [x 30] [y 320] [direction 'left] [bitmap-left cat-bitmap] [bitmap-right cat-bitmap])
+
 (load "ring.scm")
 
 (define character% ;; En karaktärsklass som både spelaren och fienderna bygger på. 

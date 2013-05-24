@@ -1,6 +1,8 @@
 ;; main.scm
 ;; ========
 
+;; För att starta spelet, kör den här filen.
+
 (require racket/gui)
 (load "map.scm")
 (load "player.scm")

@@ -1,3 +1,22 @@
+;; tilemap.scm
+;; ===========
+
+;; innehåller klassen enemy%
+;; Init-argument: width, height, tile-size, tiles
+;; (alla utom tiles är obligatoriska)
+
+;; Användningsexempel:
+; (new tilemap% [width 10] [height 10] [tile-size 16] [tiles tile-vector])
+; där tile-vector är en vector med längd 10x10=100
+
+;; Möjliga tiles:
+; symbol   beskrivning
+; ======   ===========
+; 'empty   ingenting (icke-solid)
+; 'exit    mål (icke-solid) - om spelaren kommer hit är spelet slut
+; 'ground  solid (med bild av tegelstenar)
+; 'ground2 solid (med bild av tegelstenar med gräs på)
+
 (define tilemap%
   (class object%
     (init-field width

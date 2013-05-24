@@ -1,3 +1,15 @@
+;; player.scm
+;; ==========
+
+;; innehåller klassen player%
+;; (baseras på character%)
+
+;; Init-argument: se character%
+;;   - width, height, bitmap-left och bitmap-right har dock inte samma standardvärden som i character%
+
+;; Användningsexempel:
+; (new player% [x 0] [y 10] [hp 220])
+
 (load "character.scm")
 
 (define player%
