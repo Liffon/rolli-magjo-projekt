@@ -288,7 +288,7 @@ get-next-tile-pixel & se map\% & se map\% \\
 
 render-tiles & dc xs,ys & ritar ut tiles på dc \\
 
-render & canvas, dc, scrolled distance & ROLF varför render-tile å render?! \\ 
+render & canvas, dc, scrolled distance & ritar ut alla tiles som ska synas på skärmen \\ 
  
 \end{adt-table}
 
@@ -352,31 +352,31 @@ Koden har delats upp så att varje klass ligger i en egen fil. I filen \textsl{m
 \subsubsection{Banan}
 En tile-map (brickkarta) har skapats för att användas som bana. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
 
-Det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet update! till varje element på banan. 
+Det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet render till varje element på banan. 
  
 
 \subsubsection{Karaktärer}
 
-Karaktärklassen är gemensam för fiender och spelare. Denna klass innehåller metoder som hanterar vad som ska hända när spelaren krockar med något, tar skada, tar upp och byter vapen etc. 
+Karaktärsklassen är gemensam för fiender och spelare. Denna klass innehåller metoder som hanterar vad som ska hända när karaktären krockar med något, tar skada, tar upp och byter vapen etc.  
 
 \subsubsection{Skott}
 
-Skotten är objekt som kan avlossas från vapen. Dessa tas bort när de åker utanför den synliga delen av banan för att spara på datorkapacitet. Det tas även bort vid krock med solida tiles samt efter att ha träffat tex. en fiende. 
+Skotten är objekt som kan avlossas från vapen. Dessa tas bort när de åker utanför den synliga delen av banan för att spara datorkapacitet. De tas även bort vid krock med solida tiles samt efter att ha träffat tex. en fiende. 
 
 \section{Utvärdering och erfarenheter}
 
 %Detta avsnittet är en väldigt viktig del av projektspecifikationen. Här ska ni %tänka tillbaka och utvärdera projektet (något som alltid ska göra efter ett %projekt). Som en hjälp på vägen kan ni utgå från följande frågeställningar:
 
 \textbf{Vad gick bra? Mindre bra?}
-Projektet har gått bra överlag. 
+Projektet har gått bra överlag och vi är nöjda med resultatet.  
 \textbf{Lade ni ned för mycket/lite tid?}
-Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 20 timmar mindre per person. Dock skulle jag (Magnus) inte vilja påstå att vi har lagt ner för lite tid, eftersom vi inte hade hunnit jobba så mycket mer på den utsatta tiden om vi inte hade suttit ännu mer på kvällar och helger. Eftersom vi ändå hann göra ett riktigt bra spel så är vi nöjda. 
+Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 20 timmar mindre per person. Dock skulle jag (Magnus) inte vilja påstå att vi har lagt ner för lite tid, eftersom vi inte hade hunnit jobba så mycket mer på den utsatta tiden om vi inte hade suttit ännu mer på kvällar och helger.
 
 \textbf{Var arbetsfördelningen jämn? Om inte: Vad hade ni kunnat göra för att förbättra den?}
-Arbetsfördelningen var relativt jämn, dock så hann Rolf göra mer än Magnus på samma antal timmar arbete eftersom han är en mer erfaren programmerare. Vi hade kunnat...
+Arbetsfördelningen var relativt jämn, dock så hann Rolf göra mer än Magnus på samma antal timmar arbete eftersom han är en mer erfaren programmerare. Vi jobbade tillsammans ganska länge innan vi delade upp kodandet, vilket kan ha medfört att vi i slutändan hann mindre totalt. Dock så kändes det bra att bygga upp grundstommen tillsammans. 
 
 \textbf{Har ni haft någon nytta av specifikationen? Vad har varit mest användbart med den? Minst?}
-Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång och skrivit in tankarna hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet av fundera eftersom man kommer vidare vad som kan behövas osv. Vi ville absolut inte låsa oss till vissa grejer, utan ville känna friheten att kunna ändra oss efterhand. 
+Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång, och skrivit in våra tankar, hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet att fundera under arbetets gång vad som kunde behövas osv. Vi ville absolut inte låsa oss till vissa grejer (tex. bestämma precis vilka kontroller som skulle användas och hur karaktärerna skulle se ut) utan ville känna friheten att kunna ändra oss efterhand. 
 
 \textbf{Har arbetet fungerat som ni tänkt er? Har ni följt arbetsmetodiken? Något som skiljer sig? Till det bättre? Till det sämre?}
 
