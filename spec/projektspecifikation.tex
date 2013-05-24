@@ -233,6 +233,8 @@ Koden har delats upp så att varje klass ligger i en egen fil. I filen \filename
 \subsubsection{Bana}
 Banan är en klass som innehåller allting som ska kunna interagera med varandra och det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet \code{render}. Det är här det mesta ''kopplas samman'', då det är detta objekt som vet var allting är. Många av procedurerna i \code{map\%} skickas vidare direkt till dess tile-map.
 
+
+
 \subsubsection{Tile-map}
 En tile-map (''brickkarta'') har skapades för att användas som terräng i banan. Varje tile är 40x40 pixlar och har en viss typ, som representeras av en symbol. Vissa typer av tiles är solida, andra inte. Är den solid krockar karaktärer och skott med den och är den tom kan karaktärer och skott passera igenom den. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
 
@@ -244,7 +246,8 @@ I början av spelets utveckling upplevde vi prestandaproblem vid utritning av ti
 \caption{Ett rutnät av tiles.}\label{tile-rutnat}
 \end{figure}
 
-Något som sker väldigt ofta i tile-map är konvertering mellan vanliga pixel-koordinater och tile-koordinater. Tile-mapen kan ses som en hinna som ligger över banan och har sitt eget koordinatsystem, se figur \ref{tile-rutnat}. Eftersom varje tile är 40x40 pixlar ligger tex. punkten (50,50) i den tile som har tile-koordinaterna (1,1). Punkten (0,0) ligger i övre vänstra hörnet av skärmen, och båda koordinatsystemen utgår från övre vänstra hörnet. För att räkna ut vilken tile en viss koordinat ligger i tas därför hänsyn till en tiles mått. Dessutom avrundas de erhållna koordinaterna till heltal med hjälp av proceduren \code{inexact->exact} för att kunna appliceras till en befintlig tile-koordinat, se exempelkod nedan. 
+Något som sker väldigt ofta i tile-map är konvertering mellan vanliga pixel-koordinater och tile-koordinater. Tile-mapen kan ses som en hinna som ligger över banan och har sitt eget koordinatsystem, se figur \ref{tile-rutnat}. Eftersom varje tile är 40x40 pixlar ligger tex. punkten (50,50) i den tile som har tile-koordinaterna (1,1). Punkten (0,0) ligger i övre vänstra hörnet av skärmen, och båda koordinatsystemen utgår från övre vänstra hörnet. För att räkna ut vilken tile en viss koordinat ligger i tas därför hänsyn till en tiles mått. Dessutom avrundas de erhållna koordinaterna till heltal med hjälp av proceduren \code{inexact->exact} för att kunna appliceras till en befintlig tile-koordinat, se exempelkod nedan.
+
 \begin{alltt}
 (define/public (get-tile-coord-pos x y) 
       (values (inexact->exact (floor (/ x tile-size)))
@@ -254,11 +257,23 @@ Något som sker väldigt ofta i tile-map är konvertering mellan vanliga pixel-k
 
 \subsubsection{Karaktärer}
 
-Karaktärsklassen är gemensam för fiender och spelare. Denna klass innehåller metoder som hanterar vad som ska hända när karaktären krockar med något, tar skada, tar upp och byter vapen etc.  
+Karaktärsklassen är gemensam för fiender och spelare. Denna klass innehåller metoder som hanterar vad som ska hända när karaktären krockar med något, tar skada, tar upp och byter vapen etc.
+
+Metoderna \code{left-x} och \code{right-x} användes som sagt till att finna nästa solida tile eller kant av plattform i en viss riktning. För spelaren så har de endast gällt för solida tiles medan de för fiender gäller båda. Detta beror på att fiender ska ändra gångriktning både när de stöter i ett hinder och när de kommer fram till en kant. En lösning på detta var att ''overrida'' dessa procedurer som ju ärvts från \code{character\%} i \code{enemy\%}.
+
+\code{ground-y} användes för att hålla reda på var marken är. I koden så varierar markkoordinaterna beroende på var spelaren befinner sig eftersom marken definieras som närmsta solida tile under spelaren. Detta innebär att om man hoppar från en plattform mot en högre så att man befinner sig ovanför den högre plattformen så sätts den övre plattformens koordinater till markkoordinater. 
+
+
+
+\subsubsection{vapen}
+
+Ett vapen initieras med en bullet, som sedan skapas när vapnet avfyras. Varje vapen skapas dessutom med en egen cooldown, så att skott kan skjutas olika frekvent med olika vapen. 
 
 \subsubsection{Skott}
 
 Skotten är objekt som kan avlossas från vapen. Dessa tas bort när de åker utanför den synliga delen av banan för att spara datorkapacitet. De tas även bort vid krock med solida tiles samt efter att ha träffat tex. en fiende. 
+
+Skotten åker åt det håll som spelaren är riktad åt. Detta har implementerats genom att skottet får en direction när det skapas som är likriktad vapnets bärare, dvs karaktären. 
 
 \subsubsection{Dubbelriktad muterbar ring}
 
@@ -279,10 +294,9 @@ Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 2
 
 Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång, och skrivit in våra tankar, hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet att fundera under arbetets gång vad som kunde behövas osv. Vi ville absolut inte låsa oss till vissa grejer (t.ex. bestämma precis vilka kontroller som skulle användas och hur karaktärerna skulle se ut) utan ville känna friheten att kunna ändra oss efterhand. 
 
-\textbf{Vad har varit mest problematiskt, om man utesluter den programmeringstekniska delen? Alltså saker runt omkring, som att hitta ledig tid eller plats att vara på.}
 Det hade varit bra att få mer information om hur projektet var tänkt att gå till i förväg. Det finns en pdf på kurshemsidan från 2012 (''Breddföreläsning om ADT:er, OOP, versionshantering, m.m.'') med information som vi gärna hade sett i form av en föreläsning även i år. Det hade nog hjälpt många (inklusive oss) att komma igång ordentligt med arbetet med versionshantering och så vidare.
 
-\textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?} Vi har bland annat lärt oss att dela upp kodandet och samarbeta via versionhanteringssystemet git.
+Vi har bland annat lärt oss att dela upp kodandet och samarbeta via versionhanteringssystemet git. Dessutom har ytterligare erfarenheter erhållits inom programmering i allmänhet och objektorientering i synnerhet. 
 
 Vi har dessutom lärt oss att arbeta i \LaTeX\ för att skriva rapporter.
 
