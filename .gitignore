@@ -1,1 +1,8 @@
 *.scm~
+*.swp
+*.pdf
+*.log
+*.fdb_latexmk
+*.fls
+*.aux
+*.synctex.gz

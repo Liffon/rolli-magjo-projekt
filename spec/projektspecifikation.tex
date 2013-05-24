@@ -184,163 +184,10 @@ Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
 Det här kapitlet behandlar spelets implementation.
 
 \subsection{Abstrakta datatyper}
-\begin{adt-table}{\code{map\%} (bana)}{map-adt}
-dump-tiles-to-file & filnamn & skickar vidare argumentet till tilemap  \\ 
- 
-colliding? & obj1, obj2 & returnerar sant om objekten överlappar varandra \\ 
- 
-colliding-bullets & obj & returnerar alla bullets som kolliderar med obj \\ 
- 
-colliding-characters & obj & returnerar alla characters som kolliderar med obj \\ 
- 
-colliding-items & obj & returnerar alla items som kolliderar med obj \\ 
+Tabeller \ref{map-adt}--\ref{ring-adt} innehåller specifikation för de abstrakta datatyperna som använts i projektet.
 
-colliding-in & lst, obj & returnerar alla element i lst som kolliderar med obj \\ 
- 
-overlapping-tiles & obj & returnerar en lista med alla koordinater (x . y) för tiles som obj överlappar \\ 
- 
-colliding-tiles & obj & returnerar \#t om obj överlappar en solid tile, annars \#f \\ 
- 
-get-next-tile-pixel & solid?, x, y, direction & Börjar på position (x,y) och går åt hållet direction tills den stöter på en solid eller tom (beroende på "solid?") tile eller tills banan tar slut. Returnerar x- eller y-koordinaten för den punkten (beroende på om den letade i x- eller y-led)\\ 
- 
-get-next-solid-pixel & x, y, direction & samma som get-next-tile-pixel fast kollar alltid efter solid tile \\
+\input{adt-tabeller.tex}
 
-get-next-empty-pixel & x, y, direction & samma som get-next-tile-pixel fast kollar alltid efter tom tile \\
-
-get-position-tile & x, y & returnerar värdet på en tile vid pixlar (x,y) \\
-
-get-screen-position-tile & x, y & returnerar värdet på en tile vid pixlar (x,y) med x kompenserat för scrollning \\
-
-solid-tile-at? & x, y & returnerar sant om givna pixelkoordinater är del av en solid tile \\
-
-valid-tile-coord? & x, y & returnerar sant om x, y är giltiga koordinater för tiles \\
-
-valid-tile-coord-at-screen? & x, y & returnerar sant om x, y konverterat till tile-koordinater är giltiga koordinater för tiles (x kompenseras för scrollning) \\
-
-set-tile-at-screen! & x, y, value & ändrar tilen vid pixel-koordinater x, y till value med x kompenserat för scrollning \\
-
-add-element! & element & lägger in ett element i banan\\
-
-delete-element! & element & tar bort ett element från banan \\
-update & - & uppdaterar alla characters och bullets på banan, uppdaterar positioner, kollar om spelaren har vunnit, justerar scrolled-distance, tar bort bullets som inte ska vara kvar \\
-render & canvas, dc & ritar ut allting i banan \\
-draw-rectangle & x, y, width, height, color, canvas, dc & ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning \\
-draw-bitmap & bitmap, x, y, canvas, dc & ritar ut en bitmap och kompenserar i x-led för sidoscrollning \\
-
-\end{adt-table}
-
-\begin{adt-table}{\code{character\%} (karaktär)}{karak-adt}
-get-position & - & returnerar ett par med karaktärens x- och y-position \\
-
-add- & item & lägger in föremålet i karaktärens inventarium \\
-
-take-weapon! & weapon & gör vapnet aktuellt och lägger in vapnet i inventariet. \\
-
-switch-weapon! & next/prev & roterar inventariet \\
-
-shoot! & - & avfyrar aktuellt vapen \\
-
-remove-self! & - & tar bort karaktären från banan \\
-
-swap-direction & direction & byter karaktärens riktning \\
-
-on-ground? & - & returnerar \#t om karaktären står på marken \\
-
-find-obstacle & solid?, direction & returnerar en pixel-koordinat för en tom eller solid tile i riktningen direction \\
-
-roof-y & - & Returnerar närmsta solida pixel-koordinat ovan karaktären.  \\
-
-left-x & - & Returnerar närmsta solida pixel-koordinat till vänster om karaktären.  \\
-
-right-x & - & Returnerar närmsta solida pixel-koordinat till höger om karaktären.  \\
-
-ground-y & - & Returnerar närmsta solida pixel-koordinat under karaktären.  \\
-
-decelerate! & - & Minskar karaktärens hastighet i x-led.  \\
-
-gravitate! & - & Ökar karaktärens hastighet i y-led.  \\
-
-push! & dvx, dvy & ändrar karaktärens hastighet i x- och/eller yled \\
-
-jump! & - & Ger karaktären en negativ hastighet i y-led.  \\
-
-render & canvas, dc & säger åt banan att rita en rektangel. \\
-
-move! & - & bestämmer hur spelaren skall röra sig \\
-
-die! & - & se remove-self! \\
-
-hurt! & damage & skadar karaktären \\
-
-update! & - & kör move! \\
-
-\end{adt-table}
-
-\begin{adt-table}{\code{tilemap\%} (brickkarta)}{tilemap-adt}
-
-dump-tiles-to-file & filename & spara tiles-vectorn till en fil \\
-
-load-tiles! & input & ladda in tiles från en vector eller en fil \\
-
-valid-tile-coord? & x, y & returnerar \#t om koordinaterna är tillåtna \\
-
-get-position-tile & x, y & returnerar den tile som finns på x, y \\
-
-get-next-tile-pixel & se map\% & se map\% \\
-
-render-tiles & dc xs,ys & ritar ut tiles på dc \\
-
-render & canvas, dc, scrolled distance & ritar ut alla tiles som ska synas på skärmen \\ 
- 
-\end{adt-table}
-
-
-\begin{adt-table}{\code{player\%} (spelare)}{spelar-adt}
-
-set-key! & key, boolean & sätter key till boolean \\
-
-get-key & key & returnerar \#t om key är nedtryckt \\
-
-update! & - & avgör vad som händer varje frame \\
-
-\end{adt-table}
-
-\begin{adt-table}{\code{enemy\%} (fiende)}{fiende-adt}
-
-left-x & - & returnerar närmsta pixelkoordinaten för antingen en solid tile eller en kant av en platå åt vänster \\
-
-right-x & - & returnerar närmsta pixelkoordinaten för antingen en solid tile eller en kant av en platå åt höger \\
-
-update! & - & avgör vad som händer varje frame \\
-
-\end{adt-table}
-
-
-\begin{adt-table}{\code{bullet\%} (kula)}{kula-adt}
-
-remove-self & - & tar bort kulan från banan \\
-
-render & canvas, dc & ritar kulan på banan \\
-
-update! & - & kör move! \\
-
-move & - & flyttar kulan \\
-
-\end{adt-table}
-
-\begin{adt-table}{\code{hud\%} (hud)}{hud-adt}
-
-render & canvas, dc & ritar HUD:en på skärmen \\
-
-\end{adt-table}
-
-\begin{adt-table}{\code{weapon\%} (vapen)}{vapen-adt}
-
-render & canvas, dc & ritar vapnet på skärmen  \\
-
-fire! & the-map, direction & avlossar ett skott om vapnet befinner sig hos en spelare \\
- 
-\end{adt-table}
 \subsection{Testning}
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
@@ -404,6 +251,7 @@ Projektet har gått bra överlag och vi är nöjda med resultatet. Vi har inte l
 Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång, och skrivit in våra tankar, hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet att fundera under arbetets gång vad som kunde behövas osv. Vi ville absolut inte låsa oss till vissa grejer (tex. bestämma precis vilka kontroller som skulle användas och hur karaktärerna skulle se ut) utan ville känna friheten att kunna ändra oss efterhand. 
 
 \textbf{Vad har varit mest problematiskt, om man utesluter den programmeringstekniska delen? Alltså saker runt omkring, som att hitta ledig tid eller plats att vara på.}
+Det hade varit bra att få mer information om hur projektet var tänkt att gå till i förväg. Det finns en pdf på kurshemsidan från 2012 (''Breddföreläsning om ADT:er, OOP, versionshantering, m.m.'') med information som vi gärna hade sett i form av en föreläsning även i år. Det hade nog hjälpt många (inklusive oss) att komma igång ordentligt med arbetet med versionshantering och så vidare.
 
 \textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?} Vi har bland annat lärt oss att dela upp kodandet och samarbeta via versionhanteringssystemet git.
 

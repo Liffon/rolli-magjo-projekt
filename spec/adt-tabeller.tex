@@ -1,0 +1,170 @@
+\begin{adt-table}{\code{map\%} (bana)}{map-adt}
+dump-tiles-to-file & filnamn & skickar vidare argumentet till tilemap  \\ 
+ 
+colliding? & obj1, obj2 & returnerar sant om objekten överlappar varandra \\ 
+ 
+colliding-bullets & obj & returnerar alla bullets som kolliderar med obj \\ 
+ 
+colliding-characters & obj & returnerar alla characters som kolliderar med obj \\ 
+ 
+colliding-items & obj & returnerar alla items som kolliderar med obj \\ 
+
+colliding-in & lst, obj & returnerar alla element i lst som kolliderar med obj \\ 
+ 
+overlapping-tiles & obj & returnerar en lista med alla koordinater (x . y) för tiles som obj överlappar \\ 
+ 
+colliding-tiles & obj & returnerar \code{\#t} om obj överlappar en solid tile, annars \code{\#f} \\ 
+ 
+get-next-tile-pixel & solid?, x, y, direction & Börjar på position (x,y) och går åt hållet direction tills den stöter på en solid eller tom (beroende på "solid?") tile eller tills banan tar slut. Returnerar x- eller y-koordinaten för den punkten (beroende på om den letade i x- eller y-led)\\ 
+ 
+get-next-solid-pixel & x, y, direction & samma som get-next-tile-pixel fast kollar alltid efter solid tile \\
+
+get-next-empty-pixel & x, y, direction & samma som get-next-tile-pixel fast kollar alltid efter tom tile \\
+
+get-position-tile & x, y & returnerar värdet på en tile vid pixlar (x,y) \\
+
+get-screen-position-tile & x, y & returnerar värdet på en tile vid pixlar (x,y) med x kompenserat för scrollning \\
+
+solid-tile-at? & x, y & returnerar sant om givna pixelkoordinater är del av en solid tile \\
+
+valid-tile-coord? & x, y & returnerar sant om x, y är giltiga koordinater för tiles \\
+
+valid-tile-coord-at-screen? & x, y & returnerar sant om x, y konverterat till tile-koordinater är giltiga koordinater för tiles (x kompenseras för scrollning) \\
+
+set-tile-at-screen! & x, y, value & ändrar tilen vid pixel-koordinater x, y till value med x kompenserat för scrollning \\
+
+add-element! & element & lägger in ett element i banan\\
+
+delete-element! & element & tar bort ett element från banan \\
+update & - & uppdaterar alla characters och bullets på banan, uppdaterar positioner, kollar om spelaren har vunnit, justerar scrolled-distance, tar bort bullets som inte ska vara kvar \\
+render & canvas, dc & ritar ut allting i banan \\
+draw-rectangle & x, y, width, height, color, canvas, dc & ritar ut en rektangel med en viss färg och kompenserar i x-led för sidoscrollning \\
+draw-bitmap & bitmap, x, y, canvas, dc & ritar ut en bitmap och kompenserar i x-led för sidoscrollning \\
+
+\end{adt-table}
+
+\begin{adt-table}{\code{character\%} (karaktär)}{karak-adt}
+get-position & - & returnerar ett par med karaktärens x- och y-position \\
+
+add- & item & lägger in föremålet i karaktärens inventarium \\
+
+take-weapon! & weapon & gör vapnet aktuellt och lägger in vapnet i inventariet. \\
+
+switch-weapon! & next/prev & roterar inventariet \\
+
+shoot! & - & avfyrar aktuellt vapen \\
+
+remove-self! & - & tar bort karaktären från banan \\
+
+swap-direction & direction & byter karaktärens riktning \\
+
+on-ground? & - & returnerar \code{\#t} om karaktären står på marken \\
+
+find-obstacle & solid?, direction & returnerar en pixel-koordinat för en tom eller solid tile i riktningen direction \\
+
+roof-y & - & Returnerar närmsta solida pixel-koordinat ovan karaktären.  \\
+
+left-x & - & Returnerar närmsta solida pixel-koordinat till vänster om karaktären.  \\
+
+right-x & - & Returnerar närmsta solida pixel-koordinat till höger om karaktären.  \\
+
+ground-y & - & Returnerar närmsta solida pixel-koordinat under karaktären.  \\
+
+decelerate! & - & Minskar karaktärens hastighet i x-led.  \\
+
+gravitate! & - & Ökar karaktärens hastighet i y-led.  \\
+
+push! & dvx, dvy & ändrar karaktärens hastighet i x- och/eller yled \\
+
+jump! & - & Ger karaktären en negativ hastighet i y-led.  \\
+
+render & canvas, dc & säger åt banan att rita en rektangel. \\
+
+move! & - & bestämmer hur spelaren skall röra sig \\
+
+die! & - & se remove-self! \\
+
+hurt! & damage & skadar karaktären \\
+
+update! & - & avgör vad som ska hända varje frame; overridas av \code{player\%} och \code{enemy\%} \\
+
+\end{adt-table}
+
+\begin{adt-table}{\code{tilemap\%} (brickkarta)}{tilemap-adt}
+
+dump-tiles-to-file & filename & spara tiles-vectorn till en fil \\
+
+load-tiles! & input & ladda in tiles från en vector eller en fil \\
+
+valid-tile-coord? & x, y & returnerar \code{\#t} om koordinaterna är tillåtna \\
+
+get-position-tile & x, y & returnerar den tile som finns på x, y \\
+
+get-next-tile-pixel & se map\% & se map\% \\
+
+render-tiles & dc xs,ys & ritar ut tiles på dc \\
+
+render & canvas, dc, scrolled distance & ritar ut alla tiles som ska synas på skärmen \\ 
+ 
+\end{adt-table}
+
+
+\begin{adt-table}{\code{player\%} (spelare)}{spelar-adt}
+
+set-key! & key, boolean & sätter key till boolean \\
+
+get-key & key & returnerar \code{\#t} om key är nedtryckt \\
+
+update! & - & avgör vad som händer varje frame \\
+
+\end{adt-table}
+
+\begin{adt-table}{\code{enemy\%} (fiende)}{fiende-adt}
+
+left-x & - & returnerar närmsta pixelkoordinaten för antingen en solid tile eller en kant av en platå åt vänster \\
+
+right-x & - & returnerar närmsta pixelkoordinaten för antingen en solid tile eller en kant av en platå åt höger \\
+
+update! & - & avgör vad som händer varje frame \\
+
+\end{adt-table}
+
+
+\begin{adt-table}{\code{bullet\%} (kula)}{kula-adt}
+
+remove-self & - & tar bort kulan från banan \\
+
+render & canvas, dc & ritar kulan på banan \\
+
+update! & - & kör move! \\
+
+move & - & flyttar kulan \\
+
+\end{adt-table}
+
+\begin{adt-table}{\code{hud\%} (head-up-display)}{hud-adt}
+
+render & canvas, dc & ritar HUD:en på skärmen \\
+
+\end{adt-table}
+
+\begin{adt-table}{\code{weapon\%} (vapen)}{vapen-adt}
+
+render & canvas, dc & ritar vapnet på skärmen  \\
+
+fire! & the-map, direction & avlossar ett skott om vapnet befinner sig hos en spelare \\
+ 
+\end{adt-table}
+
+\begin{adt-table}{Abstrakt datatyp för en dubbelriktad muterbar ring. Procedurerna är inte metoder utan fristående procedurer.}{ring-adt}
+
+make-ring			& -				& skapar en tom ring \\
+ring?				& maybe-ring	& returnerar \code{\#t} om maybe-ring är en ring, \code{\#f} annars \\
+empty-ring?			& ring			& returnerar \code{\#t} om ring är tom, \code{\#f} annars \\
+ring-first			& ring 			& returnerar första elemenetet i ring \\
+ring-first-value	& ring 			& returnerar första värdet i ring \\
+ring-insert!		& ring, value	& stoppar in ett nytt element med givet värde först i ring. Det gamla första elementet blir ''till höger om'' det nya. \\
+ring-rotate-left!	& ring			& roterar ringen ett steg ''åt vänster'' \\
+ring-rotate-right!	& ring			& roterar ringen ett steg ''åt höger'' \\
+
+\end{adt-table}
