@@ -8,7 +8,7 @@
 (load "weapon.scm")
 (load "hud.scm")
 
-(define *g* 0.005) ;; gravitation
+(define *g* 0.004) ;; gravitation
 (define *dt* (round (/ 1000 60))) ;; uppdateringen ska ske 60 gånger per sekund
 (define *level-filename* "level.sexpr")
 
