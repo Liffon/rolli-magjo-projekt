@@ -1,6 +1,11 @@
 ;; Muterbar dubbelriktad ring
 ;; ==========================
 
+;; (innehåller även kod för en muterbar triple)
+
+;; saknar procedurer för att ta reda på längden på en ring
+;;               och för att ta bort ett element ur en ring
+
 ;; Konstruktor
 ; skapa en tom ring
 (define (make-ring)
@@ -26,9 +31,6 @@
       (error "No first value of empty ring!" ring)
       (c2r (ring-first ring))))
 
-; kanske behövs: (ring-length ring)
-;   som returnerar längden på en ring
-
 ;; Mutatorer
 ; stoppar in ett nytt element med givet värde först i ringen
 ; det gamla första elementet blir "till höger om" det nya
@@ -44,9 +46,6 @@
           (set-c1r! first-element new-element)
           (set-c3r! left-element new-element)
           (set-mcar! ring new-element)))))
-
-; kanske behövs: (ring-delete! ring value)
-;   som tar bort första förekomsten av angivet värde i ringen
 
 ; roterar ringen ett steg åt "vänster"
 (define (ring-rotate-left! ring)
