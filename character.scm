@@ -10,7 +10,7 @@
 
 (load "ring.scm")
 
-(define character% ;; En karaktärsklass som både spelaren och fienderna bygger på. 
+(define character%
   (class object%
     (init-field [x 0] ;; x-position
                 [y 0] ;; y-position
@@ -33,41 +33,55 @@
       (cons (inexact->exact (round x))
             (inexact->exact (round y))))
     
-    (define/public (add-item! item) ;; Tar ett föremål som argument och lägger in det i karaktärens inventarium
-      (ring-insert! inventory item) ;; samt gör så att föremålet vet vem/vad som bär det. 
+    ;; Tar ett föremål som argument och lägger in det i karaktärens inventarium
+    ;; samt gör så att föremålet vet vem/vad som bär det. 
+    (define/public (add-item! item) 
+      (ring-insert! inventory item) 
       (set-field! wielder item this))
     
-    (define/public (take-weapon! new-weapon) ;; Tar ett vapen som argument, gör det till aktuellt vapen (som karaktären 
-      (set! weapon new-weapon)               ;; använder) och lägger in vapnet i inventariet. 
+    ;; Tar ett vapen som argument, gör det till aktuellt vapen (som karaktären
+    ;; använder) och lägger in vapnet i inventariet.
+    (define/public (take-weapon! new-weapon)  
+      (set! weapon new-weapon)                
       (set-field! wielder weapon this)
       (add-item! new-weapon))
-
-    (define/public (switch-weapon! next/prev) ;; Tar in 'next eller 'prev, roterar inventariet (som är en ring)
-      (unless (empty-ring? inventory)         ;; i en viss riktning och sätter det första värdet i ringen till aktuellt vapen. 
+    ;; Tar in 'next eller 'prev, roterar inventariet (som är en ring)
+    ;; i en viss riktning och sätter det första värdet i ringen till aktuellt vapen. 
+    (define/public (switch-weapon! next/prev) 
+      (unless (empty-ring? inventory)         
         (if (eq? next/prev 'next)
             (ring-rotate-right! inventory)
             (ring-rotate-left! inventory))
         (set! weapon (ring-first-value inventory))))
     
-    (define/public (shoot!) ;; Om karaktären har ett vapen så sänder den proceduren fire! till vapnet som gör att vapnet avfyras
-      (when weapon          ;; i rätt riktning. 
+    ;; Om karaktären har ett vapen så sänder den proceduren fire! till vapnet som gör att vapnet avfyras
+    ;; i rätt riktning. 
+    (define/public (shoot!) 
+      (when weapon          
         (send weapon fire! the-map direction)))
     
-    (define/public (remove-self!) ;; Tar bort karaktären ur banans lista över element. 
+    ;; Tar bort karaktären ur banans lista över element.
+    (define/public (remove-self!)  
       (when the-map
         (send the-map delete-element! this)))
 
-    (define/public (swap-direction direction) ;; Tar in riktningen höger eller vänster som argument och byter från
-      (case direction                         ;; vänster till höger eller höger till vänster. 
+    ;; Tar in riktningen höger eller vänster som argument och byter från
+    ;; vänster till höger eller höger till vänster. 
+    (define/public (swap-direction direction) 
+      (case direction                         
         ('left 'right)
         ('right 'left)))
     
-    (define/public (on-ground?) ;; Kollar om karaktären står på marken och returnerar #t eller #f. 
+    ;; Kollar om karaktären står på marken och returnerar #t eller #f. 
+    (define/public (on-ground?) 
       (eq? (inexact->exact y) (ground-y)))
     
-    (define/public (find-obstacle solid? direction) ;; Tar in ett booleskt värde (som anger om man letar en solid eller
-      (let-values                                   ;; tom tile) och en riktning som argument och returnerar närmaste tiles
-          ([(lower-val upper-val iterator)          ;; pixelkoordinat (antingen i x- eller yled beroende på riktning).  
+    ;; Tar in ett booleskt värde (som anger om man letar en solid eller
+    ;; tom tile) och en riktning som argument och returnerar närmaste tiles
+    ;; pixelkoordinat (antingen i x- eller yled beroende på riktning).  
+    (define/public (find-obstacle solid? direction) 
+      (let-values                                   
+          ([(lower-val upper-val iterator)          
             (case direction
               [(up down) ;; kolla flera olika x
                (values x
@@ -87,29 +101,41 @@
                      min)
                  (map iterator checklist)))))
     
-    (define/public (roof-y) ;; Returnerar närmsta solida pixel-koordinat ovan karaktären. 
+    ;; Returnerar närmsta solida pixel-koordinat ovan karaktären. 
+    (define/public (roof-y) 
       (add1 (find-obstacle #t 'up)))
-    (define/public (left-x) ;; Returnerar närmsta solida pixel-koordinat vänster om karaktären. 
+    
+    ;; Returnerar närmsta solida pixel-koordinat vänster om karaktären. 
+    (define/public (left-x) 
       (find-obstacle #t 'left))
-    (define/public (right-x) ;; Returnerar närmsta solida pixel-koordinat höger om karaktären. 
+    
+    ;; Returnerar närmsta solida pixel-koordinat höger om karaktären. 
+    (define/public (right-x) 
       (- (find-obstacle #t 'right) width))
-    (define/public (ground-y) ;; Returnerar närmsta solida pixel-koordinat under karaktären. 
+    
+    ;; Returnerar närmsta solida pixel-koordinat under karaktären. 
+    (define/public (ground-y) 
       (- (find-obstacle #t 'down) height))
     
-    (define/public (decelerate!) ;; Minskar karaktärens hastighet i x-led. 
+    ;; Minskar karaktärens hastighet i x-led. 
+    (define/public (decelerate!) 
       (set! vx (* vx 0.85)))
     
-    (define/public (gravitate!) ;; Ökar karaktärens hastighet i y-led. 
+    ;; Ökar karaktärens hastighet i y-led. 
+    (define/public (gravitate!) 
       (push! 0 (* *g* *dt*)))
     
-    (define/public (push! dvx dvy) ;; Tar in ändring av hastighet i både x- och yled och ökar karaktärens hastighet. 
+    ;; Tar in ändring av hastighet i både x- och yled och ökar karaktärens hastighet.
+    (define/public (push! dvx dvy)  
       (set! vx (+ vx dvx))
       (set! vy (+ vy dvy)))
     
-    (define/public (jump!) ;; Ger karaktären en negativ hastighet i y-led. 
+     ;; Ger karaktären en negativ hastighet i y-led. 
+    (define/public (jump!)
       (set! vy -0.9))
     
-    (define/public (render canvas dc) ;; Tar in canvas och dc som argument och säger åt banan att rita en rektangel. 
+    ;; Tar in canvas och dc som argument och säger åt banan att rita en rektangel. 
+    (define/public (render canvas dc) 
       (let ([bitmap (if (eq? direction 'left)
                         bitmap-left
                         bitmap-right)])
@@ -117,7 +143,8 @@
             (send the-map draw-bitmap bitmap x y canvas dc)
             (send the-map draw-rectangle x y width height "black" canvas dc))))
     
-    (define/public (move!) ;; Exekverar en rad procedurer vid anrop, som talar om hur karaktären skall röra sig.
+    ;; Exekverar en rad procedurer vid anrop, som talar om hur karaktären skall röra sig.
+    (define/public (move!) 
       (when (is-a? the-map map%)
         (unless (on-ground?)
           (gravitate!)) ;; Låter tyngdaccelerationen verka om man inte står på marken. 
@@ -149,12 +176,14 @@
       (set! hp 0)
       (remove-self!))
     
-    (define/public (hurt! damage) ;; Tar in ett heltal som argument och minskar karaktärens liv med det talet. 
+     ;; Tar in ett heltal som argument och minskar karaktärens liv med det talet.
+    (define/public (hurt! damage) 
       (set! hp (- hp damage))
       (when (not (positive? hp))
         (die!)))
     
-    (define/public (update!) ;; Kör move!-proceduren vid anrop. 
+    ;; Kör move!-proceduren vid anrop. 
+    (define/public (update!) 
       (when the-map
         (move!)))
     

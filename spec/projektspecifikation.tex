@@ -27,6 +27,8 @@
 % \code{(define (square x) (* x x))}
 \newcommand{\code}[1]%
 {\texttt{#1}}
+\newcommand{\filename}[1]%
+{\textsl{#1}}
 
 %% Kommando för ADT-tabell
 %% Användningsexempel:
@@ -270,7 +272,7 @@ die! & - & se remove-self! \\
 
 hurt! & damage & skadar karaktären \\
 
-update! & - & avgör vad som ska hända varje frame; overridas av \code{player\%} och \code{enemy\%} \\
+update! & - & kör move! \\
 
 \end{adt-table}
 
@@ -343,25 +345,38 @@ fire! & the-map, direction & avlossar ett skott om vapnet befinner sig hos en sp
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
 \subsection{Beskrivning av implementationen}
-Spelet har programmerats objektorienterat vilket innebär att spelare, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag så har en karaktärsklass skapats, som båda dessa bygger på. Rackets inbyggda objektsystem har använts för de olika klasserna.
+Spelet har programmerats objektorienterat med hjälp av Dr Rackets inbyggda system vilket innebär att spelare, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag så har en karaktärsklass skapats, som båda dessa bygger på.
 
-När de flesta objekt skapas krävs ett antal initiala argument som kännetecknar det specifika objektet. Dock så kan en karaktär skapas utan att skriva något initialt argument eftersom det finns standardvärden som används då inget annat anges.  
+När de flesta objekt skapas krävs ett antal initiala argument som kännetecknar det specifika objektet. Dock så kan en karaktär skapas utan att skriva något initialt argument eftersom det finns standardvärden som används då inget annat anges, se exempel nedan:
+
+\begin{alltt}
+(init-field [x 0]
+            [y 0]
+            [width 40]
+            [height 80]
+            [hp 100]
+            [the-map #f]
+            [bitmap-right #f]
+            [bitmap-left #f]
+            [direction 'right])
+\end{alltt}         
+
+Nyckelordet \code{init-field} sätter parametrarna till de förinställda värdena om inget annat anges av användaren. 
 
 \subsubsection{Allmän kodstruktur}
 
-Koden har delats upp så att varje klass ligger i en egen fil. I filen \textsl{main.scm} laddas all annan kod in. Här skapas spelaren, fienderna och banan etc. En timer som tickar 60 ggr/sekund styr hur ofta spellogiken skall uppdateras. 
+Koden har delats upp så att varje klass ligger i en egen fil. I filen \filename{main.scm} laddas all annan kod in. Här skapas spelaren, fienderna och banan etc. En timer som tickar 60 ggr/sekund styr hur ofta spellogiken skall uppdateras. 
 
 \subsubsection{Banan}
-En tile-map (brickkarta) har skapats för att användas som bana. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
-
-Det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet render till varje element. 
+Banan är en klass som innehåller allting som ska kunna interagera med varandra och det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet \code{render}.
 
 \subsubsection{Tile-map}
+En tile-map (brickkarta) har skapats för att användas som terräng i banan. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=11cm]{tilekoordinater}
-\caption{En rutnät av tiles.}\label{tile-rutnat}
+\caption{Ett rutnät av tiles.}\label{tile-rutnat}
 \end{figure}
 
 Något som sker väldigt ofta i tile-map är konvertering mellan vanliga pixel-koordinater och tile-koordinater. Tile-mapen kan ses som en hinna som ligger över banan och har sitt eget koordinatsystem, se figur \ref{tile-rutnat}. Eftersom varje tile är 40x40 pixlar så ligger tex. punkten (50.50) i den tile som har tile-koordinaterna (1.1). Punkten (0.0) ligger i övre vänstra hörnet av skärmen, och båda koordinatsystemen utgår från övre vänstra hörnet. För att räkna ut vilken tile en viss koordinat ligger i tas därför hänsyn till en tiles mått. Dessutom avrundas de erhållna koordinaterna till heltal med hjälp av proceduren \code{inexact->exact} för att kunna appliceras till en befintlig tile-koordinat, se exempelkod nedan. 
@@ -384,29 +399,15 @@ Skotten är objekt som kan avlossas från vapen. Dessa tas bort när de åker ut
 
 \section{Utvärdering och erfarenheter}
 
-%Detta avsnittet är en väldigt viktig del av projektspecifikationen. Här ska ni %tänka tillbaka och utvärdera projektet (något som alltid ska göra efter ett %projekt). Som en hjälp på vägen kan ni utgå från följande frågeställningar:
+Projektet har gått bra överlag och vi är nöjda med resultatet. Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 20 timmar mindre per person. Dock skulle vi inte vilja påstå att vi har lagt ner för lite tid, eftersom vi inte hade hunnit jobba så mycket mer på den utsatta tiden om vi inte hade suttit ännu mer på kvällar och helger. Arbetsfördelningen var relativt jämn, dock så hann Rolf göra mer än Magnus på samma antal timmar arbete eftersom han är en mer erfaren programmerare. Vi jobbade tillsammans ganska länge innan vi delade upp kodandet, vilket kan ha medfört att vi i slutändan hann mindre totalt. Dock så kändes det bra att bygga upp grundstommen tillsammans. 
 
-\textbf{Vad gick bra? Mindre bra?}
-Projektet har gått bra överlag och vi är nöjda med resultatet.  
-\textbf{Lade ni ned för mycket/lite tid?}
-Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 20 timmar mindre per person. Dock skulle jag (Magnus) inte vilja påstå att vi har lagt ner för lite tid, eftersom vi inte hade hunnit jobba så mycket mer på den utsatta tiden om vi inte hade suttit ännu mer på kvällar och helger.
-
-\textbf{Var arbetsfördelningen jämn? Om inte: Vad hade ni kunnat göra för att förbättra den?}
-Arbetsfördelningen var relativt jämn, dock så hann Rolf göra mer än Magnus på samma antal timmar arbete eftersom han är en mer erfaren programmerare. Vi jobbade tillsammans ganska länge innan vi delade upp kodandet, vilket kan ha medfört att vi i slutändan hann mindre totalt. Dock så kändes det bra att bygga upp grundstommen tillsammans. 
-
-\textbf{Har ni haft någon nytta av specifikationen? Vad har varit mest användbart med den? Minst?}
 Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång, och skrivit in våra tankar, hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet att fundera under arbetets gång vad som kunde behövas osv. Vi ville absolut inte låsa oss till vissa grejer (tex. bestämma precis vilka kontroller som skulle användas och hur karaktärerna skulle se ut) utan ville känna friheten att kunna ändra oss efterhand. 
-
-\textbf{Har arbetet fungerat som ni tänkt er? Har ni följt arbetsmetodiken? Något som skiljer sig? Till det bättre? Till det sämre?}
-
-
 
 \textbf{Vad har varit mest problematiskt, om man utesluter den programmeringstekniska delen? Alltså saker runt omkring, som att hitta ledig tid eller plats att vara på.}
 
-\textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?} Vi har bland annatlärt oss att dela upp kodandet och samarbeta via versionhanteringssystemet git.
+\textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?} Vi har bland annat lärt oss att dela upp kodandet och samarbeta via versionhanteringssystemet git.
 
 \section{Tidrapportering}
-Rapportering av arbetstid har skett fortlöpande i ett separat dokument som finns på Google Drive.
-
+Rapportering av arbetstid har skett fortlöpande i ett separat excel-dokument som finns bifogat. 
 
 \end{document}
