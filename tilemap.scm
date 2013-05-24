@@ -39,11 +39,13 @@
          (set! tiles input)]
         [else (error "load-tiles!: Expected vector or string - got " input)])
       (render-tiles! tiles-dc (range 0 width) (range 0 height)))
-    
-    (define/public (get-tile-coord-pos x y) ;;tar in pixlar och returnerar tile-koord. 
+
+    ;;tar in pixlar och returnerar tile-koord. 
+    (define/public (get-tile-coord-pos x y) 
       (values (inexact->exact (floor (/ x tile-size)))
               (inexact->exact (floor (/ y tile-size)))))
-    
+
+    ;; returnerar #t om koordinaterna är tillåtna
     (define/public (valid-tile-coord? x y)
       (and (<= 0 x (- width 1))
            (<= 0 y (- height 1))))

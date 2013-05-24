@@ -24,12 +24,6 @@
           (send the-map colliding-bullets this)
           '()))
     
-;    (define/override (render canvas dc)
-;      (let ([bitmap (if (eq? direction 'left)
-;                        bitmap-left
-;                        bitmap-right)])
-;        (send the-map draw-bitmap bitmap x y canvas dc)))
-    
     (define/override (left-x)
       (max (find-obstacle #t 'left)
            (send the-map get-next-empty-pixel 'left x (find-obstacle #t 'down))))

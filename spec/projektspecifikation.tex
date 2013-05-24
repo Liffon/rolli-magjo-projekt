@@ -78,7 +78,7 @@ Spelet är ett klassiskt 2D-plattformsspel där spelaren styr en karaktär som k
 Varje gång spelaren blir skadad så tappar denne hitpoints. När spelarens hitpoints tagit slut dör karaktären och spelaren förlorar ett liv. När liven tagit slut har spelaren förlorat och måste börja om. 
 
 \subsection{Utvecklingsmetodik}\label{utvecklingsmetodik}
-Det är tänkt att vi ska dela upp kodandet lika mellan oss (vilka delar specificeras senare) så att arbetet kan färdigställas snabbare. Vi har tänkt att använda oss av Git för versionshantering, till exempel med Astmatix som central server (vilket borde lösa problemet med att koden ska vara tillgänglig även om en gruppmedlem är sjuk eller borta). Vi kommunicerar med varandra via sms, mejl och Skype samt muntligt.
+Det är tänkt att vi ska dela upp kodandet lika mellan oss \textbf{(vilka delar specificeras senare)TA BORT? } så att arbetet kan färdigställas snabbare. Vi har tänkt att använda oss av Git för versionshantering, till exempel med Astmatix som central server (vilket borde lösa problemet med att koden ska vara tillgänglig även om en gruppmedlem är sjuk eller borta). Vi kommunicerar med varandra via sms, mejl och Skype samt muntligt.
 
 I första hand har vi tänkt att jobba under normal skoltid, dvs 8-17 på vardagar, men kommer även att arbeta på kvällar och helger i de fall tiden inte räcker till på dagarna. Att sitta tillsammans så ofta som möjligt när vi arbetar är önskvärt för att effektivt kunna dela idéer och samarbeta.
 
@@ -248,9 +248,9 @@ find-obstacle & solid?, direction & returnerar en pixel-koordinat för en tom el
 
 roof-y & - & Returnerar närmsta solida pixel-koordinat ovan karaktären.  \\
 
-left-y & - & Returnerar närmsta solida pixel-koordinat till vänster karaktären.  \\
+left-x & - & Returnerar närmsta solida pixel-koordinat till vänster om karaktären.  \\
 
-right-y & - & Returnerar närmsta solida pixel-koordinat till höger karaktären.  \\
+right-x & - & Returnerar närmsta solida pixel-koordinat till höger om karaktären.  \\
 
 ground-y & - & Returnerar närmsta solida pixel-koordinat under karaktären.  \\
 
@@ -274,11 +274,40 @@ update! & - & kör move! \\
 
 \end{adt-table}
 
+\begin{adt-table}{\code{tilemap\%} (brickkarta)}{tilemap-adt}
+
+dump-tiles-to-file & filename & spara tiles-vectorn till en fil \\
+
+load-tiles! & input & ladda in tiles från en vector eller en fil \\
+
+valid-tile-coord? & x, y & returnerar \#t om koordinaterna är tillåtna \\
+
+get-position-tile & x, y & returnerar den tile som finns på x, y \\
+
+get-next-tile-pixel & se map\% & se map\% \\
+
+render-tiles & dc xs,ys & ritar ut tiles på dc \\
+
+render & canvas, dc, scrolled distance & ROLF varför render-tile å render?! \\ 
+ 
+\end{adt-table}
+
+
 \begin{adt-table}{\code{player\%} (spelare)}{spelar-adt}
 
 set-key! & key, boolean & sätter key till boolean \\
 
 get-key & key & returnerar \#t om key är nedtryckt \\
+
+update! & - & avgör vad som händer varje frame \\
+
+\end{adt-table}
+
+\begin{adt-table}{\code{enemy\%} (fiende)}{fiende-adt}
+
+left-x & - & returnerar närmsta pixelkoordinaten för antingen en solid tile eller en kant av en platå åt vänster \\
+
+right-x & - & returnerar närmsta pixelkoordinaten för antingen en solid tile eller en kant av en platå åt höger \\
 
 update! & - & avgör vad som händer varje frame \\
 
