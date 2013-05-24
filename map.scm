@@ -1,3 +1,14 @@
+;; map.scm
+;; =======
+
+;; innehåller klassen map%
+
+;; Init-argument: width, height, tile-size, canvas, tiles
+;; (alla utom tiles är obligatoriska)
+
+;; Användningsexempel:
+; (new map% [width 10] [height 10] [tile-size 16] [canvas a-canvas])
+
 (load "tilemap.scm")
 
 (define map%
@@ -6,7 +17,7 @@
                 height
                 tile-size
                 canvas ;; för att kunna läsa av storleken på utritningsytan
-                [tiles #f]) ;; för initiering av tiles (vector eller filnamn)
+                [tiles #f]) ;; för initiering av tiles (en vector eller ett filnamn)
 
     (define tilemap (new tilemap%
                          [width width]

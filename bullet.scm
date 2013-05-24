@@ -1,16 +1,25 @@
+;; bullet.scm
+;; ==========
+
+;; innehåller klassen bullet%
+;; Init-argument: width, height, damage, x, y, direction, speed, the-map
+;; (width, height och damage obligatoriska)
+
+;; Användningsexempel:
+; (new bullet% [width 4] [height 2] [damage 20] [x 40] [y 80] [direction 'right] [the-map a-map])
+
 (define bullet%
   (class object%
     (init-field width
                 height
                 damage
-                [x #f]
-                [y #f]
-                [direction #f]
+                [x 0]
+                [y 0]
+                [direction 'right] ;; vänster eller höger
                 [speed 1]
-                [the-map #f])
+                [the-map #f]) ;; pekare till banan
     
     ;;tar bort kulan från banan
-    
     (define/public (remove-self!)
       (when the-map
         (send the-map delete-element! this)

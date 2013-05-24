@@ -5,6 +5,13 @@
 ;;   och procedurerna (make-pistol) och (make-machine-gun)
 ;;   som skapar vapen
 
+;; Init-argument: width, height, cooldown, bullet, name, bitmap, x, y, wielder
+;; (width, height, cooldown och bullet är obligatoriska)
+
+;; Användningsexempel:
+; (new weapon [width 300] [height 200] [cooldown 500] [bullet a-bullet] [name "Ofantligt stort vapen"])
+; där a-bullet är en instans av bullet%
+
 (load "bullet.scm")
 
 (define weapon%
@@ -17,7 +24,7 @@
                 [bitmap #f]
                 [x 0]
                 [y 0]
-                [wielder #f])
+                [wielder #f]) ;; vem som håller i vapnet (en character% eller en map%)
     
     ;; returnerar en bullet med angivna the-map, x, y och direction
     ;;   och samma width, height, damage och speed som "standard-bulleten" för vapnet
