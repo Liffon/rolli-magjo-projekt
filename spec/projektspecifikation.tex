@@ -77,7 +77,7 @@ Detta projekt går ut på att utveckla ett 2D-plattformsspel där spelaren ska h
 \subsection{Spelhistoria}
 Spelet är ett klassiskt 2D-plattformsspel där spelaren styr en karaktär som kan röra sig i en värld genom att springa och hoppa. I världen finns fiender och andra hinder (t.ex. spikar eller avgrunder) som måste undvikas eller besegras med hjälp av olika vapen. För att klara spelet måste en boss, som är den svåraste fienden i spelet, besegras.
 
-Varje gång spelaren blir skadad så tappar denne hitpoints. När spelarens hitpoints tagit slut dör karaktären och spelaren förlorar ett liv. När liven tagit slut har spelaren förlorat och måste börja om. 
+Varje gång spelaren blir skadad tappar denne hitpoints. När spelarens hitpoints tagit slut dör karaktären och spelaren förlorar ett liv. När liven tagit slut har spelaren förlorat och måste börja om. 
 
 \subsection{Utvecklingsmetodik}\label{utvecklingsmetodik}
 Det är tänkt att vi ska dela upp kodandet lika mellan oss så att arbetet kan färdigställas snabbare. Vi har tänkt att använda oss av Git för versionshantering, till exempel med Astmatix som central server (vilket borde lösa problemet med att koden ska vara tillgänglig även om en gruppmedlem är sjuk eller borta). Vi kommunicerar med varandra via sms, mejl och Skype samt muntligt.
@@ -100,18 +100,18 @@ Vi vill göra ett så bra projekt som möjligt på den tid vi hinner lägga på 
 Spelet styrs med hjälp av tangentbordet. I tabell \ref{kontroller} ses vilka kommandon som är möjliga. 
 
 \begin{table}[ht]
-\caption{Spelkontroller}\label{kontroller}
+\caption{Kontroller för att styra spelarkaraktären.}\label{kontroller}
 \centering
     \begin{tabular}{ll}
     \toprule
     Tangent  & Funktion \\
     \midrule
-    space, $\uparrow$ , x & hoppa \\
+    \code{space}, $\uparrow$ , \code{x} & hoppa \\
     $\leftarrow$  & gå vänster \\
     $\rightarrow$ & gå höger \\
-    a, s     & byta aktuellt vapen \\
-    z        & springa \\
-    c        & skjuta \\
+    \code{a}, \code{s}     & byta aktuellt vapen \\
+    \code{z}        & springa \\
+    \code{c}        & skjuta \\
     \bottomrule
     \end{tabular}
 \end{table}
@@ -124,9 +124,25 @@ För att starta spelet körs filen \textsl{main.scm} i Dr Racket. Spelkaraktäre
 \caption{En typisk spelsituation.}\label{screenshot}
 \end{figure}
 
-Om spelaren dör så tar spelet slut och måste startas om för att kunna spelas igen. Målet med spelet är att ta sig till slutet av banan. 
+Om spelaren dör visas meddelandet ''Game Over'' och spelet måste startas om för att kunna spelas igen. Målet med spelet är att ta sig till slutet av banan. 
 
+\subsubsection{Level-editor}
+Med tangentkombinationen \code{Ctrl-E} aktiveras den inbyggda level-editorn. I den kan användaren redigera hur banans terräng ser ut med hjälp av musen. Texten ''EDITING'' visas i skärmens övre högra hörn när level-editorn är aktiv. När \code{Ctrl-E} trycks ned igen, avaktiveras level-editorn. För mer information om hur level-editorn används, se tabell \ref{editor-kontroller}.
 
+\begin{table}[ht]
+\caption{Kontroller för den inbyggda level-editorn.}\label{editor-kontroller}
+\centering
+    \begin{tabu}{lX}
+    \toprule
+    Användarinput  & Funktion \\
+    \midrule
+    \code{Ctrl-E} & Aktivera/inaktivera level-editorn. \\
+    \code{Ctrl-S} & Spara den aktuella uppsättningen tiles till hårddisken. \\
+    Höger musknapp & Kopiera tilen under muspekaren till att vara aktuell tile. \\
+    Vänster musknapp & Sätt ut aktuell tile på positionen under muspekaren. \\
+    \bottomrule
+    \end{tabu}
+\end{table}
 
 \subsection{Kravlista}
 Projektets kravlista återfinns i tabell \ref{kravlista} nedan.
@@ -192,9 +208,9 @@ Tabeller \ref{map-adt}--\ref{ring-adt} innehåller specifikation för de abstrak
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
 \subsection{Beskrivning av implementationen}
-Spelet har programmerats objektorienterat med hjälp av Dr Rackets inbyggda system vilket innebär att spelare, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag så har en karaktärsklass skapats, som båda dessa bygger på.
+Spelet har programmerats objektorienterat med hjälp av Dr Rackets inbyggda system vilket innebär att spelare, fiender och bana representeras av objekt. Eftersom koden för spelaren och fienderna har många gemensamma drag har en karaktärsklass skapats, som båda dessa bygger på.
 
-När de flesta objekt skapas krävs ett antal initiala argument som kännetecknar det specifika objektet. Dock så kan en karaktär skapas utan att skriva något initialt argument eftersom det finns standardvärden som används då inget annat anges, se exempel nedan:
+När de flesta objekt skapas krävs ett antal initiala argument som kännetecknar det specifika objektet. Dock kan en karaktär skapas utan att skriva något initialt argument eftersom det finns standardvärden som används då inget annat anges, se exempel nedan:
 
 \begin{alltt}
 (init-field [x 0]
@@ -214,11 +230,13 @@ Nyckelordet \code{init-field} sätter parametrarna till de förinställda värde
 
 Koden har delats upp så att varje klass ligger i en egen fil. I filen \filename{main.scm} laddas all annan kod in. Här skapas spelaren, fienderna och banan etc. En timer som tickar 60 ggr/sekund styr hur ofta spellogiken skall uppdateras. 
 
-\subsubsection{Banan}
-Banan är en klass som innehåller allting som ska kunna interagera med varandra och det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet \code{render}.
+\subsubsection{Bana}
+Banan är en klass som innehåller allting som ska kunna interagera med varandra och det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet \code{render}. Det är här det mesta ''kopplas samman'', då det är detta objekt som vet var allting är. Många av procedurerna i \code{map\%} skickas vidare direkt till dess tile-map.
 
 \subsubsection{Tile-map}
-En tile-map (brickkarta) har skapats för att användas som terräng i banan. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
+En tile-map (''brickkarta'') har skapades för att användas som terräng i banan. Varje tile är 40x40 pixlar och har en viss typ, som representeras av en symbol. Vissa typer av tiles är solida, andra inte. Är den solid krockar karaktärer och skott med den och är den tom kan karaktärer och skott passera igenom den. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
+
+I början av spelets utveckling upplevde vi prestandaproblem vid utritning av tiles. Detta löstes genom att inte varje frame rita ut varje enskild tile, utan i stället låta tile-mapen innehålla en bild med alla tiles på hela banan. Denna bild uppdateras varje gång någon tile ändras men är annars statisk. När banan sedan ska ritas ut, kollar spelet vilken del av bilden som kommer att synas och ritar bara ut den delen.
 
 \begin{figure}[h!]
 \centering
@@ -226,7 +244,7 @@ En tile-map (brickkarta) har skapats för att användas som terräng i banan. Va
 \caption{Ett rutnät av tiles.}\label{tile-rutnat}
 \end{figure}
 
-Något som sker väldigt ofta i tile-map är konvertering mellan vanliga pixel-koordinater och tile-koordinater. Tile-mapen kan ses som en hinna som ligger över banan och har sitt eget koordinatsystem, se figur \ref{tile-rutnat}. Eftersom varje tile är 40x40 pixlar så ligger tex. punkten (50.50) i den tile som har tile-koordinaterna (1.1). Punkten (0.0) ligger i övre vänstra hörnet av skärmen, och båda koordinatsystemen utgår från övre vänstra hörnet. För att räkna ut vilken tile en viss koordinat ligger i tas därför hänsyn till en tiles mått. Dessutom avrundas de erhållna koordinaterna till heltal med hjälp av proceduren \code{inexact->exact} för att kunna appliceras till en befintlig tile-koordinat, se exempelkod nedan. 
+Något som sker väldigt ofta i tile-map är konvertering mellan vanliga pixel-koordinater och tile-koordinater. Tile-mapen kan ses som en hinna som ligger över banan och har sitt eget koordinatsystem, se figur \ref{tile-rutnat}. Eftersom varje tile är 40x40 pixlar ligger tex. punkten (50,50) i den tile som har tile-koordinaterna (1,1). Punkten (0,0) ligger i övre vänstra hörnet av skärmen, och båda koordinatsystemen utgår från övre vänstra hörnet. För att räkna ut vilken tile en viss koordinat ligger i tas därför hänsyn till en tiles mått. Dessutom avrundas de erhållna koordinaterna till heltal med hjälp av proceduren \code{inexact->exact} för att kunna appliceras till en befintlig tile-koordinat, se exempelkod nedan. 
 \begin{alltt}
 (define/public (get-tile-coord-pos x y) 
       (values (inexact->exact (floor (/ x tile-size)))
@@ -244,18 +262,29 @@ Skotten är objekt som kan avlossas från vapen. Dessa tas bort när de åker ut
 
 \subsubsection{Dubbelriktad muterbar ring}
 
-En dubbelriktad muterbar ring implementerades som en cirkulär struktur av muterbara cons-celler. Denna datatyp används sedan i \code{character\%} för att representera vilka vapen en viss karaktär hade i sin ägo. På så sätt kan spelaren på ett enkelt sätt växla mellan sina vapen både framåt och bakåt utan att någonsin nå ett ''slut'' på vapenlistan.
+En dubbelriktad muterbar ring implementerades som en cirkulär struktur av muterbara cons-celler. Denna datatyp användPs sedan i \code{character\%} för att representera vilka vapen en viss karaktär hade i sin ägo. På så sätt kan spelaren på ett enkelt sätt växla mellan sina vapen både framåt och bakåt utan att någonsin nå ett ''slut'' på vapenlistan.
+
+\subsubsection{Level-editor}
+För att underlätta skapandet av en spelbar bana konstruerades även en enkel level-editor som styrs med musen och tangentbordet. Med hjälp av level-editorn kan användaren spara den aktuella banans terräng (fiender och vapen inte inräknade) till hårddisken.
+
+Denna skapades främst som ett verktyg för att utveckla spelet och kräver i den nuvarande implementationen även ändringar i koden för att t.ex. sätta ut fiender och vapen, men skulle med små modifikationer kunna användas av vilken användare som helst för att utveckla helt nya nivåer från grunden.
+
+När spelet startas laddas alla tiles på banan in från filen \filename{level.sexpr}, vilken också är den fil som level-editorn skriver till.
 
 \section{Utvärdering och erfarenheter}
 
-Projektet har gått bra överlag och vi är nöjda med resultatet. Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 20 timmar mindre per person. Dock skulle vi inte vilja påstå att vi har lagt ner för lite tid, eftersom vi inte hade hunnit jobba så mycket mer på den utsatta tiden om vi inte hade suttit ännu mer på kvällar och helger. Arbetsfördelningen var relativt jämn, dock så hann Rolf göra mer än Magnus på samma antal timmar arbete eftersom han är en mer erfaren programmerare. Vi jobbade tillsammans ganska länge innan vi delade upp kodandet, vilket kan ha medfört att vi i slutändan hann mindre totalt. Dock så kändes det bra att bygga upp grundstommen tillsammans. 
+Projektet har gått bra överlag och vi är nöjda med resultatet. Även om det vi skapat inte är ett fullfjädrat plattformsspel med invecklade banor och många olika fiender, har vi åstadkommit en relativt kompetent spelmotor för 2D-plattformsspel som lämnar mycket utrymme för utbyggnad.
 
-Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång, och skrivit in våra tankar, hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet att fundera under arbetets gång vad som kunde behövas osv. Vi ville absolut inte låsa oss till vissa grejer (tex. bestämma precis vilka kontroller som skulle användas och hur karaktärerna skulle se ut) utan ville känna friheten att kunna ändra oss efterhand. 
+Vi har inte lagt ned riktigt lika mycket tid som vi hade räknat med, ungefär 20 timmar mindre per person. Dock skulle vi inte vilja påstå att vi har lagt ner för lite tid, eftersom vi inte hade hunnit jobba så mycket mer på den utsatta tiden om vi inte hade suttit ännu mer på kvällar och helger. Arbetsfördelningen var relativt jämn, dock hann Rolf göra mer än Magnus på samma antal timmar arbete eftersom han är en mer erfaren programmerare. Vi jobbade tillsammans ganska länge innan vi delade upp kodandet, vilket kan ha medfört att vi i slutändan hann mindre totalt. Dock kändes det tryggt att bygga upp grundstommen tillsammans. 
+
+Vi har i princip använt specifikationen till att titta på vår kravlista. Om vi hade funderat mer på hur vi tänkte lägga upp kodandet innan vi satte igång, och skrivit in våra tankar, hade vi förmodligen tittat mer på den, men vi båda kände att vi ville komma igång och använda oss av arbetssättet att fundera under arbetets gång vad som kunde behövas osv. Vi ville absolut inte låsa oss till vissa grejer (t.ex. bestämma precis vilka kontroller som skulle användas och hur karaktärerna skulle se ut) utan ville känna friheten att kunna ändra oss efterhand. 
 
 \textbf{Vad har varit mest problematiskt, om man utesluter den programmeringstekniska delen? Alltså saker runt omkring, som att hitta ledig tid eller plats att vara på.}
 Det hade varit bra att få mer information om hur projektet var tänkt att gå till i förväg. Det finns en pdf på kurshemsidan från 2012 (''Breddföreläsning om ADT:er, OOP, versionshantering, m.m.'') med information som vi gärna hade sett i form av en föreläsning även i år. Det hade nog hjälpt många (inklusive oss) att komma igång ordentligt med arbetet med versionshantering och så vidare.
 
 \textbf{Vad har ni lärt er så här långt som kan vara bra att ta med till kommande kurser/projekt?} Vi har bland annat lärt oss att dela upp kodandet och samarbeta via versionhanteringssystemet git.
+
+Vi har dessutom lärt oss att arbeta i \LaTeX\ för att skriva rapporter.
 
 \section{Tidrapportering}
 Rapportering av arbetstid har skett fortlöpande i ett separat excel-dokument som finns bifogat. 
