@@ -242,7 +242,9 @@ Karaktärsklassen är gemensam för fiender och spelare. Denna klass innehåller
 
 Skotten är objekt som kan avlossas från vapen. Dessa tas bort när de åker utanför den synliga delen av banan för att spara datorkapacitet. De tas även bort vid krock med solida tiles samt efter att ha träffat tex. en fiende. 
 
-\subsubsection{Ringen}
+\subsubsection{Dubbelriktad muterbar ring}
+
+En dubbelriktad muterbar ring implementerades som en cirkulär struktur av muterbara cons-celler. Denna datatyp används sedan i \code{character\%} för att representera vilka vapen en viss karaktär hade i sin ägo. På så sätt kan spelaren på ett enkelt sätt växla mellan sina vapen både framåt och bakåt utan att någonsin nå ett ''slut'' på vapenlistan.
 
 \section{Utvärdering och erfarenheter}
 
