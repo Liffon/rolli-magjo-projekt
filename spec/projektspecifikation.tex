@@ -197,7 +197,7 @@ colliding-in & lst, obj & returnerar alla element i lst som kolliderar med obj \
  
 overlapping-tiles & obj & returnerar en lista med alla koordinater (x . y) för tiles som obj överlappar \\ 
  
-colliding-tiles & obj & returnerar \#t om obj överlappar en solid tile, annars \#f \\ 
+colliding-tiles & obj & returnerar \code{\#t} om obj överlappar en solid tile, annars \code{\#f} \\ 
  
 get-next-tile-pixel & solid?, x, y, direction & Börjar på position (x,y) och går åt hållet direction tills den stöter på en solid eller tom (beroende på "solid?") tile eller tills banan tar slut. Returnerar x- eller y-koordinaten för den punkten (beroende på om den letade i x- eller y-led)\\ 
  
@@ -242,7 +242,7 @@ remove-self! & - & tar bort karaktären från banan \\
 
 swap-direction & direction & byter karaktärens riktning \\
 
-on-ground? & - & returnerar \#t om karaktären står på marken \\
+on-ground? & - & returnerar \code{\#t} om karaktären står på marken \\
 
 find-obstacle & solid?, direction & returnerar en pixel-koordinat för en tom eller solid tile i riktningen direction \\
 
@@ -280,7 +280,7 @@ dump-tiles-to-file & filename & spara tiles-vectorn till en fil \\
 
 load-tiles! & input & ladda in tiles från en vector eller en fil \\
 
-valid-tile-coord? & x, y & returnerar \#t om koordinaterna är tillåtna \\
+valid-tile-coord? & x, y & returnerar \code{\#t} om koordinaterna är tillåtna \\
 
 get-position-tile & x, y & returnerar den tile som finns på x, y \\
 
@@ -297,7 +297,7 @@ render & canvas, dc, scrolled distance & ritar ut alla tiles som ska synas på s
 
 set-key! & key, boolean & sätter key till boolean \\
 
-get-key & key & returnerar \#t om key är nedtryckt \\
+get-key & key & returnerar \code{\#t} om key är nedtryckt \\
 
 update! & - & avgör vad som händer varje frame \\
 
@@ -326,7 +326,7 @@ move & - & flyttar kulan \\
 
 \end{adt-table}
 
-\begin{adt-table}{\code{hud\%} (hud)}{hud-adt}
+\begin{adt-table}{\code{hud\%} (head-up-display)}{hud-adt}
 
 render & canvas, dc & ritar HUD:en på skärmen \\
 
@@ -339,6 +339,20 @@ render & canvas, dc & ritar vapnet på skärmen  \\
 fire! & the-map, direction & avlossar ett skott om vapnet befinner sig hos en spelare \\
  
 \end{adt-table}
+
+\begin{adt-table}{Abstrakt datatyp för en dubbelriktad muterbar ring. Procedurerna är inte metoder utan fristående procedurer.}{ring-adt}
+
+make-ring			& -				& skapar en tom ring \\
+ring?				& maybe-ring	& returnerar \code{\#t} om maybe-ring är en ring, \code{\#f} annars \\
+empty-ring?			& ring			& returnerar \code{\#t} om ring är tom, \code{\#f} annars \\
+ring-first			& ring 			& returnerar första elemenetet i ring \\
+ring-first-value	& ring 			& returnerar första värdet i ring \\
+ring-insert!		& ring, value	& stoppar in ett nytt element med givet värde först i ring. Det gamla första elementet blir ''till höger om'' det nya. \\
+ring-rotate-left!	& ring			& roterar ringen ett steg ''åt vänster'' \\
+ring-rotate-right!	& ring			& roterar ringen ett steg ''åt höger'' \\
+
+\end{adt-table}
+
 \subsection{Testning}
 Testning kommer att kunna ske kontinuerligt under programmeringen. Hög prioritet ligger på att få till en fungerande spelmiljö, så att testningen kan börja så tidigt som möjligt. Om behov av speciella testfunktioner upptäcks implementeras dessa i stunden.
 
