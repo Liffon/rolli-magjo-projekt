@@ -27,9 +27,13 @@
     (define holding-switch-weapon? #f)
     (define can-be-hurt #t)
     
+    ;;styr hur ofta man kan skjuta
+    
     (define shoot-timer (new timer%
                        [notify-callback (lambda ()
                                           (set! can-shoot-hold #t))]))
+    ;;styr hur ofta man kan ta skada
+    
     (define hurt-timer (new timer%
                             [notify-callback (lambda ()
                                                (set! can-be-hurt #t))]))
@@ -42,12 +46,9 @@
       (dict-set! keys key boolean))
     
     ;; Tar in en knapptryckning som argument och returnerar ett booleskt värde som representerar om
-    ;; knappen har någon funktion. 
+    ;; knappen är nedtryckt.  
     (define/public (get-key key) 
       (dict-ref keys key #f))    
-    
-;    (define/override (render canvas dc) ;; Tar canvas och dc som argument och säger till banan att rita ut spelaren. 
-;      (send the-map draw-bitmap bitmap x y canvas dc))
     
     
     (define (colliding-characters) ;; Returnerar en lista med de karaktärer som spelaren krockar med. 

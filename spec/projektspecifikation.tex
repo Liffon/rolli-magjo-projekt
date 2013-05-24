@@ -274,6 +274,17 @@ update! & - & kör move! \\
 
 \end{adt-table}
 
+\begin{adt-table}{\code{player\%} (spelare)}{spelar-adt}
+
+set-key! & key, boolean & sätter key till boolean \\
+
+get-key & key & returnerar \#t om key är nedtryckt \\
+
+update! & - & avgör vad som händer varje frame \\
+
+\end{adt-table}
+
+
 \begin{adt-table}{\code{bullet\%} (kula)}{kula-adt}
 
 remove-self & - & tar bort kulan från banan \\
@@ -310,12 +321,18 @@ Spelet har programmerats objektorienterat vilket innebär att spelare, fiender o
 Koden har delats upp så att varje klass ligger i en egen fil. I filen \textsl{main.scm} laddas all annan kod in. Här skapas spelaren, fienderna och banan etc. En timer som tickar 60 ggr/sekund styr hur ofta spellogiken skall uppdateras. 
 
 \subsubsection{Banan}
-En tile-map (brickkarta) har skapats för att användas som bana. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder). 
+En tile-map (brickkarta) har skapats för att användas som bana. Varje tile är 40x40 pixlar och kan antingen vara solid eller tom. Är den solid så krockar en karaktär med den och är den tom händer ingenting. Mark och hinder består följaktligen av en mängd tiles i olika formationer. Dessa tiles täcker hela banan och solida tiles kan ha olika utseende genom att de innehåller olika bitmaps (bilder).
+
+Det är banan som säger åt allt som finns i den att rita sig genom att sända proceduranropet update! till varje element på banan. 
+ 
 
 \subsubsection{Karaktärer}
 
-Karaktärklassen är gemensam för fiender och spelare. Denna klass hanterar
+Karaktärklassen är gemensam för fiender och spelare. Denna klass innehåller metoder som hanterar vad som ska hända när spelaren krockar med något, tar skada, tar upp och byter vapen etc. 
 
+\subsubsection{Skott}
+
+Skotten är objekt som kan avlossas från vapen. Dessa tas bort när de åker utanför den synliga delen av banan för att spara på datorkapacitet. Det tas även bort vid krock med solida tiles samt efter att ha träffat tex. en fiende. 
 
 \section{Utvärdering och erfarenheter}
 
