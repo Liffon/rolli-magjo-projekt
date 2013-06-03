@@ -55,7 +55,8 @@
                       wielder-x
                       (+ wielder-x wielder-width))]
                [y (+ wielder-y (/ wielder-height 3))])
-          (send the-map add-element! (make-bullet the-map x y direction)))))
+          (send the-map add-element! (make-bullet the-map x y direction))
+          (play-sound "shoot.wav" #t))))
     
     (super-new)))
 
