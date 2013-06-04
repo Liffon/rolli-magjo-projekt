@@ -179,6 +179,7 @@
      ;; Tar in ett heltal som argument och minskar karaktärens liv med det talet.
     (define/public (hurt! damage) 
       (set! hp (- hp damage))
+      (play-sound "enemyhit.wav" #t)
       (when (not (positive? hp))
         (die!)))
     
